@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiniela Mundial 2026</title>
+<style>
+/* ── EXACT EXCEL COLOR PALETTE ── */
+:root {
+  /* Backgrounds */
+  --bg-root:    #161C20;
+  --bg-panel:   #1F272D;
+  --bg-row-a:   #363636;
+  --bg-row-b:   #3F3F3F;
+  --bg-score:   #1A2D3A;
+  --bg-score-b: #1F3645;
+  --bg-header:  #3A7682;
+  --bg-pts-hdr: #2F616B;
+  --bg-sel-inp: #D9D9D9;
+  /* Text */
+  --txt:        #DBDBDB;
+  --txt-dim:    #ABABAB;
+  --txt-dark:   #3A1A1A;
+  --txt-gray:   #585858;
+  /* Points colors */
+  --pts-5:  #FFB02F;
+  --pts-4:  #FFD693;
+  --pts-3:  #FFEDD1;
+  --pts-0:  #585858;
+  /* Ranking position colors */
+  --rank-1: #FFB02F;
+  --rank-2: #FFD693;
+  --rank-3: #FFEDD1;
+  /* Simulation */
+  --sim:    #9B6FD4;
+  --sim-bg: rgba(155,111,212,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: Calibri, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  background: var(--bg-root);
+  color: var(--txt);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── LOADING ── */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--bg-root);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px;
+  transition: opacity .4s, visibility .4s;
+}
+#loading-screen.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid var(--bg-row-a);
+  border-top-color: var(--pts-5);
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-txt { font-family: Verdana, sans-serif; font-size: 11px; color: var(--txt-dim); letter-spacing: 2px; }
+
+/* ── ERROR ── */
+#err-screen {
+  display: none; position: fixed; inset: 0; z-index: 299;
+  background: var(--bg-root);
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 12px; padding: 40px; text-align: center;
+}
+#err-screen.show { display: flex; }
+#err-msg { color: #F07070; font-size: 13px; max-width: 480px; line-height: 1.6; white-space: pre-wrap; }
+.err-title { font-family: Verdana, sans-serif; font-size: 16px; font-weight: bold; color: var(--pts-5); }
+
+/* ── APP ── */
+#app { display: none; }
+#app.show { display: block; }
+
+/* ── HEADER ── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg-root);
+  border-bottom: 2px solid var(--bg-header);
+  padding: 8px 12px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.logo {
+  font-family: Verdana, sans-serif;
+  font-size: 14px; font-weight: bold;
+  color: var(--pts-5);
+  white-space: nowrap;
+  letter-spacing: 1px;
+}
+.h-pills { display: flex; gap: 6px; align-items: center; }
+.pill {
+  background: var(--bg-row-a);
+  border: 1px solid #444;
+  padding: 2px 9px; font-size: 11px; color: var(--txt-dim);
+  white-space: nowrap;
+}
+.pill strong { color: var(--pts-5); }
+.sim-pill {
+  background: var(--sim-bg); border-color: var(--sim);
+  color: var(--sim); display: none;
+}
+.sim-pill.on { display: inline-block; }
+.h-right { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sel-lbl { font-size: 11px; color: var(--txt-dim); }
+select {
+  background: var(--bg-row-a); border: 1px solid var(--bg-header);
+  color: var(--txt); padding: 4px 10px;
+  font-family: Calibri, sans-serif; font-size: 12px; cursor: pointer; outline: none;
+  min-width: 140px;
+}
+select:hover { border-color: var(--pts-5); }
+.icon-btn {
+  background: var(--bg-row-a); border: 1px solid #444;
+  color: var(--txt-dim); width: 28px; height: 28px; cursor: pointer;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.icon-btn:hover { border-color: var(--bg-header); color: var(--txt); }
+.icon-btn.spinning { animation: spin .8s linear infinite; }
+
+/* ── SIM BANNER ── */
+#sim-banner {
+  display: none; background: var(--sim-bg);
+  border-bottom: 1px solid rgba(155,111,212,.3);
+  padding: 5px 12px; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 11px; color: var(--sim);
+}
+#sim-banner.on { display: flex; }
+.sim-note { color: var(--txt-dim); }
+.sim-reset {
+  margin-left: auto; background: transparent;
+  border: 1px solid var(--sim); color: var(--sim);
+  padding: 2px 10px; font-family: Calibri, sans-serif; font-size: 11px; cursor: pointer;
+}
+.sim-reset:hover { background: var(--sim-bg); }
+
+/* ── MAIN ── */
+main { padding: 10px 10px; }
+
+/* ── RANKING SECTION ── */
+.ranking-wrap {
+  background: var(--bg-panel);
+  border: 1px solid #2A3540;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+.sec-label {
+  font-family: Verdana, sans-serif;
+  font-size: 10px; font-weight: bold;
+  color: var(--bg-header);
+  text-transform: uppercase; letter-spacing: 2px;
+  margin-bottom: 7px;
+}
+.rank-scroll {
+  display: flex; gap: 4px;
+  overflow-x: auto; padding-bottom: 3px;
+  scrollbar-width: thin; scrollbar-color: var(--bg-header) var(--bg-row-a);
+}
+.rank-scroll::-webkit-scrollbar { height: 3px; }
+.rank-scroll::-webkit-scrollbar-track { background: var(--bg-row-a); }
+.rank-scroll::-webkit-scrollbar-thumb { background: var(--bg-header); }
+
+.rc {
+  flex: 0 0 auto;
+  background: var(--bg-row-a);
+  border: 1px solid #444;
+  padding: 5px 8px; text-align: center;
+  min-width: 70px; cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.rc:hover { border-color: var(--bg-header); background: #404040; }
+.rc.on {
+  border-color: var(--pts-5);
+  background: #3E3318;
+}
+.rc-pos {
+  font-family: Verdana, sans-serif;
+  font-size: 8px; font-weight: bold;
+  color: var(--txt-dim); margin-bottom: 1px;
+}
+.rc.r1 .rc-pos { color: var(--rank-1); }
+.rc.r2 .rc-pos { color: var(--rank-2); }
+.rc.r3 .rc-pos { color: var(--rank-3); }
+.rc-name {
+  font-size: 11px; font-weight: bold; color: var(--txt);
+  margin-bottom: 2px; white-space: nowrap;
+}
+.rc-pts {
+  font-family: Verdana, sans-serif;
+  font-size: 16px; font-weight: bold; line-height: 1;
+  color: var(--pts-5);
+}
+.rc-delta { font-size: 9px; min-height: 11px; font-weight: bold; margin-top: 1px; }
+.rc-delta.up { color: #6EE89A; }
+.rc-delta.dn { color: #F07070; }
+.rc-delta.eq { color: var(--txt-gray); }
+
+/* ── TABLE PANEL ── */
+.tbl-panel { background: var(--bg-panel); border: 1px solid #2A3540; }
+.tbl-toolbar {
+  padding: 6px 10px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  border-bottom: 1px solid #2A3540;
+  background: var(--bg-panel);
+}
+.flt-grp { display: flex; gap: 4px; }
+.flt {
+  background: var(--bg-row-a); border: 1px solid #444;
+  color: var(--txt-dim); padding: 3px 10px;
+  font-family: Calibri, sans-serif; font-size: 11px; cursor: pointer;
+}
+.flt:hover { border-color: var(--bg-header); color: var(--txt); }
+.flt.on { background: var(--bg-header); border-color: var(--bg-header); color: #fff; }
+.srch {
+  margin-left: auto;
+  background: var(--bg-row-a); border: 1px solid #444; color: var(--txt);
+  padding: 3px 8px; font-family: Calibri, sans-serif; font-size: 12px;
+  outline: none; width: 155px;
+}
+.srch::placeholder { color: var(--txt-gray); }
+.srch:focus { border-color: var(--bg-header); }
+
+/* ── TABLE ── */
+.tbl-wrap {
+  overflow-x: auto; max-height: 68vh; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: #444 var(--bg-panel);
+}
+.tbl-wrap::-webkit-scrollbar { width: 5px; height: 5px; }
+.tbl-wrap::-webkit-scrollbar-track { background: var(--bg-panel); }
+.tbl-wrap::-webkit-scrollbar-thumb { background: #444; }
+
+table { width: 100%; border-collapse: collapse; font-size: 11px; font-family: Calibri, sans-serif; }
+thead { position: sticky; top: 0; z-index: 10; }
+
+/* Header rows */
+.hr1 th, .hr2 th {
+  background: var(--bg-header); color: #EEEEEE;
+  padding: 5px 5px; font-size: 10px; font-weight: bold;
+  text-align: center; white-space: nowrap;
+  border-right: 1px solid #2F6670;
+  border-bottom: 1px solid #2F6670;
+}
+.hr1 th.th-match { text-align: left; min-width: 190px; padding-left: 8px; }
+.hr1 th.th-score { min-width: 68px; }
+/* Points header — darker teal */
+.hr1 th.th-pts, .hr2 th.th-pts {
+  background: var(--bg-pts-hdr);
+  border-right-color: #255560;
+}
+/* Selected participant header */
+.hr1 th.th-sel, .hr2 th.th-sel {
+  background: #4A8A70;
+  border-right-color: #3A7060;
+}
+.th-pname {
+  cursor: pointer; padding: 1px 4px; display: inline-block;
+  transition: color .12s;
+}
+.th-pname:hover { color: var(--pts-5); }
+.th-pname.sel { color: var(--pts-5); }
+
+/* Data rows */
+tbody tr.row-a { background: var(--bg-row-a); }
+tbody tr.row-b { background: var(--bg-row-b); }
+tbody tr.row-pending { }
+tbody tr.row-pending td.td-match-info { opacity: .7; }
+tbody tr:hover td { filter: brightness(1.12); }
+
+td {
+  padding: 3px 5px; vertical-align: middle;
+  white-space: nowrap; border-right: 1px solid rgba(255,255,255,.04);
+}
+
+/* Match cells */
+.td-match { min-width: 190px; padding-left: 8px; }
+.m-local  { font-weight: bold; color: var(--txt); text-align: right; }
+.m-visit  { font-weight: bold; color: var(--txt); }
+.m-vs     { color: var(--txt-gray); font-size: 9px; padding: 0 3px; }
+.m-meta   { font-size: 9px; color: var(--txt-dim); display: flex; gap: 5px; align-items: center; margin-top: 1px; }
+.b-grupo  { background: #2A3540; color: var(--txt-dim); padding: 0 4px; font-size: 9px; font-weight: bold; }
+.b-pend   { background: rgba(155,111,212,.15); color: var(--sim); border: 1px solid rgba(155,111,212,.3); padding: 0 4px; font-size: 9px; font-weight: bold; }
+.b-sim    { background: var(--sim-bg); color: var(--sim); border: 1px solid rgba(155,111,212,.4); padding: 0 4px; font-size: 9px; font-weight: bold; }
+
+/* Score display cell */
+.td-score { background: var(--bg-score); text-align: center; min-width: 68px; }
+tbody tr.row-b .td-score { background: var(--bg-score-b); }
+.score-display {
+  display: inline-flex; align-items: center; gap: 2px;
+  font-weight: bold; font-size: 13px; color: var(--txt);
+  padding: 2px 6px; cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color .15s;
+}
+.score-display:hover { border-color: var(--sim); color: var(--sim); }
+.score-display.pending { color: var(--txt-gray); font-size: 11px; font-weight: normal; }
+.score-display.simulated { color: var(--sim); border-color: rgba(155,111,212,.5); }
+.sc-sep { opacity: .5; font-size: 10px; }
+/* Editor */
+.score-editor { display: none; align-items: center; gap: 3px; }
+.score-editor.open { display: inline-flex; }
+.sc-inp {
+  width: 28px; background: #0D1E2A; border: 1px solid var(--sim);
+  color: var(--txt); font-family: Calibri, sans-serif; font-size: 13px;
+  font-weight: bold; text-align: center; padding: 2px 0; outline: none;
+}
+.sc-inp.err { border-color: #F07070; }
+.sc-e-sep { color: var(--txt-gray); font-size: 10px; }
+.sc-ok {
+  background: var(--bg-header); border: none; color: #fff;
+  width: 20px; height: 20px; cursor: pointer; font-size: 11px; font-weight: bold;
+}
+.sc-ok:hover { background: #4A9090; }
+.sc-cancel {
+  background: var(--bg-row-a); border: 1px solid #555; color: var(--txt-dim);
+  width: 20px; height: 20px; cursor: pointer; font-size: 10px;
+}
+.sc-cancel:hover { border-color: #F07070; color: #F07070; }
+
+/* Selected participant cols */
+.td-sel { background: rgba(58,118,130,.12); text-align: center; }
+.td-sel-pts { background: rgba(47,97,107,.18); text-align: center; min-width: 28px; }
+
+/* Forecast chip (selected participant) */
+.chip {
+  display: inline-flex; align-items: center; gap: 2px;
+  font-size: 11px; font-weight: bold; color: var(--txt);
+  padding: 1px 4px;
+}
+.chip-sep { opacity: .4; font-weight: normal; }
+
+/* Points value — uses conditional colors from Excel */
+.pv { font-size: 11px; font-weight: bold; display: inline-block; min-width: 16px; text-align: center; }
+.pv.p5 { color: var(--pts-5); }
+.pv.p4 { color: var(--pts-4); }
+.pv.p3 { color: var(--pts-3); }
+.pv.p0 { color: var(--pts-0); font-weight: normal; }
+.pv.pnd { color: var(--txt-gray); font-weight: normal; }
+
+/* Mini pred (regular participant cols) */
+.mini { display: inline-flex; align-items: center; gap: 1px; font-size: 10px; }
+.mini.p5 { color: var(--pts-5); font-weight: bold; }
+.mini.p4 { color: var(--pts-4); font-weight: bold; }
+.mini.p3 { color: var(--pts-3); }
+.mini.p0 { color: var(--txt-gray); }
+.mini.pnd { color: var(--txt-dim); }
+.mini-sep { opacity: .35; }
+.mpts { font-size: 10px; text-align: center; display: inline-block; min-width: 14px; }
+.mpts.p5 { color: var(--pts-5); font-weight: bold; }
+.mpts.p4 { color: var(--pts-4); font-weight: bold; }
+.mpts.p3 { color: var(--pts-3); }
+.mpts.p0 { color: var(--txt-gray); }
+.mpts.pnd { color: var(--txt-dim); }
+
+.empty-row td { text-align: center; padding: 30px; color: var(--txt-gray); }
+
+footer {
+  text-align: center; padding: 10px; font-size: 10px;
+  color: var(--txt-gray); border-top: 1px solid #2A3540; margin-top: 8px;
+}
+footer a { color: var(--txt-dim); text-decoration: none; }
+footer a:hover { color: var(--pts-5); }
+
+@media (max-width: 600px) {
+  header { padding: 6px 8px; }
+  .h-pills { display: none; }
+  main { padding: 6px; }
+  .srch { width: 110px; }
+}
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="loader"></div>
+  <div class="loader-txt">CARGANDO QUINIELA…</div>
+</div>
+
+<div id="err-screen">
+  <div class="err-title">⚠ Error al cargar</div>
+  <div id="err-msg"></div>
+  <button class="flt on" onclick="location.reload()" style="margin-top:10px;padding:6px 18px;cursor:pointer">Reintentar</button>
+</div>
+
+<div id="app">
+  <header>
+    <div class="logo">⚽ QUINIELA MUNDIAL 2026</div>
+    <div class="h-pills">
+      <div class="pill">Jugados: <strong id="h-played">—</strong></div>
+      <div class="pill">Pendientes: <strong id="h-pend">—</strong></div>
+      <div class="pill">Participantes: <strong id="h-parts">—</strong></div>
+      <div class="pill sim-pill" id="sim-pill">🎮 SIMULACIÓN ACTIVA</div>
+    </div>
+    <div class="h-right">
+      <span class="sel-lbl">Ver pronósticos de:</span>
+      <select id="part-sel" onchange="selectPart(this.value)">
+        <option value="">— Seleccionar —</option>
+      </select>
+      <button class="icon-btn" id="refresh-btn" title="Recargar datos" onclick="loadData()">↻</button>
+    </div>
+  </header>
+
+  <div id="sim-banner">
+    <strong>🎮 MODO SIMULACIÓN</strong>
+    <span>— marcadores editados son locales, no se guardan.</span>
+    <span class="sim-note" id="sim-count"></span>
+    <button class="sim-reset" onclick="resetSim()">✕ Limpiar simulación</button>
+  </div>
+
+  <main>
+    <div class="ranking-wrap">
+      <div class="sec-label">
+        🏆 CLASIFICACIÓN
+        <span id="rank-sim-note" style="display:none;color:var(--sim);font-size:9px"> — SIMULADA</span>
+      </div>
+      <div class="rank-scroll" id="rank-scroll"></div>
+    </div>
+
+    <div class="tbl-panel">
+      <div class="tbl-toolbar">
+        <div class="sec-label" style="margin:0">⚽ PARTIDOS</div>
+        <div class="flt-grp">
+          <button class="flt on" onclick="setFilter('all',this)">Todos</button>
+          <button class="flt"    onclick="setFilter('played',this)">Jugados</button>
+          <button class="flt"    onclick="setFilter('pending',this)">Pendientes</button>
+        </div>
+        <input class="srch" id="srch" placeholder="Buscar equipo…" oninput="renderTable()">
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead id="tbl-head"></thead>
+          <tbody id="tbl-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Datos desde Google Sheets · Se actualiza automáticamente &nbsp;·&nbsp;
+    <a id="sheet-lnk" href="#" target="_blank">Ver hoja →</a>
+    &nbsp;·&nbsp; Clic en cualquier marcador para simular un escenario
+  </footer>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   CONFIG — solo edita este bloque
+   ══════════════════════════════════════ */
+const CONFIG = {
+  SHEET_ID:          '1oV5gbk4_igHWxBe56SGRCmGciWcFBYLkrYDPpoBb2tc',
+  GID_PARTIDOS:      '0',
+  GID_PARTICIPANTES: '675070228',
+  GID_PRONOSTICOS:   '852857498',
+  SHEET_NAME:        'Quiniela Mundial 2026',
+  AUTO_REFRESH_MIN:  5,
+};
+/* ══════════════════════════════════════ */
+
+/* ── SCORING ENGINE ── */
+function calcPoints(rl, rv, pl, pv) {
+  if (rl === null || pl === null) return null;
+  const sign = x => x > 0 ? 1 : x < 0 ? -1 : 0;
+  if (rl === pl && rv === pv)                               return 5;
+  if (sign(rl-rv) === sign(pl-pv) && (rl-rv) === (pl-pv)) return 4;
+  if (sign(rl-rv) === sign(pl-pv))                         return 3;
+  return 0;
+}
+
+/* ── STATE ── */
+const S = {
+  matches:[], participants:[], preds:{},
+  simScores:{}, selectedPart:'', filter:'all',
+};
+
+/* ── CSV ── */
+function csvUrl(gid) { return `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}`; }
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const hdrs  = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
+  return lines.slice(1).map(line => {
+    const cols=[]; let cur='', inQ=false;
+    for (const ch of line) {
+      if (ch==='"') { inQ=!inQ; }
+      else if (ch===',' && !inQ) { cols.push(cur.trim()); cur=''; }
+      else cur+=ch;
+    }
+    cols.push(cur.trim());
+    const row={};
+    hdrs.forEach((h,i) => row[h]=(cols[i]||'').replace(/^"|"$/g,'').trim());
+    return row;
+  }).filter(r => Object.values(r).some(v=>v!==''));
+}
+async function fetchCSV(gid) {
+  const r = await fetch(csvUrl(gid), {cache:'no-store'});
+  if (!r.ok) throw new Error(`HTTP ${r.status} al cargar gid=${gid}`);
+  return parseCSV(await r.text());
+}
+
+/* ── LOAD ── */
+async function loadData() {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+  try {
+    if (CONFIG.SHEET_ID==='TU_SHEET_ID_AQUI') throw new Error(
+      'Configura el SHEET_ID en el bloque CONFIG de index.html.\nRevisa SETUP.md para instrucciones.'
+    );
+    const [mR,pR,prR] = await Promise.all([
+      fetchCSV(CONFIG.GID_PARTIDOS),
+      fetchCSV(CONFIG.GID_PARTICIPANTES),
+      fetchCSV(CONFIG.GID_PRONOSTICOS),
+    ]);
+    S.participants = pR.map(r=>({
+      id:    String(r.id||r.Id||''),
+      name:  (r.nombre||r.Nombre||r.name||'').trim(),
+      points: parseInt(r.puntos||r.Puntos||r.points||0),
+      rank:   parseInt(r.lugar||r.Lugar||r.rank||99),
+    })).filter(p=>p.name).sort((a,b)=>a.rank-b.rank);
+
+    S.matches = mR.map(r => {
+      const gl = r.goles_local||r.golesLocal||r.gl||'';
+      const gv = r.goles_visitante||r.golesVisitante||r.gv||'';
+      return {
+        id:        String(r.id||r.Id||''),
+        grupo:     (r.grupo||r.Grupo||'').trim(),
+        fecha:     (r.fecha||r.Fecha||'').trim(),
+        hora:      (r.hora||r.Hora||'').trim(),
+        local:     (r.local||r.Local||r.equipo_local||'').trim(),
+        visitante: (r.visitante||r.Visitante||r.equipo_visitante||'').trim(),
+        real_l:    gl!==''&&gl!=='-' ? parseInt(gl) : null,
+        real_v:    gv!==''&&gv!=='-' ? parseInt(gv) : null,
+      };
+    }).filter(m=>m.local);
+
+    S.preds = {};
+    prR.forEach(r => {
+      const mid  = String(r.partido_id||r.partidoId||r.match_id||'');
+      const name = (r.participante||r.Participante||r.nombre||'').trim();
+      const gl   = r.goles_local||r.golesLocal||r.gl||'';
+      const gv   = r.goles_visitante||r.golesVisitante||r.gv||'';
+      if (!mid||!name) return;
+      if (!S.preds[mid]) S.preds[mid]={};
+      S.preds[mid][name] = { l: gl!==''?parseInt(gl):null, v: gv!==''?parseInt(gv):null };
+    });
+
+    const valid = new Set(S.matches.map(m=>m.id));
+    Object.keys(S.simScores).forEach(id=>{ if(!valid.has(id)) delete S.simScores[id]; });
+
+    populateSel(); buildRanking(); buildTblHead(); renderTable();
+
+    const played = S.matches.filter(m=>m.real_l!==null).length;
+    const pend   = S.matches.filter(m=>m.real_l===null).length;
+    document.getElementById('h-played').textContent = played;
+    document.getElementById('h-pend').textContent   = pend;
+    document.getElementById('h-parts').textContent  = S.participants.length;
+    document.getElementById('sheet-lnk').href = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit`;
+    document.getElementById('sheet-lnk').textContent = `Ver "${CONFIG.SHEET_NAME}" →`;
+    document.getElementById('loading-screen').classList.add('gone');
+    document.getElementById('app').classList.add('show');
+  } catch(e) {
+    console.error(e);
+    document.getElementById('loading-screen').classList.add('gone');
+    document.getElementById('err-screen').classList.add('show');
+    document.getElementById('err-msg').textContent = e.message;
+  }
+  btn.classList.remove('spinning');
+}
+
+/* ── EFFECTIVE SCORE ── */
+function eff(m) {
+  if (S.simScores[m.id] !== undefined) return S.simScores[m.id];
+  if (m.real_l !== null) return {l:m.real_l, v:m.real_v};
+  return null;
+}
+
+/* ── SIM TOTALS ── */
+function simTotals() {
+  const tot = {};
+  S.participants.forEach(p => tot[p.name]=0);
+  S.matches.forEach(m => {
+    const sc = eff(m);
+    if (sc===null) return;
+    S.participants.forEach(p => {
+      const pr = (S.preds[m.id]||{})[p.name];
+      if (!pr||pr.l===null) return;
+      tot[p.name] += (calcPoints(sc.l,sc.v,pr.l,pr.v)||0);
+    });
+  });
+  return tot;
+}
+
+/* ── RANKING ── */
+function buildRanking() {
+  const cont = document.getElementById('rank-scroll');
+  cont.innerHTML = '';
+  const hasSim = Object.keys(S.simScores).length > 0;
+  const tot = simTotals();
+  const medals = {1:'🥇',2:'🥈',3:'🥉'};
+  let sorted = [...S.participants];
+  if (hasSim) sorted = sorted.map(p=>({...p,simPts:tot[p.name]??p.points})).sort((a,b)=>b.simPts-a.simPts);
+
+  sorted.forEach((p,i) => {
+    const displayRank = hasSim ? i+1 : p.rank;
+    const simPts = hasSim ? (tot[p.name]??p.points) : p.points;
+    const delta  = hasSim ? simPts - p.points : 0;
+    const div = document.createElement('div');
+    div.className = `rc${displayRank===1?' r1':displayRank===2?' r2':displayRank===3?' r3':''}`;
+    div.id = `rc-${p.name}`;
+    div.onclick = () => selectPart(p.name);
+    if (S.selectedPart===p.name) div.classList.add('on');
+    const dHTML = hasSim
+      ? `<div class="rc-delta ${delta>0?'up':delta<0?'dn':'eq'}">${delta>0?'+':''}${delta||'—'}</div>`
+      : `<div class="rc-delta eq"></div>`;
+    div.innerHTML = `
+      <div class="rc-pos">${medals[displayRank]||''} ${displayRank}°</div>
+      <div class="rc-name">${p.name}</div>
+      <div class="rc-pts">${simPts}</div>
+      ${dHTML}`;
+    cont.appendChild(div);
+  });
+
+  document.getElementById('rank-sim-note').style.display = hasSim?'inline':'none';
+  document.getElementById('sim-pill').classList.toggle('on', hasSim);
+  document.getElementById('sim-banner').classList.toggle('on', hasSim);
+  const n = Object.keys(S.simScores).length;
+  document.getElementById('sim-count').textContent = hasSim ? `(${n} partido${n!==1?'s':''} simulado${n!==1?'s':''})` : '';
+}
+
+/* ── SELECT ── */
+function populateSel() {
+  const sel = document.getElementById('part-sel');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— Seleccionar —</option>';
+  S.participants.forEach(p => {
+    const o = document.createElement('option');
+    o.value=p.name; o.textContent=`${p.name} (${p.rank}°)`;
+    sel.appendChild(o);
+  });
+  if (prev && S.participants.find(p=>p.name===prev)) { sel.value=prev; S.selectedPart=prev; }
+}
+function selectPart(name) {
+  S.selectedPart = name;
+  document.getElementById('part-sel').value = name;
+  document.querySelectorAll('.rc').forEach(c=>c.classList.remove('on'));
+  const rc = document.getElementById(`rc-${name}`);
+  if (rc) { rc.classList.add('on'); rc.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); }
+  const ts = document.getElementById('th-sel-name');
+  if (ts) ts.textContent = name||'— Seleccionar —';
+  document.querySelectorAll('.th-pname').forEach(el=>el.classList.remove('sel'));
+  const thp = document.getElementById(`thp-${name}`);
+  if (thp) thp.classList.add('sel');
+  renderTable();
+}
+
+/* ── TABLE HEADER ── */
+function buildTblHead() {
+  const thead = document.getElementById('tbl-head');
+  const parts = S.participants;
+  thead.innerHTML = `
+    <tr class="hr1">
+      <th class="th-match" rowspan="2" style="vertical-align:middle;text-align:left">Partido</th>
+      <th class="th-score" rowspan="2" style="vertical-align:middle">
+        Marcador<br><span style="font-size:8px;color:rgba(255,255,255,.5);font-weight:normal">▸ clic p/simular</span>
+      </th>
+      <th class="th-sel" id="th-sel-name" colspan="2" style="background:#4A8A70">${S.selectedPart||'— Seleccionar —'}</th>
+      ${parts.map(p=>`
+        <th colspan="2">
+          <span class="th-pname ${S.selectedPart===p.name?'sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span>
+        </th>`).join('')}
+    </tr>
+    <tr class="hr2">
+      <th class="th-sel" style="font-size:9px;background:#4A8A70">Pron.</th>
+      <th class="th-sel th-pts" style="font-size:9px">Pts</th>
+      ${parts.map(()=>`
+        <th style="font-size:9px">P.</th>
+        <th class="th-pts" style="font-size:9px">Pts</th>`).join('')}
+    </tr>`;
+}
+
+/* ── FILTER ── */
+function setFilter(f, btn) {
+  S.filter = f;
+  document.querySelectorAll('.flt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderTable();
+}
+
+/* ── PTS CLASS ── */
+function pc(pts, hasScore) {
+  if (!hasScore||pts===null) return 'pnd';
+  return ['p0','p0','p0','p3','p4','p5'][pts]||'p0';
+}
+
+/* ── RENDER TABLE ── */
+function renderTable() {
+  const tbody = document.getElementById('tbl-body');
+  const q = document.getElementById('srch').value.toLowerCase().trim();
+  let matches = S.matches.filter(m => {
+    if (S.filter==='played')  return m.real_l!==null;
+    if (S.filter==='pending') return m.real_l===null;
+    return true;
+  });
+  if (q) matches = matches.filter(m =>
+    m.local.toLowerCase().includes(q) ||
+    m.visitante.toLowerCase().includes(q) ||
+    m.grupo.toLowerCase().includes(q)
+  );
+  if (!matches.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="${4+S.participants.length*2}">Sin resultados.</td></tr>`;
+    return;
+  }
+
+  const parts = S.participants;
+  const sel   = S.selectedPart;
+  // alternating row colors based on original index to keep consistent with Excel pattern
+  tbody.innerHTML = matches.map((m, idx) => {
+    const sc       = eff(m);
+    const isSim    = S.simScores[m.id] !== undefined;
+    const isPlayed = m.real_l !== null;
+    const hasScore = sc !== null;
+    const rowCls   = (idx%2===0) ? 'row-a' : 'row-b';
+    const scoreBg  = (idx%2===0) ? '' : ' style="background:var(--bg-score-b)"';
+
+    /* Score cell */
+    const dispEl = hasScore
+      ? `<div class="score-display ${isSim?'simulated':''}" id="sd-${m.id}" onclick="openEditor('${m.id}')" title="Clic para simular">${sc.l}<span class="sc-sep"> - </span>${sc.v}</div>`
+      : `<div class="score-display pending" id="sd-${m.id}" onclick="openEditor('${m.id}')" title="Clic para simular escenario">+ sim</div>`;
+    const edEl = `<div class="score-editor" id="se-${m.id}">
+      <input class="sc-inp" id="si-l-${m.id}" type="number" min="0" max="30" value="${hasScore?sc.l:''}" placeholder="0" onkeydown="edKey(event,'${m.id}')">
+      <span class="sc-e-sep">-</span>
+      <input class="sc-inp" id="si-v-${m.id}" type="number" min="0" max="30" value="${hasScore?sc.v:''}" placeholder="0" onkeydown="edKey(event,'${m.id}')">
+      <button class="sc-ok" onclick="applyEd('${m.id}')">✓</button>
+      <button class="sc-cancel" onclick="cancelEd('${m.id}')">✕</button>
+    </div>`;
+
+    /* Selected participant */
+    let selPred='', selPts='';
+    if (sel) {
+      const pr = (S.preds[m.id]||{})[sel];
+      if (pr&&pr.l!==null) {
+        const pts = hasScore ? calcPoints(sc.l,sc.v,pr.l,pr.v) : null;
+        const cls = pc(pts,hasScore);
+        selPred = `<div class="chip">${pr.l}<span class="chip-sep"> - </span>${pr.v}</div>`;
+        selPts  = hasScore ? `<span class="pv ${cls}">${pts}</span>` : `<span class="pv pnd">?</span>`;
+      } else {
+        selPred = `<span style="color:var(--txt-gray);font-size:10px">—</span>`;
+        selPts  = `<span style="color:var(--txt-gray);font-size:10px">—</span>`;
+      }
+    }
+
+    /* All participant cols */
+    const pCols = parts.map(p => {
+      const pr = (S.preds[m.id]||{})[p.name];
+      if (!pr||pr.l===null) return `<td style="text-align:center;color:var(--txt-gray)">—</td><td class="th-pts" style="text-align:center;color:var(--txt-gray)">—</td>`;
+      const pts = hasScore ? calcPoints(sc.l,sc.v,pr.l,pr.v) : null;
+      const cls = pc(pts,hasScore);
+      return `
+        <td style="text-align:center"><div class="mini ${cls}">${pr.l}<span class="mini-sep">-</span>${pr.v}</div></td>
+        <td class="th-pts-data" style="text-align:center">${hasScore ? `<span class="mpts ${cls}">${pts}</span>` : `<span class="mpts pnd">?</span>`}</td>`;
+    }).join('');
+
+    return `<tr class="${rowCls}${isSim?' row-sim':''}${!isPlayed&&!isSim?' row-pending':''}">
+      <td class="td-match td-match-info">
+        <div style="display:flex;align-items:center;gap:4px">
+          <span class="m-local">${m.local}</span>
+          <span class="m-vs">vs</span>
+          <span class="m-visit">${m.visitante}</span>
+        </div>
+        <div class="m-meta">
+          <span class="b-grupo">Gr.${m.grupo}</span>
+          <span>${m.fecha} ${m.hora}</span>
+          ${isSim ? '<span class="b-sim">SIM</span>' : (!isPlayed ? '<span class="b-pend">PENDIENTE</span>' : '')}
+        </div>
+      </td>
+      <td class="td-score"${scoreBg} style="text-align:center">${dispEl}${edEl}</td>
+      <td class="td-sel" style="text-align:center">${selPred}</td>
+      <td class="td-sel-pts">${selPts}</td>
+      ${pCols}
+    </tr>`;
+  }).join('');
+}
+
+/* ── EDITOR ── */
+function openEditor(id) {
+  document.querySelectorAll('.score-editor.open').forEach(el => { cancelEd(el.id.replace('se-','')); });
+  document.getElementById(`sd-${id}`).style.display = 'none';
+  document.getElementById(`se-${id}`).classList.add('open');
+  const li = document.getElementById(`si-l-${id}`);
+  li.focus(); li.select();
+}
+function cancelEd(id) {
+  document.getElementById(`se-${id}`).classList.remove('open');
+  document.getElementById(`sd-${id}`).style.display = '';
+}
+function applyEd(id) {
+  const li = document.getElementById(`si-l-${id}`);
+  const vi = document.getElementById(`si-v-${id}`);
+  const l = parseInt(li.value), v = parseInt(vi.value);
+  if (isNaN(l)||isNaN(v)||l<0||v<0) {
+    li.classList.add('err'); vi.classList.add('err');
+    setTimeout(()=>{ li.classList.remove('err'); vi.classList.remove('err'); }, 700);
+    return;
+  }
+  S.simScores[id] = {l,v};
+  cancelEd(id);
+  buildRanking();
+  renderTable();
+}
+function edKey(e,id) {
+  if (e.key==='Enter')  applyEd(id);
+  if (e.key==='Escape') cancelEd(id);
+  if (e.key==='Tab' && e.target.id===`si-l-${id}`) {
+    e.preventDefault();
+    const vi = document.getElementById(`si-v-${id}`); vi.focus(); vi.select();
+  }
+}
+
+/* ── RESET ── */
+function resetSim() {
+  S.simScores = {};
+  buildRanking();
+  renderTable();
+}
+
+/* ── AUTO REFRESH (only when no sim active) ── */
+if (CONFIG.AUTO_REFRESH_MIN > 0) {
+  setInterval(() => { if (Object.keys(S.simScores).length===0) loadData(); }, CONFIG.AUTO_REFRESH_MIN*60*1000);
+}
+
+loadData();
+</script>
+</body>
+</html>
