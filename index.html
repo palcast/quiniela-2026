@@ -360,6 +360,17 @@ tbody tr.row-b .td-score { background: var(--bg-score-b); }
 .mpts.p0 { color: var(--txt-gray); }
 .mpts.pnd { color: var(--txt-dim); }
 
+/* ── FLAGS ── */
+.flag {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: inline-block;
+  vertical-align: middle;
+  border: 1px solid rgba(255,255,255,.15);
+  flex-shrink: 0;
+}
+
 .empty-row td { text-align: center; padding: 30px; color: var(--txt-gray); }
 
 footer {
@@ -474,6 +485,45 @@ function calcPoints(rl, rv, pl, pv) {
   return 0;
 }
 
+/* ── COUNTRY CODE MAP ── */
+const CODES = {
+  'Chequia':'cz','Corea Sur':'kr','México':'mx','Sudáfrica':'za',
+  'Bosnia H':'ba','Canadá':'ca','Catar':'qa','Suiza':'ch',
+  'Brasil':'br','Escocia':'sc','Haití':'ht','Marruecos':'ma',
+  'Australia':'au','EUA':'us','Paraguay':'py','Turquía':'tr',
+  'Alemania':'de','C Marfil':'ci','Curazao':'cw','Ecuador':'ec',
+  'Japón':'jp','Países B':'nl','Suecia':'se','Túnez':'tn',
+  'Bélgica':'be','Egipto':'eg','Irán':'ir','N Zelanda':'nz',
+  'Arabia S':'sa','Cabo Verde':'cv','España':'es','Uruguay':'uy',
+  'Francia':'fr','Irak':'iq','Noruega':'no','Senegal':'sn',
+  'Argelia':'dz','Argentina':'ar','Austria':'at','Jordania':'jo',
+  'Colombia':'co','Portugal':'pt','RD Congo':'cd','Uzbekistán':'uz',
+  'Croacia':'hr','Ghana':'gh','Inglaterra':'en','Panamá':'pa',
+  'Jamaica':'jm','Angola':'ao','Chile':'cl','Nueva Zelanda':'nz',
+  'Camerún':'cm',
+};
+
+// Special cases: Escocia and Inglaterra don't have ISO codes in flagcdn
+const FLAG_OVERRIDES = {
+  'sc': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Flag_of_Scotland.svg/20px-Flag_of_Scotland.svg.png',
+  'en': 'https://flagcdn.com/w20/gb-eng.png',
+};
+
+function flagUrl(code) {
+  if (!code) return '';
+  const lc = code.toLowerCase();
+  return FLAG_OVERRIDES[lc] || `https://flagcdn.com/w20/${lc}.png`;
+}
+
+function flagImg(nameOrCode) {
+  // Accept either country name or code directly
+  const code = (nameOrCode && nameOrCode.length === 2)
+    ? nameOrCode
+    : (CODES[nameOrCode] || '');
+  if (!code) return '';
+  return `<img class="flag" src="${flagUrl(code)}" alt="${nameOrCode}" title="${nameOrCode}" onerror="this.style.display='none'">`;
+}
+
 /* ── STATE ── */
 const S = {
   matches:[], participants:[], preds:{},
@@ -536,6 +586,8 @@ async function loadData() {
         visitante: (r.visitante||r.Visitante||r.equipo_visitante||'').trim(),
         real_l:    gl!==''&&gl!=='-' ? parseInt(gl) : null,
         real_v:    gv!==''&&gv!=='-' ? parseInt(gv) : null,
+        cod_local:     (r.cod_local||r.codLocal||r.codigo_local||'').trim().toLowerCase(),
+        cod_visitante: (r.cod_visitante||r.codVisitante||r.codigo_visitante||'').trim().toLowerCase(),
       };
     }).filter(m=>m.local);
 
@@ -768,9 +820,11 @@ function renderTable() {
 
     return `<tr class="${rowCls}${isSim?' row-sim':''}${!isPlayed&&!isSim?' row-pending':''}">
       <td class="td-match td-match-info">
-        <div style="display:flex;align-items:center;gap:4px">
+        <div style="display:flex;align-items:center;gap:5px">
+          ${flagImg(m.cod_local || m.local)}
           <span class="m-local">${m.local}</span>
           <span class="m-vs">vs</span>
+          ${flagImg(m.cod_visitante || m.visitante)}
           <span class="m-visit">${m.visitante}</span>
         </div>
         <div class="m-meta">
