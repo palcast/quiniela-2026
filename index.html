@@ -506,13 +506,13 @@ const CODES = {
 // Special cases: Escocia and Inglaterra don't have ISO codes in flagcdn
 const FLAG_OVERRIDES = {
   'sc': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Flag_of_Scotland.svg/20px-Flag_of_Scotland.svg.png',
-  'en': 'https://flagcdn.com/w20/gb-eng.png',
+  'en': 'https://flagcdn.com/w40/gb-eng.png',
 };
 
 function flagUrl(code) {
   if (!code) return '';
   const lc = code.toLowerCase();
-  return FLAG_OVERRIDES[lc] || `https://flagcdn.com/w20/${lc}.png`;
+  return FLAG_OVERRIDES[lc] || `https://flagcdn.com/w40/${lc}.png`;  // w40 = 2x para pantallas HiDPI
 }
 
 function flagImg(nameOrCode) {
