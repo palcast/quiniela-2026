@@ -6,311 +6,349 @@
 <title>Quiniela Mundial 2026</title>
 <style>
 :root {
-  --bg:     #161C20;
-  --bg2:    #1F272D;
-  --ra:     #2E2E2E;
-  --rb:     #363636;
-  --score:  #1A2D3A;
-  --scoreb: #1F3645;
-  --hdr:    #3A7682;
-  --phdr:   #2F616B;
-  --shdr:   #4A8A70;
-  --txt:    #DBDBDB;
-  --dim:    #ABABAB;
-  --gray:   #4A4A4A;
-  --gold:   #F0B429;
-  --p5:     #FF4F4F;
-  --p4:     #FFB02F;
-  --p3:     #33B1FF;
-  --p0:     #3A3A3A;
-  --sim:    #9B6FD4;
+  --bg-root:    #161C20;
+  --bg-panel:   #1F272D;
+  --bg-row-a:   #363636;
+  --bg-row-b:   #3F3F3F;
+  --bg-score:   #1A2D3A;
+  --bg-score-b: #1F3645;
+  --bg-hdr:     #3A7682;
+  --bg-pts-hdr: #2F616B;
+  --bg-sel-hdr: #4A8A70;
+  --txt:        #DBDBDB;
+  --txt-dim:    #ABABAB;
+  --txt-gray:   #585858;
+  --pts-5: #FFB02F;
+  --pts-4: #38BDF8;
+  --pts-3: #A78BFA;
+  --pts-0: #3A3A3A;
+  --sim:   #9B6FD4;
+  --sim-bg:rgba(155,111,212,0.15);
+  --gold:  #F0B429;
+  /* fixed col heights — must match between both tables */
+  --row-h: 38px;
+  --hdr-h: 46px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Calibri,'Segoe UI',sans-serif;font-size:13px;background:var(--bg);color:var(--txt);min-height:100vh}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Calibri,'Segoe UI',sans-serif;font-size:13px;background:var(--bg-root);color:var(--txt);min-height:100vh;overflow-x:hidden}
 
-/* loading */
-#ls{position:fixed;inset:0;z-index:99;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .4s}
-#ls.gone{opacity:0;pointer-events:none}
-.spin{width:34px;height:34px;border-radius:50%;border:3px solid #333;border-top-color:var(--p5);animation:rot .8s linear infinite}
-@keyframes rot{to{transform:rotate(360deg)}}
-.ltxt{font-size:11px;color:var(--dim);letter-spacing:2px;font-family:Verdana,sans-serif}
-#es{display:none;position:fixed;inset:0;z-index:98;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:32px;text-align:center}
-#es.show{display:flex}
-#em{color:#F07070;font-size:13px;max-width:460px;line-height:1.6;white-space:pre-wrap}
+/* ── LOADING ── */
+#loading-screen{position:fixed;inset:0;z-index:300;background:var(--bg-root);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .4s,visibility .4s}
+#loading-screen.gone{opacity:0;visibility:hidden;pointer-events:none}
+.loader{width:36px;height:36px;border-radius:50%;border:3px solid #2a2a2a;border-top-color:var(--pts-5);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-txt{font-family:Verdana,sans-serif;font-size:11px;color:var(--txt-dim);letter-spacing:2px}
 
-/* app */
+/* ── ERROR ── */
+#err-screen{display:none;position:fixed;inset:0;z-index:299;background:var(--bg-root);align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:40px;text-align:center}
+#err-screen.show{display:flex}
+#err-msg{color:#F07070;font-size:13px;max-width:480px;line-height:1.6;white-space:pre-wrap}
+.err-title{font-family:Verdana,sans-serif;font-size:16px;font-weight:bold;color:var(--pts-5)}
+
+/* ── APP ── */
 #app{display:none}
 #app.show{display:block}
 
-/* header */
-header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:2px solid var(--hdr);padding:8px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.logo{font-family:Verdana,sans-serif;font-size:13px;font-weight:bold;color:var(--gold);white-space:nowrap}
-.pills{display:flex;gap:6px;flex-wrap:wrap}
-.pill{background:var(--ra);border:1px solid #444;padding:2px 8px;font-size:11px;color:var(--dim)}
-.pill b{color:var(--gold)}
-.sp{display:none;border-color:rgba(155,111,212,.4)!important;background:rgba(155,111,212,.1)!important;color:var(--sim)!important}
-.sp.on{display:inline-block}
-.hr{margin-left:auto;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.sl{font-size:11px;color:var(--dim)}
-select{background:var(--ra);border:1px solid var(--hdr);color:var(--txt);padding:4px 8px;font-family:Calibri,sans-serif;font-size:12px;cursor:pointer;outline:none;min-width:130px}
-.ib{background:var(--ra);border:1px solid #444;color:var(--dim);width:26px;height:26px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
-.ib:hover{border-color:var(--hdr);color:var(--txt)}
-.ib.spin2{animation:rot .8s linear infinite}
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:100;background:var(--bg-root);border-bottom:2px solid var(--bg-hdr);padding:8px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.logo{font-family:Verdana,sans-serif;font-size:14px;font-weight:bold;color:var(--gold);white-space:nowrap;letter-spacing:1px}
+.h-pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pill{background:var(--bg-row-a);border:1px solid #444;padding:2px 9px;font-size:11px;color:var(--txt-dim);white-space:nowrap}
+.pill strong{color:var(--gold)}
+.sim-pill{border-color:rgba(155,111,212,.4)!important;background:rgba(155,111,212,.1)!important;color:var(--sim)!important;display:none}
+.sim-pill.on{display:inline-block}
+.h-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sel-lbl{font-size:11px;color:var(--txt-dim)}
+select{background:var(--bg-row-a);border:1px solid var(--bg-hdr);color:var(--txt);padding:4px 10px;font-family:Calibri,sans-serif;font-size:12px;cursor:pointer;outline:none;min-width:140px}
+select:hover{border-color:var(--pts-5)}
+.icon-btn{background:var(--bg-row-a);border:1px solid #444;color:var(--txt-dim);width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.icon-btn:hover{border-color:var(--bg-hdr);color:var(--txt)}
+.icon-btn.spinning{animation:spin .8s linear infinite}
 
-/* sim banner */
-#sb{display:none;background:rgba(155,111,212,.12);border-bottom:1px solid rgba(155,111,212,.25);padding:5px 10px;align-items:center;gap:8px;font-size:11px;color:var(--sim)}
-#sb.on{display:flex}
-.sr{margin-left:auto;background:transparent;border:1px solid var(--sim);color:var(--sim);padding:2px 8px;font-size:11px;cursor:pointer;font-family:Calibri,sans-serif}
+/* ── SIM BANNER ── */
+#sim-banner{display:none;background:var(--sim-bg);border-bottom:1px solid rgba(155,111,212,.3);padding:5px 12px;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--sim)}
+#sim-banner.on{display:flex}
+.sim-reset{margin-left:auto;background:transparent;border:1px solid var(--sim);color:var(--sim);padding:2px 10px;font-family:Calibri,sans-serif;font-size:11px;cursor:pointer}
+.sim-reset:hover{background:var(--sim-bg)}
 
-/* main */
-main{padding:8px}
+/* ── MAIN ── */
+main{padding:10px}
 
-/* ranking */
-.rw{background:var(--bg2);border:1px solid #2A3540;padding:7px 8px;margin-bottom:8px}
-.sl2{font-family:Verdana,sans-serif;font-size:9px;font-weight:bold;color:var(--hdr);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
-.rs{display:flex;gap:4px;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin;scrollbar-color:var(--hdr) var(--ra)}
-.rs::-webkit-scrollbar{height:3px}
-.rs::-webkit-scrollbar-thumb{background:var(--hdr)}
-.rc{flex:0 0 auto;background:var(--ra);border:1px solid #444;padding:5px 7px;text-align:center;min-width:66px;cursor:pointer;transition:border-color .15s}
-.rc:hover{border-color:var(--hdr)}
-.rc.on{border-color:var(--gold);background:#3E3318}
-.r1{border-color:rgba(255,215,0,.35)!important}.r2{border-color:rgba(192,192,192,.25)!important}.r3{border-color:rgba(205,127,50,.3)!important}
-.rp{font-size:8px;font-weight:bold;color:var(--dim);margin-bottom:1px}
-.r1 .rp{color:#FFD700}.r2 .rp{color:#C0C0C0}.r3 .rp{color:#CD7F32}
-.rn{font-size:11px;font-weight:bold;color:var(--txt);margin-bottom:2px}
-.rv{font-family:Verdana,sans-serif;font-size:15px;font-weight:bold;color:var(--gold);line-height:1}
-.rd{font-size:9px;min-height:10px;font-weight:bold;margin-top:1px}
-.rd.up{color:#6EE89A}.rd.dn{color:#F07070}.rd.eq{color:var(--gray)}
+/* ── RANKING ── */
+.ranking-wrap{background:var(--bg-panel);border:1px solid #2A3540;padding:8px 10px;margin-bottom:10px;overflow:hidden}
+.sec-label{font-family:Verdana,sans-serif;font-size:10px;font-weight:bold;color:var(--bg-hdr);text-transform:uppercase;letter-spacing:2px;margin-bottom:7px}
+.rank-scroll{display:flex;gap:4px;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin;scrollbar-color:var(--bg-hdr) var(--bg-row-a)}
+.rank-scroll::-webkit-scrollbar{height:3px}
+.rank-scroll::-webkit-scrollbar-thumb{background:var(--bg-hdr)}
+.rc{flex:0 0 auto;background:var(--bg-row-a);border:1px solid #444;padding:5px 8px;text-align:center;min-width:70px;cursor:pointer;transition:border-color .15s,background .15s}
+.rc:hover{border-color:var(--bg-hdr);background:#404040}
+.rc.on{border-color:var(--pts-5);background:#3E3318}
+.rc.r1{border-color:rgba(255,215,0,.38)}
+.rc.r2{border-color:rgba(192,192,192,.28)}
+.rc.r3{border-color:rgba(205,127,50,.32)}
+.rc-pos{font-family:Verdana,sans-serif;font-size:8px;font-weight:bold;color:var(--txt-dim);margin-bottom:1px}
+.rc.r1 .rc-pos{color:#FFD700}.rc.r2 .rc-pos{color:#C0C0C0}.rc.r3 .rc-pos{color:#CD7F32}
+.rc-name{font-size:11px;font-weight:bold;color:var(--txt);margin-bottom:2px;white-space:nowrap}
+.rc-pts{font-family:Verdana,sans-serif;font-size:16px;font-weight:bold;line-height:1;color:var(--gold)}
+.rc-delta{font-size:9px;min-height:11px;font-weight:bold;margin-top:1px}
+.rc-delta.up{color:#6EE89A}.rc-delta.dn{color:#F07070}.rc-delta.eq{color:var(--txt-gray)}
 
-/* toolbar */
-.tb{background:var(--bg2);border:1px solid #2A3540;border-bottom:none}
-.tbr{padding:6px 8px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #2A3540}
-.fg{display:flex;gap:4px}
-.ft{background:var(--ra);border:1px solid #444;color:var(--dim);padding:3px 9px;font-family:Calibri,sans-serif;font-size:11px;cursor:pointer}
-.ft:hover{border-color:var(--hdr);color:var(--txt)}
-.ft.on{background:var(--hdr);border-color:var(--hdr);color:#fff}
+/* ── TABLE PANEL ── */
+.tbl-panel{background:var(--bg-panel);border:1px solid #2A3540}
+.tbl-toolbar{padding:6px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid #2A3540}
+.flt-grp{display:flex;gap:4px}
+.flt{background:var(--bg-row-a);border:1px solid #444;color:var(--txt-dim);padding:3px 10px;font-family:Calibri,sans-serif;font-size:11px;cursor:pointer}
+.flt:hover{border-color:var(--bg-hdr);color:var(--txt)}
+.flt.on{background:var(--bg-hdr);border-color:var(--bg-hdr);color:#fff}
 
-/* ═══════════════════════════════════════
-   TABLE — single table, sticky columns
-   ═══════════════════════════════════════ */
-.tw{
-  border:1px solid #2A3540;
-  overflow:auto;
-  max-height:62vh;
-  /* Critical: creates new stacking context so sticky works */
-  position:relative;
-}
-.tw::-webkit-scrollbar{width:5px;height:5px}
-.tw::-webkit-scrollbar-thumb{background:#444}
+/* ── DUAL TABLE LAYOUT ── */
+/*
+  .grid-wrap
+    .left-wrap   (fixed, no scroll)     ← partidos + seleccionado
+    .right-wrap  (overflow-x: auto)     ← participantes
+  Both share the same max-height scroll via JS sync
+*/
+.grid-wrap{display:flex;overflow:hidden;max-height:65vh}
 
-table{
-  border-collapse:separate; /* must be separate for sticky to work */
-  border-spacing:0;
-  font-size:13px;
-  font-family:Calibri,'Segoe UI',sans-serif;
-  /* Do NOT set width:100% — let it be natural width */
-}
+/* LEFT — fixed, no horizontal scroll */
+.left-wrap{flex:0 0 auto;overflow:hidden;z-index:2;box-shadow:4px 0 8px rgba(0,0,0,.45)}
+.left-wrap table{border-collapse:collapse;font-size:13px;font-family:Calibri,sans-serif;table-layout:fixed;width:100%}
 
-/* ── STICKY HEADER ── */
-thead th{
-  position:sticky;
-  top:0;
-  z-index:30;
-  background:var(--hdr);
-  color:#EEE;
-  padding:4px 5px;
-  font-size:11px;
-  font-weight:bold;
-  text-align:center;
-  white-space:nowrap;
-  border-right:1px solid #2F6670;
-  border-bottom:1px solid #2F6670;
-  height:22px;
-}
-thead tr:first-child th{ top:0; }
-thead tr:last-child  th{ top:22px; }
-th.hp{ background:var(--phdr); border-right-color:#255560; }
-th.hs{ background:var(--shdr); border-right-color:#3A7060; }
-.pn{cursor:pointer;display:inline-block;transition:color .12s}
-.pn:hover{color:var(--gold)}
-.pn.sel{color:var(--gold)}
+/* RIGHT — scrolls horizontally */
+.right-wrap{flex:1 1 auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#444 var(--bg-panel)}
+.right-wrap::-webkit-scrollbar{height:5px}
+.right-wrap::-webkit-scrollbar-track{background:var(--bg-panel)}
+.right-wrap::-webkit-scrollbar-thumb{background:#555}
+.right-wrap table{border-collapse:collapse;font-size:13px;font-family:Calibri,sans-serif}
 
-/* ── STICKY LEFT COLUMNS ── */
-/* Each sticky-left cell has position:sticky + left value set by JS once */
-td.sl, th.sl{
-  position:sticky;
-  z-index:20;
-}
-thead th.sl{ z-index:40; }
-/* The last sticky column gets a shadow */
-td.sl-last, th.sl-last{
-  box-shadow:3px 0 6px rgba(0,0,0,.5);
-}
+/* Shared vertical scroll on a wrapper div */
+.scroll-body{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#444 var(--bg-panel)}
+.scroll-body::-webkit-scrollbar{width:5px}
+.scroll-body::-webkit-scrollbar-thumb{background:#555}
+
+/* ── HEADER ROWS ── */
+th{background:var(--bg-hdr);color:#EEE;padding:5px 6px;font-size:12px;font-weight:bold;text-align:center;white-space:nowrap;border-right:1px solid #2F6670;border-bottom:1px solid #2F6670;height:var(--hdr-h)}
+th.th-pts{background:var(--bg-pts-hdr);border-right-color:#255560}
+th.th-sel{background:var(--bg-sel-hdr);border-right-color:#3A7060}
+.th-pname{cursor:pointer;padding:1px 4px;display:inline-block;transition:color .12s;color:#EEE;font-weight:bold}
+.th-pname:hover{color:var(--gold)}
+.th-pname.sel{color:var(--gold)}
 
 /* ── DATA ROWS ── */
-tbody tr.ra td{ background:var(--ra); }
-tbody tr.rb td{ background:var(--rb); }
-tbody tr.ra td.gs{ background:var(--score); }
-tbody tr.rb td.gs{ background:var(--scoreb); }
-tbody tr.ra td.ts{ background:#253830; }
-tbody tr.rb td.ts{ background:#263930; }
-tbody tr.ra td.tp{ background:#1E3028; }
-tbody tr.rb td.tp{ background:#1F3128; }
-/* header sticky bg must be opaque */
-thead th.sl{ background:var(--hdr); }
-thead th.sl.hp{ background:var(--phdr); }
-thead th.sl.hs{ background:var(--shdr); }
+td{padding:4px 5px;vertical-align:middle;white-space:nowrap;border-right:1px solid rgba(255,255,255,.04);height:var(--row-h)}
+tr.row-a td{background:var(--bg-row-a)}
+tr.row-b td{background:var(--bg-row-b)}
+tr:hover td{filter:brightness(1.12)}
+tr.row-pending{opacity:.75}
+tr.row-pending:hover{opacity:1}
 
-tbody tr:hover td{ filter:brightness(1.1); }
-tbody tr.pnd{ opacity:.72; }
-tbody tr.pnd:hover{ opacity:1; }
-tbody tr.editing td.gs{ background:#0D2030!important; filter:none!important; }
+/* ── LEFT TABLE CELLS ── */
+.td-meta{text-align:left;padding:3px 6px}
+.m-row1{display:flex;align-items:center;gap:5px}
+.m-grupo{font-size:11px;font-weight:bold;color:var(--bg-hdr);min-width:12px}
+.m-fecha{font-size:11px;color:var(--txt-dim)}
+.m-hora{font-size:13px;font-weight:bold;color:var(--txt);display:block;margin-top:1px;padding-left:17px}
+.b-pend{background:rgba(155,111,212,.15);color:var(--sim);border:1px solid rgba(155,111,212,.3);padding:0 4px;font-size:9px;font-weight:bold;display:inline-block;margin-left:17px;margin-top:1px}
+.b-sim{background:var(--sim-bg);color:var(--sim);border:1px solid rgba(155,111,212,.4);padding:0 4px;font-size:9px;font-weight:bold;display:inline-block;margin-left:17px;margin-top:1px}
 
-td{
-  padding:3px 5px;
-  white-space:nowrap;
-  border-right:1px solid rgba(255,255,255,.04);
-  border-bottom:1px solid rgba(255,255,255,.03);
-  height:36px;
-  vertical-align:middle;
+.td-name{padding:3px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.td-name.local{text-align:right}
+.td-name.visitor{text-align:left}
+.m-name{font-weight:bold;font-size:13px;color:var(--txt)}
+
+.td-flag{padding:2px 3px;text-align:center}
+.flag{width:20px;height:20px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle;border:1px solid rgba(255,255,255,.15)}
+
+/* Goal cells */
+.td-goal{padding:0;text-align:center;cursor:text}
+tr.row-a .td-goal{background:var(--bg-score)}
+tr.row-b .td-goal{background:var(--bg-score-b)}
+tr.editing .td-goal{background:#0D2030!important}
+.goal-val{display:block;width:100%;font-weight:bold;font-size:15px;color:var(--txt);text-align:center;padding:4px 2px;cursor:text;user-select:none}
+.goal-val.pending{color:var(--txt-gray);font-size:13px;font-weight:normal}
+.goal-val.simulated{color:var(--sim)}
+.goal-inp{display:none;width:100%;border:none;outline:none;background:#0D1E2A;color:var(--txt);font-family:Calibri,sans-serif;font-weight:bold;font-size:15px;text-align:center;padding:4px 2px;-moz-appearance:textfield}
+.goal-inp::-webkit-outer-spin-button,.goal-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.goal-inp.active{display:block}
+
+/* Selected participant cols */
+.td-sel{text-align:center;overflow:hidden}
+tr.row-a .td-sel{background:#253830}
+tr.row-b .td-sel{background:#263930}
+.td-sel-pts{text-align:center}
+tr.row-a .td-sel-pts{background:#1E3028}
+tr.row-b .td-sel-pts{background:#1F3128}
+th.th-sel-pts{background:#3A7060;border-right-color:#2A6050}
+
+/* Forecast chip */
+.chip{display:inline-flex;align-items:center;gap:1px;font-size:11px;font-weight:bold;color:var(--txt-dim)}
+.chip-sep{opacity:.4;font-weight:normal}
+
+/* Points */
+.pv{font-size:13px;font-weight:bold;display:inline-block;min-width:18px;text-align:center}
+.pv.p5{color:var(--pts-5);text-shadow:0 0 8px rgba(255,176,47,.4)}
+.pv.p4{color:var(--pts-4)}
+.pv.p3{color:var(--pts-3)}
+.pv.p0{color:var(--pts-0);font-weight:normal}
+.pv.pnd{color:var(--txt-gray);font-weight:normal}
+
+/* Right table cells */
+.td-mini{text-align:center;width:36px;min-width:36px}
+.td-mpts{text-align:center;width:30px;min-width:30px}
+.mini{display:inline-flex;align-items:center;gap:1px;font-size:12px;color:var(--txt-dim)}
+.mini-sep{opacity:.35}
+.mpts{font-size:13px;font-weight:bold;text-align:center;display:inline-block;min-width:16px;color:var(--pts-0)}
+.mpts.p5{color:var(--pts-5);text-shadow:0 0 8px rgba(255,176,47,.4)}
+.mpts.p4{color:var(--pts-4)}
+.mpts.p3{color:var(--pts-3)}
+.mpts.p0{color:var(--pts-0);font-weight:normal}
+.mpts.pnd{color:var(--txt-dim);font-weight:normal}
+
+footer{text-align:center;padding:10px;font-size:10px;color:var(--txt-gray);border-top:1px solid #2A3540;margin-top:8px}
+footer a{color:var(--txt-dim);text-decoration:none}
+footer a:hover{color:var(--gold)}
+
+/* ── DESKTOP ── */
+@media(min-width:601px){
+  .mob-only{display:none!important}
 }
-
-/* ── SPECIFIC CELLS ── */
-/* fecha */
-.cm{ text-align:left; width:80px; }
-.mg{ font-size:11px;font-weight:bold;color:var(--hdr) }
-.mf{ font-size:10px;color:var(--dim) }
-.mh{ font-size:13px;font-weight:bold;color:var(--txt);display:block;margin-top:1px }
-.bp{ background:rgba(155,111,212,.12);color:var(--sim);border:1px solid rgba(155,111,212,.28);font-size:9px;font-weight:bold;padding:0 3px;display:inline-block;margin-top:2px }
-.bsm{ background:rgba(155,111,212,.2);color:var(--sim);border:1px solid rgba(155,111,212,.5);font-size:9px;font-weight:bold;padding:0 3px;display:inline-block;margin-top:2px }
-
-/* team names */
-.cn{ width:85px;overflow:hidden;text-overflow:ellipsis; }
-.cn.lo{ text-align:right; }
-.cn.vi{ text-align:left; }
-.mn{ font-weight:bold;font-size:13px;color:var(--txt) }
-
-/* flags */
-.cf{ width:26px;text-align:center;padding:2px 2px; }
-.flag{ width:20px;height:20px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,.15);vertical-align:middle }
-
-/* goals */
-.gs{ width:32px;text-align:center;padding:0;cursor:text; }
-.gv{ display:block;width:100%;font-weight:bold;font-size:15px;color:var(--txt);text-align:center;padding:4px 0;cursor:text;user-select:none }
-.gv.pnd{ color:var(--gray);font-size:12px;font-weight:normal }
-.gv.sim{ color:var(--sim) }
-.gi{ display:none;width:100%;border:none;outline:none;background:#0D1E2A;color:var(--txt);font-family:Calibri,sans-serif;font-weight:bold;font-size:15px;text-align:center;padding:4px 0;-moz-appearance:textfield }
-.gi::-webkit-inner-spin-button,.gi::-webkit-outer-spin-button{-webkit-appearance:none}
-.gi.on{ display:block }
-
-/* selected participant */
-.ts{ text-align:center;width:46px; }
-.tp{ text-align:center;width:30px; }
-.chip{ display:inline-flex;align-items:center;gap:1px;font-size:11px;font-weight:bold;color:var(--dim) }
-.pv{ font-size:12px;font-weight:bold;display:inline-block;min-width:16px;text-align:center }
-.pv.p5{ color:var(--p5) }.pv.p4{ color:var(--p4) }.pv.p3{ color:var(--p3) }
-.pv.p0{ color:var(--p0);font-weight:normal }.pv.pn2{ color:var(--dim);font-weight:normal }
-
-/* participant cols */
-.pp{ text-align:center;width:34px; }
-.pt{ text-align:center;width:28px; }
-.mi{ display:inline-flex;align-items:center;gap:1px;font-size:11px;color:var(--dim) }
-.mp{ font-size:12px;font-weight:bold;display:inline-block;min-width:14px;text-align:center;color:var(--p0) }
-.mp.p5{ color:var(--p5) }.mp.p4{ color:var(--p4) }.mp.p3{ color:var(--p3) }
-.mp.p0{ color:var(--p0);font-weight:normal }.mp.pn2{ color:var(--dim);font-weight:normal }
 
 /* ── MOBILE ── */
 @media(max-width:600px){
-  header{ padding:5px 7px }
-  .pills{ display:none }
-  main{ padding:5px }
-  .logo{ font-size:12px }
-  /* hide name cols */
-  .cn,.th-cn{ display:none }
-  /* bigger flags */
-  .flag{ width:22px;height:22px }
-  .cf{ width:26px }
-}
+  header{padding:6px 8px}
+  .h-pills{display:none}
+  main{padding:6px}
 
-footer{ text-align:center;padding:8px;font-size:10px;color:var(--gray);border-top:1px solid #2A3540;margin-top:8px }
-footer a{ color:var(--dim);text-decoration:none }
-footer a:hover{ color:var(--gold) }
+  /* Hide team name columns on mobile */
+  .td-name{display:none}
+  th.th-name{display:none}
+  col.col-name{display:none}
+
+  /* Bigger flags on mobile since they're the only team identifier */
+  .flag{width:26px;height:26px}
+  .td-flag{width:30px;min-width:30px;max-width:30px;padding:2px}
+
+  /* Slightly smaller goal font to save space */
+  .goal-val{font-size:14px;padding:3px 1px}
+  .goal-inp{font-size:14px;padding:3px 1px}
+  .td-goal{width:30px;min-width:30px;max-width:30px}
+
+  .m-fecha{font-size:10px}
+  .m-hora{font-size:12px}
+  .m-grupo{font-size:10px}
+
+  /* Tighter selected cols */
+  .td-sel-pts{width:30px;min-width:30px;max-width:30px}
+
+  .mini{font-size:11px}
+  .mpts{font-size:12px}
+  .pv{font-size:12px}
+}
 </style>
 </head>
 <body>
 
-<div id="ls"><div class="spin"></div><div class="ltxt">CARGANDO QUINIELA…</div></div>
-<div id="es">
-  <div style="font-family:Verdana,sans-serif;font-size:16px;font-weight:bold;color:var(--p5)">⚠ Error al cargar</div>
-  <div id="em"></div>
-  <button class="ft on" onclick="location.reload()" style="margin-top:8px;padding:5px 16px;cursor:pointer">Reintentar</button>
+<div id="loading-screen">
+  <div class="loader"></div>
+  <div class="loader-txt">CARGANDO QUINIELA…</div>
+</div>
+<div id="err-screen">
+  <div class="err-title">⚠ Error al cargar</div>
+  <div id="err-msg"></div>
+  <button class="flt on" onclick="location.reload()" style="margin-top:10px;padding:6px 18px;cursor:pointer">Reintentar</button>
 </div>
 
 <div id="app">
   <header>
     <div class="logo">⚽ QUINIELA MUNDIAL 2026</div>
-    <div class="pills">
-      <div class="pill">Jugados: <b id="hp">—</b></div>
-      <div class="pill">Pendientes: <b id="hpd">—</b></div>
-      <div class="pill">Participantes: <b id="hpt">—</b></div>
-      <div class="pill sp" id="spp">🎮 SIMULACIÓN</div>
+    <div class="h-pills">
+      <div class="pill">Jugados: <strong id="h-played">—</strong></div>
+      <div class="pill">Pendientes: <strong id="h-pend">—</strong></div>
+      <div class="pill">Participantes: <strong id="h-parts">—</strong></div>
+      <div class="pill sim-pill" id="sim-pill">🎮 SIMULACIÓN ACTIVA</div>
     </div>
-    <div class="hr">
-      <span class="sl">Ver pronósticos de:</span>
-      <select id="psel" onchange="selPart(this.value)">
+    <div class="h-right">
+      <span class="sel-lbl">Ver pronósticos de:</span>
+      <select id="part-sel" onchange="selectPart(this.value)">
         <option value="">— Seleccionar —</option>
       </select>
-      <button class="ib" id="rb" onclick="loadData()" title="Recargar">↻</button>
+      <button class="icon-btn" id="refresh-btn" title="Recargar datos" onclick="loadData()">↻</button>
     </div>
   </header>
 
-  <div id="sb">
-    <b>🎮 SIMULACIÓN</b> — los marcadores editados son locales, no se guardan.
-    <span id="sc"></span>
-    <button class="sr" onclick="resetSim()">✕ Limpiar</button>
+  <div id="sim-banner">
+    <strong>🎮 MODO SIMULACIÓN</strong>
+    <span>— marcadores editados son locales, no se guardan.</span>
+    <span id="sim-count"></span>
+    <button class="sim-reset" onclick="resetSim()">✕ Limpiar simulación</button>
   </div>
 
   <main>
-    <div class="rw">
-      <div class="sl2">🏆 CLASIFICACIÓN <span id="rsn" style="display:none;color:var(--sim);font-size:8px"> — SIMULADA</span></div>
-      <div class="rs" id="rs"></div>
+    <div class="ranking-wrap">
+      <div class="sec-label">
+        🏆 CLASIFICACIÓN
+        <span id="rank-sim-note" style="display:none;color:var(--sim);font-size:9px"> — SIMULADA</span>
+      </div>
+      <div class="rank-scroll" id="rank-scroll"></div>
     </div>
 
-    <div class="tb">
-      <div class="tbr">
-        <div class="sl2" style="margin:0">⚽ PARTIDOS</div>
-        <div class="fg">
-          <button class="ft on" onclick="setF('all',this)">Todos</button>
-          <button class="ft"    onclick="setF('played',this)">Jugados</button>
-          <button class="ft"    onclick="setF('pending',this)">Pendientes</button>
+    <div class="tbl-panel">
+      <div class="tbl-toolbar">
+        <div class="sec-label" style="margin:0">⚽ PARTIDOS</div>
+        <div class="flt-grp">
+          <button class="flt on" onclick="setFilter('all',this)">Todos</button>
+          <button class="flt"    onclick="setFilter('played',this)">Jugados</button>
+          <button class="flt"    onclick="setFilter('pending',this)">Pendientes</button>
         </div>
       </div>
-      <div class="tw" id="tw">
-        <table id="tbl">
-          <thead id="th"></thead>
-          <tbody id="tb"></tbody>
-        </table>
+
+      <!-- Dual-table grid -->
+      <div class="grid-wrap" id="grid-wrap">
+        <!-- LEFT: fixed columns -->
+        <div class="left-wrap" id="left-wrap">
+          <table>
+            <thead id="left-head"></thead>
+          </table>
+          <div class="scroll-body" id="left-body-wrap">
+            <table>
+              <tbody id="left-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- RIGHT: scrollable participants -->
+        <div class="right-wrap" id="right-wrap">
+          <table>
+            <thead id="right-head"></thead>
+          </table>
+          <div class="scroll-body" id="right-body-wrap">
+            <table>
+              <tbody id="right-body"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </main>
 
   <footer>
     Datos desde Google Sheets · actualizado automáticamente &nbsp;·&nbsp;
-    <a id="sl3" href="#" target="_blank">Ver hoja →</a>
-    &nbsp;·&nbsp; Clic en goles para simular
+    <a id="sheet-lnk" href="#" target="_blank">Ver hoja →</a>
+    &nbsp;·&nbsp; Clic en goles para simular escenario
   </footer>
 </div>
 
 <script>
-/* ══════════════════ CONFIG ══════════════════ */
-const CFG={
-  SHEET_ID:'1oV5gbk4_igHWxBe56SGRCmGciWcFBYLkrYDPpoBb2tc',
-  GID_P:'0', GID_PA:'675070228', GID_PR:'852857498',
-  NAME:'Quiniela Mundial 2026', REFRESH:5,
+const CONFIG = {
+  SHEET_ID:          '1oV5gbk4_igHWxBe56SGRCmGciWcFBYLkrYDPpoBb2tc',
+  GID_PARTIDOS:      '0',
+  GID_PARTICIPANTES: '675070228',
+  GID_PRONOSTICOS:   '852857498',
+  SHEET_NAME:        'Quiniela Mundial 2026',
+  AUTO_REFRESH_MIN:  5,
 };
 
 /* ── SCORING ── */
-function pts(rl,rv,pl,pv){
+function calcPoints(rl,rv,pl,pv){
   if(rl===null||pl===null)return null;
   const s=x=>x>0?1:x<0?-1:0;
   if(rl===pl&&rv===pv)return 5;
@@ -320,326 +358,408 @@ function pts(rl,rv,pl,pv){
 }
 
 /* ── FLAGS ── */
-const FC={'Chequia':'cz','Corea Sur':'kr','México':'mx','Sudáfrica':'za','Bosnia H':'ba','Canadá':'ca','Catar':'qa','Suiza':'ch','Brasil':'br','Escocia':'sc','Haití':'ht','Marruecos':'ma','Australia':'au','EUA':'us','Paraguay':'py','Turquía':'tr','Alemania':'de','C Marfil':'ci','Curazao':'cw','Ecuador':'ec','Japón':'jp','Países B':'nl','Suecia':'se','Túnez':'tn','Bélgica':'be','Egipto':'eg','Irán':'ir','N Zelanda':'nz','Arabia S':'sa','Cabo Verde':'cv','España':'es','Uruguay':'uy','Francia':'fr','Irak':'iq','Noruega':'no','Senegal':'sn','Argelia':'dz','Argentina':'ar','Austria':'at','Jordania':'jo','Colombia':'co','Portugal':'pt','RD Congo':'cd','Uzbekistán':'uz','Croacia':'hr','Ghana':'gh','Inglaterra':'en','Panamá':'pa','Jamaica':'jm','Angola':'ao','Chile':'cl','Nueva Zelanda':'nz','Camerún':'cm'};
-const FO={'sc':'https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg','en':'https://upload.wikimedia.org/wikipedia/en/b/be/Flag_of_England.svg'};
-function furl(c){const l=c.toLowerCase();return FO[l]||`https://flagcdn.com/${l}.svg`}
-function fimg(n){const c=(n&&n.length===2)?n:(FC[n]||'');if(!c)return'';return`<img class="flag" src="${furl(c)}" title="${n}" onerror="this.style.display='none'">`;}
+const CODES={'Chequia':'cz','Corea Sur':'kr','México':'mx','Sudáfrica':'za','Bosnia H':'ba','Canadá':'ca','Catar':'qa','Suiza':'ch','Brasil':'br','Escocia':'sc','Haití':'ht','Marruecos':'ma','Australia':'au','EUA':'us','Paraguay':'py','Turquía':'tr','Alemania':'de','C Marfil':'ci','Curazao':'cw','Ecuador':'ec','Japón':'jp','Países B':'nl','Suecia':'se','Túnez':'tn','Bélgica':'be','Egipto':'eg','Irán':'ir','N Zelanda':'nz','Arabia S':'sa','Cabo Verde':'cv','España':'es','Uruguay':'uy','Francia':'fr','Irak':'iq','Noruega':'no','Senegal':'sn','Argelia':'dz','Argentina':'ar','Austria':'at','Jordania':'jo','Colombia':'co','Portugal':'pt','RD Congo':'cd','Uzbekistán':'uz','Croacia':'hr','Ghana':'gh','Inglaterra':'en','Panamá':'pa','Jamaica':'jm','Angola':'ao','Chile':'cl','Nueva Zelanda':'nz','Camerún':'cm'};
+const FLAG_OVR={'sc':'https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg','en':'https://upload.wikimedia.org/wikipedia/en/b/be/Flag_of_England.svg'};
+function flagUrl(c){const l=c.toLowerCase();return FLAG_OVR[l]||`https://flagcdn.com/${l}.svg`}
+function flagImg(n){
+  const code=(n&&n.length===2)?n:(CODES[n]||'');
+  if(!code)return'';
+  return`<img class="flag" src="${flagUrl(code)}" alt="${n}" title="${n}" onerror="this.style.display='none'">`;
+}
 
 /* ── STATE ── */
-const S={matches:[],parts:[],preds:{},sim:{},sel:'',filter:'all'};
+const S={matches:[],participants:[],preds:{},simScores:{},selectedPart:'',filter:'all'};
 
 /* ── CSV ── */
-const cu=g=>`https://docs.google.com/spreadsheets/d/${CFG.SHEET_ID}/export?format=csv&gid=${g}`;
-function parseCSV(t){
-  const lines=t.trim().split('\n');
-  const h=lines[0].split(',').map(x=>x.trim().replace(/^"|"$/g,''));
+function csvUrl(g){return`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${g}`}
+function parseCSV(text){
+  const lines=text.trim().split('\n');
+  const hdrs=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
   return lines.slice(1).map(line=>{
-    const c=[];let cur='',q=false;
-    for(const ch of line){if(ch==='"'){q=!q}else if(ch===','&&!q){c.push(cur.trim());cur=''}else cur+=ch}
-    c.push(cur.trim());
-    const r={};h.forEach((k,i)=>r[k]=(c[i]||'').replace(/^"|"$/g,'').trim());
-    return r;
+    const cols=[];let cur='',inQ=false;
+    for(const ch of line){if(ch==='"'){inQ=!inQ}else if(ch===','&&!inQ){cols.push(cur.trim());cur=''}else cur+=ch}
+    cols.push(cur.trim());
+    const row={};hdrs.forEach((h,i)=>row[h]=(cols[i]||'').replace(/^"|"$/g,'').trim());
+    return row;
   }).filter(r=>Object.values(r).some(v=>v!==''));
 }
-async function csv(g){const r=await fetch(cu(g),{cache:'no-store'});if(!r.ok)throw new Error(`HTTP ${r.status} gid=${g}`);return parseCSV(await r.text())}
+async function fetchCSV(g){const r=await fetch(csvUrl(g),{cache:'no-store'});if(!r.ok)throw new Error(`HTTP ${r.status} gid=${g}`);return parseCSV(await r.text())}
 
 /* ── LOAD ── */
 async function loadData(){
-  const btn=document.getElementById('rb');
-  btn.classList.add('spin2');
+  const btn=document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
   try{
-    const[mR,pR,prR]=await Promise.all([csv(CFG.GID_P),csv(CFG.GID_PA),csv(CFG.GID_PR)]);
-    S.parts=pR.map(r=>({
-      id:String(r.id||''),
-      name:(r.nombre||r.name||'').trim(),
-      points:parseInt(r.puntos||r.points||0),
-      rank:parseInt(r.lugar||r.rank||99),
+    const[mR,pR,prR]=await Promise.all([fetchCSV(CONFIG.GID_PARTIDOS),fetchCSV(CONFIG.GID_PARTICIPANTES),fetchCSV(CONFIG.GID_PRONOSTICOS)]);
+    S.participants=pR.map(r=>({
+      id:String(r.id||r.Id||''),
+      name:(r.nombre||r.Nombre||r.name||'').trim(),
+      points:parseInt(r.puntos||r.Puntos||r.points||0),
+      rank:parseInt(r.lugar||r.Lugar||r.rank||99),
     })).filter(p=>p.name).sort((a,b)=>a.rank-b.rank);
     S.matches=mR.map(r=>{
       const gl=r.goles_local||r.golesLocal||r.gl||'';
       const gv=r.goles_visitante||r.golesVisitante||r.gv||'';
       return{
-        id:String(r.id||''),
-        grupo:(r.grupo||'').trim(),
-        fecha:(r.fecha||'').trim(),
-        hora:(r.hora||'').trim(),
-        local:(r.local||'').trim(),
-        visit:(r.visitante||'').trim(),
-        rl:gl!==''&&gl!=='-'?parseInt(gl):null,
-        rv:gv!==''&&gv!=='-'?parseInt(gv):null,
-        cl:(r.cod_local||r.codLocal||'').trim().toLowerCase(),
-        cv:(r.cod_visitante||r.codVisitante||'').trim().toLowerCase(),
+        id:String(r.id||r.Id||''),
+        grupo:(r.grupo||r.Grupo||'').trim(),
+        fecha:(r.fecha||r.Fecha||'').trim(),
+        hora:(r.hora||r.Hora||'').trim(),
+        local:(r.local||r.Local||'').trim(),
+        visitante:(r.visitante||r.Visitante||'').trim(),
+        real_l:gl!==''&&gl!=='-'?parseInt(gl):null,
+        real_v:gv!==''&&gv!=='-'?parseInt(gv):null,
+        cod_l:(r.cod_local||r.codLocal||'').trim().toLowerCase(),
+        cod_v:(r.cod_visitante||r.codVisitante||'').trim().toLowerCase(),
       };
     }).filter(m=>m.local);
     S.preds={};
     prR.forEach(r=>{
-      const mid=String(r.partido_id||r.partidoId||'');
-      const name=(r.participante||'').trim();
-      const gl=r.goles_local||r.gl||'';
-      const gv=r.goles_visitante||r.gv||'';
+      const mid=String(r.partido_id||r.partidoId||r.match_id||'');
+      const name=(r.participante||r.Participante||r.nombre||'').trim();
+      const gl=r.goles_local||r.golesLocal||r.gl||'';
+      const gv=r.goles_visitante||r.golesVisitante||r.gv||'';
       if(!mid||!name)return;
       if(!S.preds[mid])S.preds[mid]={};
       S.preds[mid][name]={l:gl!==''?parseInt(gl):null,v:gv!==''?parseInt(gv):null};
     });
     const valid=new Set(S.matches.map(m=>m.id));
-    Object.keys(S.sim).forEach(id=>{if(!valid.has(id))delete S.sim[id]});
-    // Restore selected part if still valid
-    const sel=document.getElementById('psel');
-    if(S.sel&&!S.parts.find(p=>p.name===S.sel))S.sel='';
-    populateSel();buildRanking();render();
-    document.getElementById('hp').textContent=S.matches.filter(m=>m.rl!==null).length;
-    document.getElementById('hpd').textContent=S.matches.filter(m=>m.rl===null).length;
-    document.getElementById('hpt').textContent=S.parts.length;
-    document.getElementById('sl3').href=`https://docs.google.com/spreadsheets/d/${CFG.SHEET_ID}/edit`;
-    document.getElementById('sl3').textContent=`Ver "${CFG.NAME}" →`;
-    document.getElementById('ls').classList.add('gone');
+    Object.keys(S.simScores).forEach(id=>{if(!valid.has(id))delete S.simScores[id]});
+    populateSel();buildRanking();buildHeaders();renderTable();syncHeights();
+    document.getElementById('h-played').textContent=S.matches.filter(m=>m.real_l!==null).length;
+    document.getElementById('h-pend').textContent=S.matches.filter(m=>m.real_l===null).length;
+    document.getElementById('h-parts').textContent=S.participants.length;
+    document.getElementById('sheet-lnk').href=`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit`;
+    document.getElementById('loading-screen').classList.add('gone');
     document.getElementById('app').classList.add('show');
+    initColgroups();
   }catch(e){
     console.error(e);
-    document.getElementById('ls').classList.add('gone');
-    document.getElementById('es').classList.add('show');
-    document.getElementById('em').textContent=e.message;
+    document.getElementById('loading-screen').classList.add('gone');
+    document.getElementById('err-screen').classList.add('show');
+    document.getElementById('err-msg').textContent=e.message;
   }
-  btn.classList.remove('spin2');
+  btn.classList.remove('spinning');
 }
 
 /* ── HELPERS ── */
-function sc(m){if(S.sim[m.id]!==undefined)return S.sim[m.id];if(m.rl!==null)return{l:m.rl,v:m.rv};return null}
-function pc(p,h){if(!h||p===null)return'pn2';return['p0','p0','p0','p3','p4','p5'][p]||'p0'}
-function simTots(){
-  const t={};S.parts.forEach(p=>t[p.name]=0);
+function eff(m){if(S.simScores[m.id]!==undefined)return S.simScores[m.id];if(m.real_l!==null)return{l:m.real_l,v:m.real_v};return null}
+function pc(pts,has){if(!has||pts===null)return'pnd';return['p0','p0','p0','p3','p4','p5'][pts]||'p0'}
+function simTotals(){
+  const tot={};S.participants.forEach(p=>tot[p.name]=0);
   S.matches.forEach(m=>{
-    const s=sc(m);if(!s)return;
-    S.parts.forEach(p=>{
+    const sc=eff(m);if(!sc)return;
+    S.participants.forEach(p=>{
       const pr=(S.preds[m.id]||{})[p.name];
       if(!pr||pr.l===null)return;
-      t[p.name]+=(pts(s.l,s.v,pr.l,pr.v)||0);
+      tot[p.name]+=(calcPoints(sc.l,sc.v,pr.l,pr.v)||0);
     });
   });
-  return t;
+  return tot;
 }
 
 /* ── RANKING ── */
 function buildRanking(){
-  const el=document.getElementById('rs');
-  el.innerHTML='';
-  const hasSim=Object.keys(S.sim).length>0;
-  const tot=simTots();
-  const m={1:'🥇',2:'🥈',3:'🥉'};
-  let sorted=[...S.parts];
-  if(hasSim)sorted=sorted.map(p=>({...p,sp:tot[p.name]??p.points})).sort((a,b)=>b.sp-a.sp);
+  const cont=document.getElementById('rank-scroll');
+  cont.innerHTML='';
+  const hasSim=Object.keys(S.simScores).length>0;
+  const tot=simTotals();
+  const medals={1:'🥇',2:'🥈',3:'🥉'};
+  let sorted=[...S.participants];
+  if(hasSim)sorted=sorted.map(p=>({...p,simPts:tot[p.name]??p.points})).sort((a,b)=>b.simPts-a.simPts);
   sorted.forEach((p,i)=>{
-    const r=hasSim?i+1:p.rank;
-    const v=hasSim?(tot[p.name]??p.points):p.points;
-    const d=hasSim?v-p.points:0;
+    const dr=hasSim?i+1:p.rank;
+    const sp=hasSim?(tot[p.name]??p.points):p.points;
+    const delta=hasSim?sp-p.points:0;
     const div=document.createElement('div');
-    div.className=`rc${r===1?' r1':r===2?' r2':r===3?' r3':''}`;
+    div.className=`rc${dr===1?' r1':dr===2?' r2':dr===3?' r3':''}`;
     div.id=`rc-${p.name}`;
-    div.onclick=()=>selPart(p.name);
-    if(S.sel===p.name)div.classList.add('on');
-    div.innerHTML=`<div class="rp">${m[r]||''} ${r}°</div><div class="rn">${p.name}</div><div class="rv">${v}</div>${hasSim?`<div class="rd ${d>0?'up':d<0?'dn':'eq'}">${d>0?'+':''}${d||'—'}</div>`:''}`;
-    el.appendChild(div);
+    div.onclick=()=>selectPart(p.name);
+    if(S.selectedPart===p.name)div.classList.add('on');
+    div.innerHTML=`<div class="rc-pos">${medals[dr]||''} ${dr}°</div><div class="rc-name">${p.name}</div><div class="rc-pts">${sp}</div>${hasSim?`<div class="rc-delta ${delta>0?'up':delta<0?'dn':'eq'}">${delta>0?'+':''}${delta||'—'}</div>`:''}`;
+    cont.appendChild(div);
   });
-  document.getElementById('rsn').style.display=hasSim?'inline':'none';
-  document.getElementById('spp').classList.toggle('on',hasSim);
-  document.getElementById('sb').classList.toggle('on',hasSim);
-  const n=Object.keys(S.sim).length;
-  document.getElementById('sc').textContent=hasSim?`(${n} partido${n!==1?'s':''} sim.)`:'';
+  document.getElementById('rank-sim-note').style.display=hasSim?'inline':'none';
+  document.getElementById('sim-pill').classList.toggle('on',hasSim);
+  document.getElementById('sim-banner').classList.toggle('on',hasSim);
+  const n=Object.keys(S.simScores).length;
+  document.getElementById('sim-count').textContent=hasSim?`(${n} partido${n!==1?'s':''} simulado${n!==1?'s':''})`:'';
 }
 
-/* ── POPULATE SELECT ── */
+/* ── SELECT ── */
 function populateSel(){
-  const el=document.getElementById('psel');
-  el.innerHTML='<option value="">— Seleccionar —</option>';
-  S.parts.forEach(p=>{
-    const o=document.createElement('option');
-    o.value=p.name;o.textContent=`${p.name} (${p.rank}°)`;
-    el.appendChild(o);
-  });
-  if(S.sel)el.value=S.sel;
+  const sel=document.getElementById('part-sel');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">— Seleccionar —</option>';
+  S.participants.forEach(p=>{const o=document.createElement('option');o.value=p.name;o.textContent=`${p.name} (${p.rank}°)`;sel.appendChild(o)});
+  if(prev&&S.participants.find(p=>p.name===prev)){sel.value=prev;S.selectedPart=prev}
 }
-function selPart(name){
-  S.sel=name;
-  document.getElementById('psel').value=name;
+function selectPart(name){
+  S.selectedPart=name;
+  document.getElementById('part-sel').value=name;
   document.querySelectorAll('.rc').forEach(c=>c.classList.remove('on'));
   const rc=document.getElementById(`rc-${name}`);
   if(rc){rc.classList.add('on');rc.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})}
-  render();
+  buildHeaders();renderTable();syncHeights();
 }
 
-/* ── RENDER ── */
-function render(){
-  const matches=S.matches.filter(m=>{
-    if(S.filter==='played')return m.rl!==null;
-    if(S.filter==='pending')return m.rl===null;
-    return true;
-  });
+/* ── COLUMN WIDTHS (single source of truth) ── */
+const COLS = {
+  fecha: 82, local: 88, flagL: 28, goalL: 34, goalV: 34,
+  flagV: 28, visitor: 88, selPred: 46, selPts: 30,
+  partPred: 36, partPts: 28,
+};
 
-  /* ── HEADER ── */
-  // Number of sticky cols: fecha(1) local(2) flagL(3) goalL(4) goalV(5) flagV(6) visit(7) selPred(8) selPts(9) = 9
-  const STICKY=9;
-  const sel=S.sel;
-  document.getElementById('th').innerHTML=`
+/* ── BUILD HEADERS ── */
+function buildHeaders(){
+  const sel=S.selectedPart;
+  const C=COLS;
+
+  // Left header with matching colgroup
+  document.getElementById('left-head').innerHTML=`
+    <colgroup>
+      <col style="width:${C.fecha}px">
+      <col class="col-name" style="width:${C.local}px">
+      <col style="width:${C.flagL}px">
+      <col style="width:${C.goalL}px">
+      <col style="width:${C.goalV}px">
+      <col style="width:${C.flagV}px">
+      <col class="col-name" style="width:${C.visitor}px">
+      <col style="width:${C.selPred}px">
+      <col style="width:${C.selPts}px">
+    </colgroup>
     <tr>
-      <th class="sl" style="text-align:left">Fecha</th>
-      <th class="sl th-cn" style="text-align:right">Local</th>
-      <th class="sl"></th>
-      <th class="sl hp" style="font-size:9px;font-weight:normal;opacity:.7">L</th>
-      <th class="sl hp" style="font-size:9px;font-weight:normal;opacity:.7">V</th>
-      <th class="sl"></th>
-      <th class="sl th-cn" style="text-align:left">Visitante</th>
-      <th class="sl hs" colspan="2">${sel||'— Seleccionar —'}</th>
-      ${S.parts.map(p=>`<th class="hs" colspan="2"><span class="pn${sel===p.name?' sel':''}" id="pn-${p.name}" onclick="selPart('${p.name}')">${p.name}</span></th>`).join('')}
+      <th rowspan="2" style="text-align:left">Fecha</th>
+      <th class="th-name" rowspan="2" style="text-align:right">Local</th>
+      <th rowspan="2"></th>
+      <th class="th-pts" style="font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">L</th>
+      <th class="th-pts" style="font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
+      <th rowspan="2"></th>
+      <th class="th-name" rowspan="2" style="text-align:left">Visitante</th>
+      <th class="th-sel" colspan="2">${sel||'— Seleccionar —'}</th>
     </tr>
     <tr>
-      <th class="sl" style="font-size:9px;opacity:.5">Hora</th>
-      <th class="sl th-cn"></th>
-      <th class="sl"></th>
-      <th class="sl hp" style="font-size:9px;opacity:.5">▸sim</th>
-      <th class="sl hp" style="font-size:9px;opacity:.5">▸sim</th>
-      <th class="sl"></th>
-      <th class="sl th-cn"></th>
-      <th class="sl hs" style="font-size:10px">L-V</th>
-      <th class="sl hs" style="font-size:10px">P</th>
-      ${S.parts.map(()=>`<th style="font-size:10px">L-V</th><th class="hp" style="font-size:10px">P</th>`).join('')}
+      <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
+      <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
+      <th class="th-sel" style="font-size:11px">L-V</th>
+      <th class="th-sel th-sel-pts" style="font-size:11px">P</th>
     </tr>`;
 
-  /* ── BODY ── */
-  document.getElementById('tb').innerHTML=matches.map((m,i)=>{
-    const s=sc(m);
-    const isSim=S.sim[m.id]!==undefined;
-    const isP=m.rl!==null;
-    const has=s!==null;
-    const rc=i%2===0?'ra':'rb';
+  const rColgroup = S.participants.map(()=>`<col style="width:${C.partPred}px"><col style="width:${C.partPts}px">`).join('');
 
-    const gL=`<span class="gv${has?(isSim?' sim':''):' pnd'}" id="gvl-${m.id}">${has?s.l:'-'}</span><input class="gi" id="gil-${m.id}" type="number" min="0" max="30" value="${has?s.l:''}" inputmode="numeric" onkeydown="gk(event,'${m.id}','l')" onblur="gb('${m.id}')">`;
-    const gV=`<span class="gv${has?(isSim?' sim':''):' pnd'}" id="gvv-${m.id}">${has?s.v:'-'}</span><input class="gi" id="giv-${m.id}" type="number" min="0" max="30" value="${has?s.v:''}" inputmode="numeric" onkeydown="gk(event,'${m.id}','v')" onblur="gb('${m.id}')">`;
+  // Sync right body table colgroup
+  const rbt = document.querySelector('#right-body-wrap table');
+  if(rbt){
+    const oldCg = rbt.querySelector('colgroup');
+    if(oldCg) rbt.removeChild(oldCg);
+    const newCg = document.createElement('colgroup');
+    S.participants.forEach(()=>{
+      const c1=document.createElement('col'); c1.style.width=C.partPred+'px'; newCg.appendChild(c1);
+      const c2=document.createElement('col'); c2.style.width=C.partPts+'px'; newCg.appendChild(c2);
+    });
+    rbt.insertBefore(newCg, rbt.firstChild);
+  }
 
-    let sp='—',spt='—';
+  document.getElementById('right-head').innerHTML=`
+    <colgroup>${rColgroup}</colgroup>
+    <tr>${S.participants.map(p=>`
+      <th colspan="2"><span class="th-pname${sel===p.name?' sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span></th>`).join('')}
+    </tr>
+    <tr>${S.participants.map(()=>`
+      <th style="font-size:11px">L-V</th>
+      <th class="th-pts" style="font-size:11px">P</th>`).join('')}
+    </tr>`;
+}
+
+/* ── RENDER TABLE ── */
+function renderTable(){
+  const q='';
+  let matches=S.matches.filter(m=>{
+    if(S.filter==='played')return m.real_l!==null;
+    if(S.filter==='pending')return m.real_l===null;
+    return true;
+  });
+  if(q)matches=matches.filter(m=>m.local.toLowerCase().includes(q)||m.visitante.toLowerCase().includes(q)||m.grupo.toLowerCase().includes(q));
+
+  const sel=S.selectedPart;
+  const leftRows=[];
+  const rightRows=[];
+
+  matches.forEach((m,idx)=>{
+    const sc=eff(m);
+    const isSim=S.simScores[m.id]!==undefined;
+    const isPlayed=m.real_l!==null;
+    const hasScore=sc!==null;
+    const rowCls=`${idx%2===0?'row-a':'row-b'}${isSim?' row-sim':''}${!isPlayed&&!isSim?' row-pending':''}`;
+
+    // Goal cells
+    const gL=`<span class="goal-val${hasScore?(isSim?' simulated':''):' pending'}" id="gv-l-${m.id}">${hasScore?sc.l:'-'}</span><input class="goal-inp" id="gi-l-${m.id}" type="number" min="0" max="30" value="${hasScore?sc.l:''}" inputmode="numeric" onkeydown="goalKey(event,'${m.id}','l')" onblur="goalBlur('${m.id}')">`;
+    const gV=`<span class="goal-val${hasScore?(isSim?' simulated':''):' pending'}" id="gv-v-${m.id}">${hasScore?sc.v:'-'}</span><input class="goal-inp" id="gi-v-${m.id}" type="number" min="0" max="30" value="${hasScore?sc.v:''}" inputmode="numeric" onkeydown="goalKey(event,'${m.id}','v')" onblur="goalBlur('${m.id}')">`;
+
+    // Selected participant
+    let selPred='—',selPts='—';
     if(sel){
       const pr=(S.preds[m.id]||{})[sel];
       if(pr&&pr.l!==null){
-        const p=has?pts(s.l,s.v,pr.l,pr.v):null;
-        const c=pc(p,has);
-        sp=`<div class="chip">${pr.l}<span style="opacity:.4">-</span>${pr.v}</div>`;
-        spt=has?`<span class="pv ${c}">${p}</span>`:`<span class="pv pn2">?</span>`;
+        const pts=hasScore?calcPoints(sc.l,sc.v,pr.l,pr.v):null;
+        const cls=pc(pts,hasScore);
+        selPred=`<div class="chip">${pr.l}<span class="chip-sep">-</span>${pr.v}</div>`;
+        selPts=hasScore?`<span class="pv ${cls}">${pts}</span>`:`<span class="pv pnd">?</span>`;
       }
     }
 
-    const pcols=S.parts.map(p=>{
-      const pr=(S.preds[m.id]||{})[p.name];
-      if(!pr||pr.l===null)return`<td class="pp" style="color:var(--gray)">—</td><td class="pt" style="color:var(--gray)">—</td>`;
-      const pv=has?pts(s.l,s.v,pr.l,pr.v):null;
-      const c=pc(pv,has);
-      return`<td class="pp"><div class="mi">${pr.l}<span style="opacity:.35">-</span>${pr.v}</div></td><td class="pt">${has?`<span class="mp ${c}">${pv}</span>`:`<span class="mp pn2">?</span>`}</td>`;
-    }).join('');
-
-    return`<tr class="${rc}${isSim?' sim':''}${!isP&&!isSim?' pnd':''}">
-      <td class="cm sl">
-        <span style="display:flex;align-items:center;gap:4px"><span class="mg">${m.grupo}</span><span class="mf">${m.fecha}</span></span>
-        <span class="mh">${m.hora}</span>
-        ${isSim?`<span class="bsm">SIM</span>`:(!isP?`<span class="bp">PND</span>`:'')}
+    leftRows.push(`<tr class="${rowCls}">
+      <td class="td-meta">
+        <div class="m-row1"><span class="m-grupo">${m.grupo}</span><span class="m-fecha">${m.fecha}</span></div>
+        <span class="m-hora">${m.hora}</span>
+        ${isSim?'<span class="b-sim">SIM</span>':(!isPlayed?'<span class="b-pend">PND</span>':'')}
       </td>
-      <td class="cn lo sl th-cn"><span class="mn">${m.local}</span></td>
-      <td class="cf sl">${fimg(m.cl||m.local)}</td>
-      <td class="gs sl" id="tdl-${m.id}" onclick="go('${m.id}','l')">${gL}</td>
-      <td class="gs sl" id="tdv-${m.id}" onclick="go('${m.id}','v')">${gV}</td>
-      <td class="cf sl">${fimg(m.cv||m.visit)}</td>
-      <td class="cn vi sl th-cn"><span class="mn">${m.visit}</span></td>
-      <td class="ts sl">${sp}</td>
-      <td class="tp sl">${spt}</td>
-      ${pcols}
-    </tr>`;
-  }).join('');
+      <td class="td-name local"><span class="m-name">${m.local}</span></td>
+      <td class="td-flag">${flagImg(m.cod_l||m.local)}</td>
+      <td class="td-goal" id="td-l-${m.id}" onclick="openGoal('${m.id}','l')">${gL}</td>
+      <td class="td-goal" id="td-v-${m.id}" onclick="openGoal('${m.id}','v')">${gV}</td>
+      <td class="td-flag">${flagImg(m.cod_v||m.visitante)}</td>
+      <td class="td-name visitor"><span class="m-name">${m.visitante}</span></td>
+      <td class="td-sel">${selPred}</td>
+      <td class="td-sel-pts">${selPts}</td>
+    </tr>`);
 
-  // Apply sticky left positions after DOM update
-  requestAnimationFrame(fixSticky);
+    // Right: participant cols
+    const pCols=S.participants.map(p=>{
+      const pr=(S.preds[m.id]||{})[p.name];
+      if(!pr||pr.l===null)return`<td class="td-mini" style="color:var(--txt-gray)">—</td><td class="td-mpts" style="color:var(--txt-gray)">—</td>`;
+      const pts=hasScore?calcPoints(sc.l,sc.v,pr.l,pr.v):null;
+      const cls=pc(pts,hasScore);
+      return`<td class="td-mini"><div class="mini">${pr.l}<span class="mini-sep">-</span>${pr.v}</div></td><td class="td-mpts">${hasScore?`<span class="mpts ${cls}">${pts}</span>`:`<span class="mpts pnd">?</span>`}</td>`;
+    }).join('');
+    rightRows.push(`<tr class="${rowCls}">${pCols}</tr>`);
+  });
+
+  document.getElementById('left-body').innerHTML=leftRows.join('');
+  document.getElementById('right-body').innerHTML=rightRows.join('');
+  syncHeights();
 }
 
-/* ── STICKY LEFT: compute real offsets ── */
-function fixSticky(){
-  const firstRow=document.querySelector('#tb tr');
-  if(!firstRow)return;
-  const cells=[...firstRow.querySelectorAll('td.sl')];
-  if(!cells.length)return;
-
-  // Compute cumulative left offsets
-  const lefts=[];
-  let acc=0;
-  cells.forEach(td=>{lefts.push(acc);acc+=td.offsetWidth});
-
-  // Apply to all tbody rows
-  document.querySelectorAll('#tb tr').forEach(tr=>{
-    [...tr.querySelectorAll('td.sl')].forEach((td,i)=>{td.style.left=lefts[i]+'px'});
-    // Mark last sticky
-    const sl=[...tr.querySelectorAll('td.sl')];
-    sl.forEach(td=>td.classList.remove('sl-last'));
-    if(sl.length)sl[sl.length-1].classList.add('sl-last');
+/* ── SYNC ROW HEIGHTS between left and right tables ── */
+function syncHeights(){
+  requestAnimationFrame(()=>{
+    const lRows=document.querySelectorAll('#left-body tr');
+    const rRows=document.querySelectorAll('#right-body tr');
+    // Reset heights first
+    lRows.forEach(r=>r.style.height='');
+    rRows.forEach(r=>r.style.height='');
+    // Apply max of both
+    const len=Math.min(lRows.length,rRows.length);
+    for(let i=0;i<len;i++){
+      const h=Math.max(lRows[i].offsetHeight,rRows[i].offsetHeight);
+      lRows[i].style.height=h+'px';
+      rRows[i].style.height=h+'px';
+    }
+    // Sync scroll areas height
+    const wrap=document.getElementById('grid-wrap');
+    const lh=document.getElementById('left-head').offsetHeight;
+    const maxH=wrap.offsetHeight-lh;
+    document.getElementById('left-body-wrap').style.maxHeight=maxH+'px';
+    document.getElementById('right-body-wrap').style.maxHeight=maxH+'px';
   });
+}
 
-  // Apply to both header rows
-  document.querySelectorAll('#th tr').forEach(tr=>{
-    const ths=[...tr.querySelectorAll('th.sl')];
-    if(!ths.length)return;
-    let o=0;
-    ths.forEach(th=>{th.style.left=o+'px';o+=th.offsetWidth});
-    ths.forEach(th=>th.classList.remove('sl-last'));
-    if(ths.length)ths[ths.length-1].classList.add('sl-last');
-  });
+/* ── SYNC VERTICAL SCROLL ── */
+function initScrollSync(){
+  const lb=document.getElementById('left-body-wrap');
+  const rb=document.getElementById('right-body-wrap');
+  let lock=false;
+  lb.addEventListener('scroll',()=>{if(lock)return;lock=true;rb.scrollTop=lb.scrollTop;lock=false});
+  rb.addEventListener('scroll',()=>{if(lock)return;lock=true;lb.scrollTop=rb.scrollTop;lock=false});
 }
 
 /* ── GOAL EDITOR ── */
 let _aid=null;
-function go(id,side){
-  if(_aid&&_aid!==id)gc(_aid,true);
+function openGoal(id,side){
+  if(_aid&&_aid!==id)closeGoal(_aid,true);
   _aid=id;
-  const inp=document.getElementById(`gi${side}-${id}`);
-  const sp=document.getElementById(`gv${side}-${id}`);
+  const inp=document.getElementById(`gi-${side}-${id}`);
+  const sp=document.getElementById(`gv-${side}-${id}`);
   if(!inp||!sp)return;
-  sp.style.display='none';inp.classList.add('on');
-  inp.closest('tr').classList.add('editing');
+  sp.style.display='none';
+  inp.classList.add('active');
   inp.focus();inp.select();
+  inp.closest('tr').classList.add('editing');
 }
-function gc(id,save){
-  const li=document.getElementById(`gil-${id}`);
-  const vi=document.getElementById(`giv-${id}`);
-  const ls=document.getElementById(`gvl-${id}`);
-  const vs=document.getElementById(`gvv-${id}`);
+function closeGoal(id,save){
+  const li=document.getElementById(`gi-l-${id}`);
+  const vi=document.getElementById(`gi-v-${id}`);
+  const ls=document.getElementById(`gv-l-${id}`);
+  const vs=document.getElementById(`gv-v-${id}`);
   if(!li)return;
   li.closest('tr').classList.remove('editing');
   if(save){
     const l=parseInt(li.value),v=parseInt(vi.value);
     if(!isNaN(l)&&!isNaN(v)&&l>=0&&v>=0){
-      S.sim[id]={l,v};
-      buildRanking();render();return;
+      S.simScores[id]={l,v};
+      buildRanking();renderTable();return;
     }
   }
-  li.classList.remove('on');ls.style.display='';
-  vi.classList.remove('on');vs.style.display='';
+  li.classList.remove('active');ls.style.display='';
+  vi.classList.remove('active');vs.style.display='';
   _aid=null;
 }
-function gk(e,id,side){
-  if(e.key==='Escape'){gc(id,false);return}
-  if(e.key==='Enter'){gc(id,true);return}
-  if(e.key==='Tab'){e.preventDefault();side==='l'?go(id,'v'):gc(id,true);return}
+function goalKey(e,id,side){
+  if(e.key==='Escape'){closeGoal(id,false);return}
+  if(e.key==='Enter'){closeGoal(id,true);return}
+  if(e.key==='Tab'){e.preventDefault();side==='l'?openGoal(id,'v'):closeGoal(id,true);return}
   if(!/^[0-9]$/.test(e.key)&&!['Backspace','Delete','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();
 }
-function gb(id){
+function goalBlur(id){
   setTimeout(()=>{
-    const li=document.getElementById(`gil-${id}`);
-    const vi=document.getElementById(`giv-${id}`);
+    const li=document.getElementById(`gi-l-${id}`);
+    const vi=document.getElementById(`gi-v-${id}`);
     if(!li)return;
-    if(document.activeElement!==li&&document.activeElement!==vi)gc(id,true);
+    if(document.activeElement!==li&&document.activeElement!==vi)closeGoal(id,true);
   },120);
 }
 
-/* ── FILTER / RESET ── */
-function setF(f,btn){S.filter=f;document.querySelectorAll('.ft').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render()}
-function resetSim(){S.sim={};buildRanking();render()}
+/* ── FILTER ── */
+function setFilter(f,btn){
+  S.filter=f;
+  document.querySelectorAll('.flt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderTable();
+}
+
+/* ── RESET SIM ── */
+function resetSim(){S.simScores={};buildRanking();renderTable()}
 
 /* ── AUTO REFRESH ── */
-if(CFG.REFRESH>0)setInterval(()=>{if(!Object.keys(S.sim).length)loadData()},CFG.REFRESH*60*1000);
+if(CONFIG.AUTO_REFRESH_MIN>0){
+  setInterval(()=>{if(Object.keys(S.simScores).length===0)loadData()},CONFIG.AUTO_REFRESH_MIN*60*1000);
+}
 
+/* ── INIT COLGROUPS (called once, stable DOM) ── */
+function initColgroups(){
+  const C = COLS;
+  // Left body table colgroup
+  const lbt = document.querySelector('#left-body-wrap table');
+  if(lbt && !lbt.querySelector('colgroup')){
+    const cg = document.createElement('colgroup');
+    const cols = [
+      {w:C.fecha,cls:''}, {w:C.local,cls:'col-name'}, {w:C.flagL,cls:''},
+      {w:C.goalL,cls:''}, {w:C.goalV,cls:''}, {w:C.flagV,cls:''},
+      {w:C.visitor,cls:'col-name'}, {w:C.selPred,cls:''}, {w:C.selPts,cls:''}
+    ];
+    cols.forEach(c=>{
+      const col=document.createElement('col');
+      col.style.width=c.w+'px';
+      if(c.cls)col.className=c.cls;
+      cg.appendChild(col);
+    });
+    lbt.insertBefore(cg, lbt.firstChild);
+  }
+  // Right body table colgroup — set after participants load, so called from buildHeaders too
+}
+
+/* ── BOOT ── */
+initScrollSync();
 loadData();
 </script>
 </body>
