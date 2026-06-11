@@ -299,6 +299,30 @@ tr.row-b .td-mini{background:var(--bg-score-b)}
 .mpts.p0{color:var(--pts-0);font-weight:normal}
 .mpts.pnd{color:var(--txt-dim);font-weight:normal}
 
+/* ── REGLAS TAB ── */
+.reglas-wrap{max-width:520px;margin:18px auto;display:flex;flex-direction:column;gap:14px;padding:0 10px}
+.reglas-card{background:var(--bg-panel);border:1px solid #2A3540;padding:16px 20px}
+.reglas-card-title{font-family:Verdana,sans-serif;font-size:11px;font-weight:bold;color:var(--bg-hdr);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;text-align:center}
+.pts-rule{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;font-size:13px}
+.pts-rule:last-child{margin-bottom:0}
+.pts-rule-lbl{color:var(--txt-dim)}
+.pts-rule-eq{color:var(--txt-dim);margin:0 2px}
+.pts-rule-val{font-weight:bold}
+.pts-rule-val.p5{color:var(--pts-5)}
+.pts-rule-val.p4{color:var(--pts-4)}
+.pts-rule-val.p3{color:var(--pts-3)}
+.bolsa-total{text-align:center;font-family:Verdana,sans-serif;font-size:13px;font-weight:bold;color:var(--gold);margin-bottom:12px}
+.bolsa-table{width:100%;border-collapse:collapse}
+.bolsa-table td{padding:5px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.bolsa-tr-a td{background:var(--bg-row-a)}
+.bolsa-tr-b td{background:var(--bg-row-b)}
+.bolsa-lugar{font-weight:bold;color:var(--txt-dim);width:50px}
+.bolsa-tr-a:nth-child(1) .bolsa-lugar{color:#FFD700}
+.bolsa-tr-b:nth-child(2) .bolsa-lugar{color:#C0C0C0}
+.bolsa-tr-a:nth-child(3) .bolsa-lugar{color:#CD7F32}
+.bolsa-monto{font-weight:bold;color:var(--gold);text-align:right;font-family:Verdana,sans-serif}
+.bolsa-loading{text-align:center;color:var(--txt-gray);font-size:12px;padding:10px}
+
 footer{text-align:center;padding:10px;font-size:10px;color:var(--txt-gray);border-top:1px solid #2A3540;margin-top:8px}
 footer a{color:var(--txt-dim);text-decoration:none}
 footer a:hover{color:var(--gold)}
@@ -400,6 +424,7 @@ footer a:hover{color:var(--gold)}
     <button class="tab-btn active" onclick="switchTab('tab-puntuacion',this)">🏆 Puntuación</button>
     <button class="tab-btn" onclick="switchTab('tab-marcador',this)">⚽ Marcadores</button>
     <button class="tab-btn" onclick="switchTab('tab-partido',this)">🔍 Partido</button>
+    <button class="tab-btn" onclick="switchTab('tab-reglas',this)">📋 Reglas</button>
   </div>
 
   <main>
@@ -477,6 +502,44 @@ footer a:hover{color:var(--gold)}
       </div>
     </div>
 
+    <!-- ══ TAB 4: REGLAS ══ -->
+    <div class="tab-pane" id="tab-reglas">
+      <div class="reglas-wrap">
+
+        <!-- Sistema de puntuación -->
+        <div class="reglas-card">
+          <div class="reglas-card-title">Sistema de Puntuación</div>
+          <div class="pts-rule">
+            <span class="pts-rule-lbl">Marcador Exacto</span>
+            <span class="pts-rule-eq">=</span>
+            <span class="pts-rule-val p5">5 Puntos</span>
+          </div>
+          <div class="pts-rule">
+            <span class="pts-rule-lbl">Resultado y Diferencia de Goles</span>
+            <span class="pts-rule-eq">=</span>
+            <span class="pts-rule-val p4">4 Puntos</span>
+          </div>
+          <div class="pts-rule">
+            <span class="pts-rule-lbl">Sólo Resultado</span>
+            <span class="pts-rule-eq">=</span>
+            <span class="pts-rule-val p3">3 Puntos</span>
+          </div>
+        </div>
+
+        <!-- Bolsa -->
+        <div class="reglas-card">
+          <div class="reglas-card-title">Premios</div>
+          <div class="bolsa-total" id="bolsa-total">Cargando bolsa…</div>
+          <table class="bolsa-table" id="bolsa-table">
+            <tbody id="bolsa-body">
+              <tr><td colspan="2" class="bolsa-loading">Cargando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
   </main>
 
   <footer>
@@ -491,6 +554,7 @@ const CONFIG = {
   GID_PARTIDOS:      '0',
   GID_PARTICIPANTES: '675070228',
   GID_PRONOSTICOS:   '852857498',
+  GID_BOLSA:         '1985521338',
   SHEET_NAME:        'Quiniela Mundial 2026',
   AUTO_REFRESH_MIN:  5,
 };
@@ -516,7 +580,7 @@ function flagImg(n){
 }
 
 /* ── STATE ── */
-const S={matches:[],participants:[],preds:{},simScores:{},selectedPart:'',filter:'all'};
+const S={matches:[],participants:[],preds:{},simScores:{},selectedPart:'',filter:'all',bolsa:[]};
 
 /* ── CSV ── */
 function csvUrl(g){return`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${g}`}
@@ -538,7 +602,8 @@ async function loadData(){
   const btn=document.getElementById('refresh-btn');
   btn.classList.add('spinning');
   try{
-    const[mR,pR,prR]=await Promise.all([fetchCSV(CONFIG.GID_PARTIDOS),fetchCSV(CONFIG.GID_PARTICIPANTES),fetchCSV(CONFIG.GID_PRONOSTICOS)]);
+    const[mR,pR,prR,bR]=await Promise.all([fetchCSV(CONFIG.GID_PARTIDOS),fetchCSV(CONFIG.GID_PARTICIPANTES),fetchCSV(CONFIG.GID_PRONOSTICOS),fetchCSV(CONFIG.GID_BOLSA)]);
+    S.bolsa=bR;
     S.participants=pR.map(r=>({
       id:String(r.id||r.Id||''),
       name:(r.nombre||r.Nombre||r.name||'').trim(),
@@ -905,6 +970,41 @@ function switchTab(id, btn) {
   if (id === 'tab-puntuacion') renderPuntuacion();
   if (id === 'tab-partido')    renderMatchSelector();
   if (id === 'tab-marcador')   { buildHeaders(); renderTable(); syncHeights(); }
+  if (id === 'tab-reglas')     renderReglas();
+}
+
+/* ── REGLAS TAB ── */
+function renderReglas() {
+  const rows = S.bolsa;
+  if (!rows || !rows.length) return;
+
+  // Parse lugar and monto — handle varying column names
+  const parsed = rows.map(r => ({
+    lugar:  r.lugar || r.Lugar || r.place || Object.values(r)[0] || '',
+    monto:  r.monto || r.Monto || r.amount || Object.values(r)[1] || '',
+  })).filter(r => r.lugar && r.monto);
+
+  // Total
+  const total = parsed.reduce((s, r) => {
+    const n = parseInt(String(r.monto).replace(/[^0-9]/g, ''));
+    return s + (isNaN(n) ? 0 : n);
+  }, 0);
+  document.getElementById('bolsa-total').textContent =
+    'Bolsa acumulada $' + total.toLocaleString('es-MX');
+
+  // Medals
+  const medals = {1:'🥇',2:'🥈',3:'🥉'};
+  const tbody = document.getElementById('bolsa-body');
+  tbody.innerHTML = parsed.map((r, i) => {
+    const lugar = parseInt(r.lugar);
+    const monto = parseInt(String(r.monto).replace(/[^0-9]/g, ''));
+    const medal = medals[lugar] || '';
+    const rowCls = i % 2 === 0 ? 'bolsa-tr-a' : 'bolsa-tr-b';
+    return `<tr class="${rowCls}">
+      <td class="bolsa-lugar">${medal} ${lugar}°</td>
+      <td class="bolsa-monto">$${monto.toLocaleString('es-MX')}</td>
+    </tr>`;
+  }).join('');
 }
 
 /* ── PUNTUACION TAB ── */
