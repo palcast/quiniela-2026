@@ -293,34 +293,50 @@ td {
 .td-team-name.visitor { text-align: left;  min-width: 85px; }
 .m-name      { font-weight: bold; font-size: 12px; color: var(--txt); }
 .td-flag     { padding: 3px 2px; width: 24px; text-align: center; vertical-align: middle; }
-.td-goal     { padding: 3px 3px; min-width: 24px; text-align: center; vertical-align: middle; background: var(--bg-score); }
-tbody tr.row-b .td-goal { background: var(--bg-score-b); }
-.goal-val    { font-weight: bold; font-size: 14px; color: var(--txt); line-height: 1; display: block; }
-.goal-val.pending   { color: var(--txt-gray); font-size: 11px; font-weight: normal; }
-.goal-val.simulated { color: var(--sim); }
+/* goal cell styles defined above */
 
 /* Score display cell */
-/* score display replaced by td-goal cells */
+/* ── EXCEL-STYLE EDITABLE GOAL CELLS ── */
+.td-goal {
+  padding: 0; min-width: 28px; width: 28px;
+  text-align: center; vertical-align: middle;
+  background: var(--bg-score);
+  position: relative;
+}
+tbody tr.row-b .td-goal { background: var(--bg-score-b); }
+tbody tr:hover .td-goal { filter: brightness(1.12); }
+
+/* The displayed number — fills the whole cell */
+.goal-val {
+  display: block; width: 100%;
+  font-weight: bold; font-size: 14px; color: var(--txt);
+  text-align: center; padding: 5px 2px;
+  cursor: text;
+  user-select: none;
+}
+.goal-val.pending { color: var(--txt-gray); font-size: 12px; font-weight: normal; }
+.goal-val.simulated { color: var(--sim); }
+
+/* The inline input — hidden by default, same size as the cell */
+.goal-inp {
+  display: none;
+  width: 100%; border: none; outline: none;
+  background: #0D1E2A;
+  color: var(--txt);
+  font-family: Calibri, sans-serif;
+  font-weight: bold; font-size: 14px;
+  text-align: center;
+  padding: 5px 2px;
+  -moz-appearance: textfield;
+}
+.goal-inp::-webkit-outer-spin-button,
+.goal-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.goal-inp.active { display: block; }
+/* Highlight the whole row when any goal cell is being edited */
+tr.editing .td-goal { background: #0D2030 !important; }
+tr.editing .td-goal .goal-inp.active { background: #0A1825; color: var(--pts-5); }
 /* Editor */
-.score-editor { display: none; align-items: center; gap: 3px; }
-.score-editor.open { display: inline-flex; }
-.sc-inp {
-  width: 28px; background: #0D1E2A; border: 1px solid var(--sim);
-  color: var(--txt); font-family: Calibri, sans-serif; font-size: 13px;
-  font-weight: bold; text-align: center; padding: 2px 0; outline: none;
-}
-.sc-inp.err { border-color: #F07070; }
-.sc-e-sep { color: var(--txt-gray); font-size: 10px; }
-.sc-ok {
-  background: var(--bg-header); border: none; color: #fff;
-  width: 20px; height: 20px; cursor: pointer; font-size: 11px; font-weight: bold;
-}
-.sc-ok:hover { background: #4A9090; }
-.sc-cancel {
-  background: var(--bg-row-a); border: 1px solid #555; color: var(--txt-dim);
-  width: 20px; height: 20px; cursor: pointer; font-size: 10px;
-}
-.sc-cancel:hover { border-color: #F07070; color: #F07070; }
+/* old editor controls removed */
 
 /* Selected participant cols */
 .td-sel { background: rgba(58,118,130,.12); text-align: center; }
@@ -712,14 +728,16 @@ function selectPart(name) {
 function buildTblHead() {
   const thead = document.getElementById('tbl-head');
   const parts = S.participants;
+  // Fixed cols: Fecha | Local | FlagL | GolesL | GolesV | FlagV | Visitante | [sel x2] | [parts x2 each]
   thead.innerHTML = `
     <tr class="hr1">
       <th rowspan="2" style="vertical-align:middle;text-align:center;min-width:95px">Fecha / Hora</th>
-      <th rowspan="2" style="text-align:right;min-width:85px">Local</th>
-      <th rowspan="2" style="width:24px"></th>
-      <th class="th-pts" style="font-size:8px;font-weight:normal;color:rgba(255,255,255,.5)">▸ clic p/simular</th>
-      <th rowspan="2" style="width:24px"></th>
-      <th rowspan="2" style="text-align:left;min-width:85px">Visitante</th>
+      <th rowspan="2" style="text-align:right;min-width:85px;padding-right:6px">Local</th>
+      <th rowspan="2" style="width:26px"></th>
+      <th class="th-pts" style="width:28px;font-size:8px;font-weight:normal;color:rgba(255,255,255,.6)">L</th>
+      <th class="th-pts" style="width:28px;font-size:8px;font-weight:normal;color:rgba(255,255,255,.6)">V</th>
+      <th rowspan="2" style="width:26px"></th>
+      <th rowspan="2" style="text-align:left;min-width:85px;padding-left:6px">Visitante</th>
       <th class="th-sel" id="th-sel-name" colspan="2" style="background:#4A8A70">${S.selectedPart||'— Seleccionar —'}</th>
       ${parts.map(p=>`
         <th colspan="2">
@@ -727,7 +745,8 @@ function buildTblHead() {
         </th>`).join('')}
     </tr>
     <tr class="hr2">
-      <th class="th-pts" style="font-size:9px">Marcador</th>
+      <th class="th-pts" style="font-size:8px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
+      <th class="th-pts" style="font-size:8px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
       <th class="th-sel" style="font-size:9px;background:#4A8A70">Pron.</th>
       <th class="th-sel th-pts" style="font-size:9px">Pts</th>
       ${parts.map(()=>`
@@ -780,14 +799,7 @@ function renderTable() {
     const rowCls   = (idx%2===0) ? 'row-a' : 'row-b';
     const scoreBg  = (idx%2===0) ? '' : ' style="background:var(--bg-score-b)"';
 
-    /* Editor overlay — appears inside the local goal cell */
-    const edEl = `<div class="score-editor" id="se-${m.id}" style="justify-content:center">
-      <input class="sc-inp" id="si-l-${m.id}" type="number" min="0" max="30" value="${hasScore?sc.l:''}" placeholder="0" onkeydown="edKey(event,'${m.id}')">
-      <span class="sc-e-sep">-</span>
-      <input class="sc-inp" id="si-v-${m.id}" type="number" min="0" max="30" value="${hasScore?sc.v:''}" placeholder="0" onkeydown="edKey(event,'${m.id}')">
-      <button class="sc-ok" onclick="applyEd('${m.id}')">✓</button>
-      <button class="sc-cancel" onclick="cancelEd('${m.id}')">✕</button>
-    </div>`;
+    /* Each goal cell has its own inline input, no extra decorations */
 
     /* Selected participant */
     let selPred='', selPts='';
@@ -815,13 +827,18 @@ function renderTable() {
         <td class="th-pts-data" style="text-align:center">${hasScore ? `<span class="mpts ${cls}">${pts}</span>` : `<span class="mpts pnd">?</span>`}</td>`;
     }).join('');
 
-    // goal display per cell
-    const gL = hasScore
-      ? `<span class="goal-val${isSim?' simulated':''}">${sc.l}</span>${edEl}`
-      : `<span class="goal-val pending">-</span>${edEl}`;
-    const gV = hasScore
-      ? `<span class="goal-val${isSim?' simulated':''}">${sc.v}</span>`
-      : `<span class="goal-val pending">-</span>`;
+    // goal cells — each has a display span + hidden input
+    const simCls = isSim ? ' simulated' : '';
+    const gL = `<span class="goal-val${hasScore?simCls:' pending'}" id="gv-l-${m.id}">${hasScore?sc.l:'-'}</span>
+                <input class="goal-inp" id="gi-l-${m.id}" type="number" min="0" max="30"
+                       value="${hasScore?sc.l:''}" inputmode="numeric"
+                       onkeydown="goalKey(event,'${m.id}','l')"
+                       onblur="goalBlur('${m.id}')">`;
+    const gV = `<span class="goal-val${hasScore?simCls:' pending'}" id="gv-v-${m.id}">${hasScore?sc.v:'-'}</span>
+                <input class="goal-inp" id="gi-v-${m.id}" type="number" min="0" max="30"
+                       value="${hasScore?sc.v:''}" inputmode="numeric"
+                       onkeydown="goalKey(event,'${m.id}','v')"
+                       onblur="goalBlur('${m.id}')">`;
 
     return `<tr class="${rowCls}${isSim?' row-sim':''}${!isPlayed&&!isSim?' row-pending':''}">
       <td class="td-meta">
@@ -834,8 +851,8 @@ function renderTable() {
       </td>
       <td class="td-team-name local"><span class="m-name">${m.local}</span></td>
       <td class="td-flag">${flagImg(m.cod_local || m.local)}</td>
-      <td class="td-goal" style="cursor:pointer;${isSim?'background:rgba(155,111,212,.12)':''}" onclick="openEditor('${m.id}')" title="Clic para simular" id="sd-${m.id}">${gL}</td>
-      <td class="td-goal" style="${isSim?'background:rgba(155,111,212,.12)':''}">${gV}</td>
+      <td class="td-goal" id="td-l-${m.id}" onclick="openGoal('${m.id}','l')" title="Clic para editar">${gL}</td>
+      <td class="td-goal" id="td-v-${m.id}" onclick="openGoal('${m.id}','v')" title="Clic para editar">${gV}</td>
       <td class="td-flag">${flagImg(m.cod_visitante || m.visitante)}</td>
       <td class="td-team-name visitor"><span class="m-name">${m.visitante}</span></td>
       <td class="td-sel" style="text-align:center">${selPred}</td>
@@ -845,42 +862,86 @@ function renderTable() {
   }).join('');
 }
 
-/* ── EDITOR ── */
-function openEditor(id) {
-  document.querySelectorAll('.score-editor.open').forEach(el => { cancelEd(el.id.replace('se-','')); });
-  // Hide the goal span inside the td (first child span)
-  const td = document.getElementById(`sd-${id}`);
-  if (td) { const sp = td.querySelector('.goal-val'); if (sp) sp.style.display='none'; }
-  document.getElementById(`se-${id}`).classList.add('open');
-  const li = document.getElementById(`si-l-${id}`);
-  li.focus(); li.select();
+/* ── GOAL CELL EDITOR (Excel-style) ── */
+let _activeId = null;
+
+function openGoal(id, side) {
+  // Close any currently open cell
+  if (_activeId && _activeId !== id) closeGoal(_activeId, true);
+
+  _activeId = id;
+  const inp = document.getElementById(`gi-${side}-${id}`);
+  const sp  = document.getElementById(`gv-${side}-${id}`);
+  const row = inp.closest('tr');
+  if (!inp || !sp) return;
+
+  sp.style.display = 'none';
+  inp.classList.add('active');
+  inp.focus();
+  inp.select();
+  if (row) row.classList.add('editing');
 }
-function cancelEd(id) {
-  document.getElementById(`se-${id}`).classList.remove('open');
-  const td = document.getElementById(`sd-${id}`);
-  if (td) { const sp = td.querySelector('.goal-val'); if (sp) sp.style.display=''; }
+
+function closeGoal(id, save) {
+  const liInp = document.getElementById(`gi-l-${id}`);
+  const viInp = document.getElementById(`gi-v-${id}`);
+  const liSp  = document.getElementById(`gv-l-${id}`);
+  const viSp  = document.getElementById(`gv-v-${id}`);
+  if (!liInp) return;
+
+  const row = liInp.closest('tr');
+  if (row) row.classList.remove('editing');
+
+  if (save) {
+    const l = parseInt(liInp.value);
+    const v = parseInt(viInp.value);
+    if (!isNaN(l) && !isNaN(v) && l >= 0 && v >= 0) {
+      S.simScores[id] = {l, v};
+      // Update display spans immediately without full re-render
+      liSp.textContent = l; liSp.className = 'goal-val simulated';
+      viSp.textContent = v; viSp.className = 'goal-val simulated';
+      buildRanking();
+      renderTable();
+      return;
+    }
+  }
+
+  // Restore original values
+  liInp.classList.remove('active'); liSp.style.display = '';
+  viInp.classList.remove('active'); viSp.style.display = '';
+  _activeId = null;
 }
-function applyEd(id) {
-  const li = document.getElementById(`si-l-${id}`);
-  const vi = document.getElementById(`si-v-${id}`);
-  const l = parseInt(li.value), v = parseInt(vi.value);
-  if (isNaN(l)||isNaN(v)||l<0||v<0) {
-    li.classList.add('err'); vi.classList.add('err');
-    setTimeout(()=>{ li.classList.remove('err'); vi.classList.remove('err'); }, 700);
+
+function goalKey(e, id, side) {
+  if (e.key === 'Escape') { closeGoal(id, false); return; }
+  if (e.key === 'Enter')  { closeGoal(id, true);  return; }
+  // Tab: local → visitor → confirm
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    if (side === 'l') {
+      openGoal(id, 'v');
+    } else {
+      closeGoal(id, true);
+    }
     return;
   }
-  S.simScores[id] = {l,v};
-  cancelEd(id);
-  buildRanking();
-  renderTable();
-}
-function edKey(e,id) {
-  if (e.key==='Enter')  applyEd(id);
-  if (e.key==='Escape') cancelEd(id);
-  if (e.key==='Tab' && e.target.id===`si-l-${id}`) {
+  // Only allow digits and backspace/delete
+  if (!/^[0-9]$/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight'].includes(e.key)) {
     e.preventDefault();
-    const vi = document.getElementById(`si-v-${id}`); vi.focus(); vi.select();
   }
+}
+
+function goalBlur(id) {
+  // Small delay so Tab can move focus first
+  setTimeout(() => {
+    const liInp = document.getElementById(`gi-l-${id}`);
+    const viInp = document.getElementById(`gi-v-${id}`);
+    if (!liInp) return;
+    const focused = document.activeElement;
+    if (focused !== liInp && focused !== viInp) {
+      closeGoal(id, true);
+    }
+  }, 120);
 }
 
 /* ── RESET ── */
