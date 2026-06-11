@@ -268,57 +268,27 @@ thead { position: sticky; top: 0; z-index: 10; }
 .th-pname:hover { color: var(--pts-5); }
 .th-pname.sel { color: var(--pts-5); }
 
-/* ── STICKY LEFT COLUMNS ── */
-/* Widths: meta=80, local=90, flagL=26, goalL=32, goalV=32, flagV=26, visitor=90, selPron=62, selPts=40 */
-/* Cumulative lefts: 0, 80, 170, 196, 228, 260, 286, 376, 438 */
+/* ── STICKY LEFT COLUMNS — offsets set by JS after render ── */
 .sticky   { position: sticky; z-index: 2; }
-.sticky-0 { left: 0px;   }
-.sticky-1 { left: 80px;  }
-.sticky-2 { left: 170px; }
-.sticky-3 { left: 196px; }
-.sticky-4 { left: 228px; }
-.sticky-5 { left: 260px; }
-.sticky-6 { left: 286px; }
-.sticky-7 { left: 376px; }
-.sticky-8 { left: 438px; box-shadow: 3px 0 8px rgba(0,0,0,.5); }
 thead .sticky { z-index: 12; }
+.sticky-last { box-shadow: 3px 0 8px rgba(0,0,0,.55); }
 
-/* Sticky cells need explicit bg — row-a */
-tbody tr.row-a .sticky-0,
-tbody tr.row-a .sticky-1,
-tbody tr.row-a .sticky-2,
-tbody tr.row-a .sticky-5,
-tbody tr.row-a .sticky-6 { background: var(--bg-row-a); }
-tbody tr.row-a .sticky-3,
-tbody tr.row-a .sticky-4 { background: var(--bg-score); }
-tbody tr.row-a .sticky-7 { background: #253830; }
-tbody tr.row-a .sticky-8 { background: #1E3028; }
+/* Backgrounds per row type */
+tbody tr.row-a td.sticky { background: var(--bg-row-a); }
+tbody tr.row-b td.sticky { background: var(--bg-row-b); }
+tbody tr.row-a td.sticky.td-goal { background: var(--bg-score); }
+tbody tr.row-b td.sticky.td-goal { background: var(--bg-score-b); }
+tbody tr.row-a td.sticky.td-sel  { background: #253830; }
+tbody tr.row-b td.sticky.td-sel  { background: #263930; }
+tbody tr.row-a td.sticky.td-sel-pts { background: #1E3028; }
+tbody tr.row-b td.sticky.td-sel-pts { background: #1F3128; }
+thead th.sticky { background: var(--bg-header); }
+thead th.sticky.th-pts { background: var(--bg-pts-hdr); }
+thead th.sticky.th-sel,
+thead th.sticky.th-sel-pts { background: #4A8A70; }
 
-/* row-b */
-tbody tr.row-b .sticky-0,
-tbody tr.row-b .sticky-1,
-tbody tr.row-b .sticky-2,
-tbody tr.row-b .sticky-5,
-tbody tr.row-b .sticky-6 { background: var(--bg-row-b); }
-tbody tr.row-b .sticky-3,
-tbody tr.row-b .sticky-4 { background: var(--bg-score-b); }
-tbody tr.row-b .sticky-7 { background: #263930; }
-tbody tr.row-b .sticky-8 { background: #1F3128; }
-
-/* thead sticky bg */
-thead .sticky-0,
-thead .sticky-1,
-thead .sticky-2,
-thead .sticky-5,
-thead .sticky-6 { background: var(--bg-header); }
-thead .sticky-3,
-thead .sticky-4 { background: var(--bg-pts-hdr); }
-thead .sticky-7,
-thead .sticky-8 { background: #4A8A70; }
-
-/* editing row goal cells */
-tr.editing .sticky-3,
-tr.editing .sticky-4 { background: #0D2030 !important; }
+/* editing row */
+tr.editing td.sticky.td-goal { background: #0D2030 !important; }
 
 /* Data rows */
 tbody tr.row-a { background: var(--bg-row-a); }
@@ -778,24 +748,24 @@ function buildTblHead() {
   // Fixed cols: Fecha | Local | FlagL | GolesL | GolesV | FlagV | Visitante | [sel x2] | [parts x2 each]
   thead.innerHTML = `
     <tr class="hr1">
-      <th rowspan="2" class="sticky sticky-0" style="vertical-align:middle;text-align:left;min-width:80px">Fecha / Hora</th>
-      <th rowspan="2" class="sticky sticky-1" style="text-align:right;min-width:90px;padding-right:6px">Local</th>
-      <th rowspan="2" class="sticky sticky-2" style="width:26px"></th>
-      <th class="th-pts sticky sticky-3" style="width:32px;min-width:32px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">L</th>
-      <th class="th-pts sticky sticky-4" style="width:32px;min-width:32px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
-      <th rowspan="2" class="sticky sticky-5" style="width:26px"></th>
-      <th rowspan="2" class="sticky sticky-6" style="text-align:left;min-width:90px;padding-left:6px">Visitante</th>
-      <th class="th-sel sticky sticky-7" id="th-sel-name" colspan="2" style="background:#4A8A70">${S.selectedPart||'— Seleccionar —'}</th>
+      <th rowspan="2" class="sticky" style="vertical-align:middle;text-align:left;min-width:80px">Fecha / Hora</th>
+      <th rowspan="2" class="sticky" style="text-align:right;min-width:90px;padding-right:6px">Local</th>
+      <th rowspan="2" class="sticky" style="width:26px"></th>
+      <th class="th-pts sticky" style="width:32px;min-width:32px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">L</th>
+      <th class="th-pts sticky" style="width:32px;min-width:32px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
+      <th rowspan="2" class="sticky" style="width:26px"></th>
+      <th rowspan="2" class="sticky" style="text-align:left;min-width:90px;padding-left:6px">Visitante</th>
+      <th class="th-sel sticky" id="th-sel-name" colspan="2" style="background:#4A8A70">${S.selectedPart||'— Seleccionar —'}</th>
       ${parts.map(p=>`
         <th colspan="2">
           <span class="th-pname ${S.selectedPart===p.name?'sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span>
         </th>`).join('')}
     </tr>
     <tr class="hr2">
-      <th class="th-pts sticky sticky-3" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
-      <th class="th-pts sticky sticky-4" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
-      <th class="th-sel sticky sticky-7" style="font-size:11px;background:#4A8A70">Pron.</th>
-      <th class="th-sel th-pts sticky sticky-8" style="font-size:11px">Pts</th>
+      <th class="th-pts sticky" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
+      <th class="th-pts sticky" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
+      <th class="th-sel sticky" style="font-size:11px;background:#4A8A70">Pron.</th>
+      <th class="th-sel th-pts sticky" style="font-size:11px">Pts</th>
       ${parts.map(()=>`
         <th style="font-size:11px">P.</th>
         <th class="th-pts" style="font-size:11px">Pts</th>`).join('')}
@@ -888,22 +858,25 @@ function renderTable() {
                        onblur="goalBlur('${m.id}')">`;
 
     return `<tr class="${rowCls}${isSim?' row-sim':''}${!isPlayed&&!isSim?' row-pending':''}">
-      <td class="td-meta sticky sticky-0">
+      <td class="td-meta sticky">
         <div class="m-row1"><span class="m-grupo">${m.grupo}</span><span class="m-fecha">${m.fecha}</span></div>
         <span class="m-hora">${m.hora}</span>
         ${isSim ? '<span class="b-sim">SIM</span>' : (!isPlayed ? '<span class="b-pend">PND</span>' : '')}
       </td>
-      <td class="td-team-name local sticky sticky-1"><span class="m-name">${m.local}</span></td>
-      <td class="td-flag sticky sticky-2">${flagImg(m.cod_local || m.local)}</td>
-      <td class="td-goal sticky sticky-3" id="td-l-${m.id}" onclick="openGoal('${m.id}','l')" title="Clic para editar">${gL}</td>
-      <td class="td-goal sticky sticky-4" id="td-v-${m.id}" onclick="openGoal('${m.id}','v')" title="Clic para editar">${gV}</td>
-      <td class="td-flag sticky sticky-5">${flagImg(m.cod_visitante || m.visitante)}</td>
-      <td class="td-team-name visitor sticky sticky-6"><span class="m-name">${m.visitante}</span></td>
-      <td class="td-sel sticky sticky-7" style="text-align:center">${selPred}</td>
-      <td class="td-sel-pts sticky sticky-8">${selPts}</td>
+      <td class="td-team-name local sticky"><span class="m-name">${m.local}</span></td>
+      <td class="td-flag sticky">${flagImg(m.cod_local || m.local)}</td>
+      <td class="td-goal sticky" id="td-l-${m.id}" onclick="openGoal('${m.id}','l')" title="Clic para editar">${gL}</td>
+      <td class="td-goal sticky" id="td-v-${m.id}" onclick="openGoal('${m.id}','v')" title="Clic para editar">${gV}</td>
+      <td class="td-flag sticky">${flagImg(m.cod_visitante || m.visitante)}</td>
+      <td class="td-team-name visitor sticky"><span class="m-name">${m.visitante}</span></td>
+      <td class="td-sel sticky" style="text-align:center">${selPred}</td>
+      <td class="td-sel-pts sticky">${selPts}</td>
       ${pCols}
     </tr>`;
   }).join('');
+
+  // Compute sticky left offsets now that DOM is updated
+  requestAnimationFrame(applyStickyOffsets);
 }
 
 /* ── GOAL CELL EDITOR (Excel-style) ── */
@@ -997,10 +970,62 @@ function resetSim() {
 
 /* ── AUTO REFRESH (only when no sim active) ── */
 if (CONFIG.AUTO_REFRESH_MIN > 0) {
-  setInterval(() => { if (Object.keys(S.simScores).length===0) loadData(); }, CONFIG.AUTO_REFRESH_MIN*60*1000);
+  setInterval(() => { if (Object.keys(S.simScores).length===0) loadData();
+
+/* ── COMPUTE STICKY OFFSETS after table renders ── */
+function applyStickyOffsets() {
+  // Get the first body row to measure actual rendered widths
+  const firstRow = document.querySelector('#tbl-body tr');
+  if (!firstRow) return;
+  const cells = firstRow.querySelectorAll('td.sticky');
+  if (!cells.length) return;
+
+  // Also get header cells
+  const hCells = document.querySelectorAll('thead th.sticky');
+
+  let offset = 0;
+  const offsets = [];
+
+  // Walk through sticky cells in order (they're added left→right)
+  cells.forEach((td, i) => {
+    offsets.push(offset);
+    offset += td.offsetWidth;
+  });
+
+  // Apply to all rows — tbody
+  document.querySelectorAll('#tbl-body tr').forEach(row => {
+    const stickyCells = row.querySelectorAll('td.sticky');
+    stickyCells.forEach((td, i) => {
+      td.style.left = offsets[i] + 'px';
+    });
+  });
+
+  // Apply to thead
+  let hOffset = 0;
+  const hOffsets = [];
+  hCells.forEach((th, i) => {
+    hOffsets.push(hOffset);
+    hOffset += th.offsetWidth;
+  });
+  hCells.forEach((th, i) => {
+    th.style.left = hOffsets[i] + 'px';
+  });
+
+  // Mark the last sticky cell in each row with shadow
+  document.querySelectorAll('#tbl-body tr').forEach(row => {
+    const stickyCells = row.querySelectorAll('td.sticky');
+    stickyCells.forEach(td => td.classList.remove('sticky-last'));
+    if (stickyCells.length) stickyCells[stickyCells.length-1].classList.add('sticky-last');
+  });
+  // thead last
+  hCells.forEach(th => th.classList.remove('sticky-last'));
+  if (hCells.length) hCells[hCells.length-1].classList.add('sticky-last');
+} }, CONFIG.AUTO_REFRESH_MIN*60*1000);
 }
 
 loadData();
+
+/* ── COMPUTE STICKY OFFSETS after table renders ── */
 </script>
 </body>
 </html>
