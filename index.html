@@ -970,62 +970,48 @@ function resetSim() {
 
 /* ── AUTO REFRESH (only when no sim active) ── */
 if (CONFIG.AUTO_REFRESH_MIN > 0) {
-  setInterval(() => { if (Object.keys(S.simScores).length===0) loadData();
-
-/* ── COMPUTE STICKY OFFSETS after table renders ── */
+/* ── COMPUTE STICKY OFFSETS — measured after DOM renders ── */
 function applyStickyOffsets() {
-  // Get the first body row to measure actual rendered widths
   const firstRow = document.querySelector('#tbl-body tr');
   if (!firstRow) return;
-  const cells = firstRow.querySelectorAll('td.sticky');
-  if (!cells.length) return;
+  const bodyCells = firstRow.querySelectorAll('td.sticky');
+  if (!bodyCells.length) return;
 
-  // Also get header cells
-  const hCells = document.querySelectorAll('thead th.sticky');
-
-  let offset = 0;
+  // Measure real widths from first row
   const offsets = [];
+  let acc = 0;
+  bodyCells.forEach(td => { offsets.push(acc); acc += td.offsetWidth; });
 
-  // Walk through sticky cells in order (they're added left→right)
-  cells.forEach((td, i) => {
-    offsets.push(offset);
-    offset += td.offsetWidth;
-  });
-
-  // Apply to all rows — tbody
+  // Apply to every body row
   document.querySelectorAll('#tbl-body tr').forEach(row => {
-    const stickyCells = row.querySelectorAll('td.sticky');
-    stickyCells.forEach((td, i) => {
-      td.style.left = offsets[i] + 'px';
+    row.querySelectorAll('td.sticky').forEach((td, i) => {
+      td.style.left = (offsets[i] ?? 0) + 'px';
     });
   });
 
-  // Apply to thead
-  let hOffset = 0;
+  // Apply to thead — measure independently
+  const hCells = document.querySelectorAll('thead th.sticky');
   const hOffsets = [];
-  hCells.forEach((th, i) => {
-    hOffsets.push(hOffset);
-    hOffset += th.offsetWidth;
-  });
-  hCells.forEach((th, i) => {
-    th.style.left = hOffsets[i] + 'px';
-  });
+  let hAcc = 0;
+  hCells.forEach(th => { hOffsets.push(hAcc); hAcc += th.offsetWidth; });
+  hCells.forEach((th, i) => { th.style.left = (hOffsets[i] ?? 0) + 'px'; });
 
-  // Mark the last sticky cell in each row with shadow
+  // Shadow on last sticky cell per row
   document.querySelectorAll('#tbl-body tr').forEach(row => {
-    const stickyCells = row.querySelectorAll('td.sticky');
-    stickyCells.forEach(td => td.classList.remove('sticky-last'));
-    if (stickyCells.length) stickyCells[stickyCells.length-1].classList.add('sticky-last');
+    const cells = row.querySelectorAll('td.sticky');
+    cells.forEach(td => td.classList.remove('sticky-last'));
+    if (cells.length) cells[cells.length - 1].classList.add('sticky-last');
   });
-  // thead last
   hCells.forEach(th => th.classList.remove('sticky-last'));
-  if (hCells.length) hCells[hCells.length-1].classList.add('sticky-last');
-} }, CONFIG.AUTO_REFRESH_MIN*60*1000);
+  if (hCells.length) hCells[hCells.length - 1].classList.add('sticky-last');
+}
+
+/* ── AUTO REFRESH (only when no sim active) ── */
+if (CONFIG.AUTO_REFRESH_MIN > 0) {
+  setInterval(() => { if (Object.keys(S.simScores).length === 0) loadData(); }, CONFIG.AUTO_REFRESH_MIN * 60 * 1000);
 }
 
 loadData();
-
-/* ── COMPUTE STICKY OFFSETS after table renders ── */
 </script>
 </body>
 </html>
