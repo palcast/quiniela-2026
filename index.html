@@ -115,17 +115,21 @@ main{padding:10px}
 .left-wrap{flex:0 0 auto;overflow:hidden;z-index:2;box-shadow:4px 0 8px rgba(0,0,0,.45)}
 .left-wrap table{border-collapse:collapse;font-size:13px;font-family:Calibri,sans-serif;table-layout:fixed}
 
-/* RIGHT — scrolls horizontally */
-.right-wrap{flex:1 1 auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#444 var(--bg-panel)}
-.right-wrap::-webkit-scrollbar{height:5px}
-.right-wrap::-webkit-scrollbar-track{background:var(--bg-panel)}
-.right-wrap::-webkit-scrollbar-thumb{background:#555}
+/* RIGHT — container, no scroll itself */
+.right-wrap{flex:1 1 auto;overflow:hidden;display:flex;flex-direction:column}
 .right-wrap table{border-collapse:collapse;font-size:13px;font-family:Calibri,sans-serif}
 
-/* Shared vertical scroll on a wrapper div */
+/* RIGHT header — no scroll, fixed */
+#right-head-wrap{overflow:hidden;flex:0 0 auto}
+
+/* RIGHT body — scrolls both directions */
 .scroll-body{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#444 var(--bg-panel)}
 .scroll-body::-webkit-scrollbar{width:5px}
 .scroll-body::-webkit-scrollbar-thumb{background:#555}
+#right-body-wrap{overflow-x:auto;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#444 var(--bg-panel)}
+#right-body-wrap::-webkit-scrollbar{height:5px;width:5px}
+#right-body-wrap::-webkit-scrollbar-track{background:var(--bg-panel)}
+#right-body-wrap::-webkit-scrollbar-thumb{background:#555}
 
 /* ── HEADER ROWS ── */
 th{background:var(--bg-hdr);color:#EEE;padding:5px 6px;font-size:12px;font-weight:bold;text-align:center;white-space:nowrap;border-right:1px solid #2F6670;border-bottom:1px solid #2F6670;height:var(--hdr-h)}
@@ -323,9 +327,11 @@ footer a:hover{color:var(--gold)}
         </div>
         <!-- RIGHT: scrollable participants -->
         <div class="right-wrap" id="right-wrap">
-          <table>
-            <thead id="right-head"></thead>
-          </table>
+          <div id="right-head-wrap">
+            <table>
+              <thead id="right-head"></thead>
+            </table>
+          </div>
           <div class="scroll-body" id="right-body-wrap">
             <table>
               <tbody id="right-body"></tbody>
@@ -629,6 +635,7 @@ function syncHeights(){
     const maxH=wrap.offsetHeight-lh;
     document.getElementById('left-body-wrap').style.maxHeight=maxH+'px';
     document.getElementById('right-body-wrap').style.maxHeight=maxH+'px';
+    document.getElementById('right-body-wrap').style.height=maxH+'px';
   });
 }
 
@@ -636,9 +643,17 @@ function syncHeights(){
 function initScrollSync(){
   const lb=document.getElementById('left-body-wrap');
   const rb=document.getElementById('right-body-wrap');
+  const rh=document.getElementById('right-head-wrap');
   let lock=false;
+  // Sync vertical scroll between left and right bodies
   lb.addEventListener('scroll',()=>{if(lock)return;lock=true;rb.scrollTop=lb.scrollTop;lock=false});
-  rb.addEventListener('scroll',()=>{if(lock)return;lock=true;lb.scrollTop=rb.scrollTop;lock=false});
+  rb.addEventListener('scroll',()=>{
+    if(lock)return;lock=true;
+    lb.scrollTop=rb.scrollTop;
+    // Sync header horizontal scroll with body
+    rh.scrollLeft=rb.scrollLeft;
+    lock=false;
+  });
 }
 
 /* ── GOAL EDITOR ── */
