@@ -99,7 +99,7 @@ main{padding:10px}
 .pts-wrap{background:var(--bg-panel);border:1px solid #2A3540;padding:14px 14px 8px;display:flex;flex-direction:column;gap:10px}
 .pts-wrap-title{font-family:Verdana,sans-serif;font-size:11px;font-weight:bold;color:var(--txt-dim);text-align:center;letter-spacing:2px;text-transform:uppercase}
 /* Bar chart area */
-.vbar-area{display:flex;gap:0;overflow-x:auto;align-items:flex-end;height:260px;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--bg-hdr) var(--bg-panel)}
+.vbar-area{display:flex;gap:0;overflow-x:auto;align-items:flex-end;height:280px;padding-bottom:4px;padding-top:18px;scrollbar-width:thin;scrollbar-color:var(--bg-hdr) var(--bg-panel)}
 .vbar-area::-webkit-scrollbar{height:3px}
 .vbar-area::-webkit-scrollbar-thumb{background:var(--bg-hdr)}
 .vbar-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1 1 0;min-width:22px;max-width:40px;cursor:pointer}
@@ -119,7 +119,7 @@ main{padding:10px}
 .pts-rank-col td{padding:2px 8px;border-bottom:1px solid rgba(255,255,255,.03);white-space:nowrap;font-size:11px;height:20px}
 .ptr-a td{background:var(--bg-row-a)}
 .ptr-b td{background:var(--bg-row-b)}
-.ptr-sel td{background:#3E3318!important;color:var(--gold)!important;font-weight:bold}
+.ptr-sel td{background:rgba(240,180,41,0.1)!important;color:var(--gold)!important;font-weight:bold}
 .td-pr-rank{text-align:center;color:var(--txt-dim);width:28px;font-size:10px}
 .ptr-sel .td-pr-rank{color:var(--gold)}
 .td-pr-name{text-align:left;padding-left:6px!important;min-width:80px}
@@ -151,7 +151,7 @@ main{padding:10px}
 .match-preds-table th.th-pts-col{background:var(--bg-pts-hdr)}
 .match-preds-table td{padding:2px 6px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03);text-align:center;height:22px;white-space:nowrap}
 .mp-a td{background:var(--bg-row-a)}.mp-b td{background:var(--bg-row-b)}
-.mp-sel td{background:#3E3318!important;color:var(--gold)!important}
+.mp-sel td{background:rgba(240,180,41,0.1)!important;color:var(--gold)!important}
 .td-rank-num{color:var(--txt-dim);font-size:10px;width:20px;text-align:center}
 .td-part-name{text-align:left!important;padding-left:8px!important;font-weight:bold;font-size:11px;min-width:70px}
 .mp-sel .td-part-name{color:var(--gold)}
@@ -740,7 +740,7 @@ function renderTable(){
         const pts=hasScore?calcPoints(sc.l,sc.v,pr.l,pr.v):null;
         const cls=pc(pts,hasScore);
         selPred=`<div class="mini">${pr.l}<span class="mini-sep">-</span>${pr.v}</div>`;
-        selPts=hasScore?`<span class="mpts ${cls}">${pts}</span>`:`<span class="mpts pnd">?</span>`;
+        selPts=hasScore?`<span class="mpts ${cls}">${pts}</span>`:'';
       }
     }
 
@@ -766,7 +766,7 @@ function renderTable(){
       if(!pr||pr.l===null)return`<td class="td-mini" style="color:var(--txt-gray)">—</td><td class="td-mpts" style="color:var(--txt-gray)">—</td>`;
       const pts=hasScore?calcPoints(sc.l,sc.v,pr.l,pr.v):null;
       const cls=pc(pts,hasScore);
-      return`<td class="td-mini"><div class="mini">${pr.l}<span class="mini-sep">-</span>${pr.v}</div></td><td class="td-mpts">${hasScore?`<span class="mpts ${cls}">${pts}</span>`:`<span class="mpts pnd">?</span>`}</td>`;
+      return`<td class="td-mini"><div class="mini">${pr.l}<span class="mini-sep">-</span>${pr.v}</div></td><td class="td-mpts">${hasScore?`<span class="mpts ${cls}">${pts}</span>`:''}</td>`;
     }).join('');
     rightRows.push(`<tr class="${rowCls}">${pCols}</tr>`);
   });
@@ -843,7 +843,10 @@ function closeGoal(id,save){
     const l=parseInt(li.value),v=parseInt(vi.value);
     if(!isNaN(l)&&!isNaN(v)&&l>=0&&v>=0){
       S.simScores[id]={l,v};
-      buildRanking();renderTable();return;
+      buildRanking();renderTable();
+      const aTab=document.querySelector('.tab-pane.active');
+      if(aTab&&aTab.id==='tab-puntuacion') renderPuntuacion();
+      return;
     }
   }
   li.classList.remove('active');ls.style.display='';
@@ -874,7 +877,15 @@ function setFilter(f,btn){
 }
 
 /* ── RESET SIM ── */
-function resetSim(){S.simScores={};buildRanking();renderTable()}
+function resetSim(){
+  S.simScores={};
+  buildRanking();renderTable();
+  const activeTab=document.querySelector('.tab-pane.active');
+  if(activeTab){
+    if(activeTab.id==='tab-puntuacion') renderPuntuacion();
+    if(activeTab.id==='tab-partido')    renderMatchDetail();
+  }
+}
 
 /* ── TAB SWITCHING ── */
 function switchTab(id, btn) {
