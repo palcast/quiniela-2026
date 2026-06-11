@@ -775,22 +775,23 @@ function renderTable(){
 /* ── SYNC ROW HEIGHTS between left and right tables ── */
 function syncHeights(){
   requestAnimationFrame(()=>{
+    const wrap=document.getElementById('grid-wrap');
+    // If marcador tab is not visible, skip — offsetHeight would be 0
+    if(!wrap||wrap.offsetParent===null) return;
+
     const lRows=document.querySelectorAll('#left-body tr');
     const rRows=document.querySelectorAll('#right-body tr');
-    // Reset heights first
     lRows.forEach(r=>r.style.height='');
     rRows.forEach(r=>r.style.height='');
-    // Apply max of both
     const len=Math.min(lRows.length,rRows.length);
     for(let i=0;i<len;i++){
       const h=Math.max(lRows[i].offsetHeight,rRows[i].offsetHeight);
       lRows[i].style.height=h+'px';
       rRows[i].style.height=h+'px';
     }
-    // Sync scroll areas height
-    const wrap=document.getElementById('grid-wrap');
     const lh=document.getElementById('left-head').offsetHeight;
     const maxH=wrap.offsetHeight-lh;
+    if(maxH<=0) return;
     document.getElementById('left-body-wrap').style.maxHeight=maxH+'px';
     document.getElementById('right-body-wrap').style.maxHeight=maxH+'px';
     document.getElementById('right-body-wrap').style.height=maxH+'px';
@@ -879,6 +880,7 @@ function switchTab(id, btn) {
   btn.classList.add('active');
   if (id === 'tab-puntuacion') renderPuntuacion();
   if (id === 'tab-partido')    renderMatchSelector();
+  if (id === 'tab-marcador')   { buildHeaders(); renderTable(); syncHeights(); }
 }
 
 /* ── PUNTUACION TAB ── */
