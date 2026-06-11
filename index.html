@@ -84,32 +84,36 @@ select:hover{border-color:var(--pts-5)}
 main{padding:10px}
 
 /* ── PUNTUACION TAB ── */
-.pts-layout{display:flex;gap:0;align-items:flex-start;flex-wrap:wrap}
-.pts-table-wrap{flex:0 0 auto;background:var(--bg-panel);border:1px solid #2A3540;min-width:220px}
-.pts-table-wrap table{border-collapse:collapse;width:100%;font-size:12px}
-.pts-table-wrap th{background:var(--bg-hdr);color:#EEE;padding:5px 10px;font-size:11px;text-align:center;border-bottom:1px solid #014A62;white-space:nowrap}
-.pts-table-wrap th.th-pts-col{background:var(--bg-pts-hdr)}
-.pts-table-wrap td{padding:4px 10px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap}
-.pts-tr-a td{background:var(--bg-row-a)}
-.pts-tr-b td{background:var(--bg-row-b)}
-.pts-tr-sel td{background:#3E3318!important}
-.pts-tr-sel td.td-pts-rank{color:var(--gold);font-weight:bold}
-.pts-tr-sel td.td-pts-name{color:var(--gold);font-weight:bold}
-.pts-tr-sel td.td-pts-val{color:var(--gold);font-weight:bold}
-.td-pts-rank{text-align:center;color:var(--txt-dim);width:36px}
-.td-pts-name{text-align:left;padding-left:12px}
-.td-pts-val{text-align:right;padding-right:12px;font-weight:bold;font-family:Verdana,sans-serif;font-size:13px;color:var(--gold)}
-
-.chart-wrap{flex:1 1 260px;background:var(--bg-panel);border:1px solid #2A3540;padding:8px 10px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg-hdr) var(--bg-panel)}
-.chart-wrap::-webkit-scrollbar{width:3px}
-.chart-wrap::-webkit-scrollbar-thumb{background:var(--bg-hdr)}
-.hbar-row{display:flex;align-items:center;gap:6px;height:22px;margin-bottom:2px}
-.hbar-track{flex:1 1 auto;height:14px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden;position:relative}
-.hbar-fill{height:100%;border-radius:2px;transition:width .4s ease;min-width:2px}
-.hbar-fill-default{background:#4A5568}
-.hbar-fill-sel{background:var(--gold)}
-.hbar-val{flex:0 0 30px;text-align:right;font-size:11px;font-weight:bold;color:var(--txt-dim);font-family:Verdana,sans-serif}
-.hbar-val-sel{color:var(--gold)}
+/* ── PUNTUACION TAB ── */
+.pts-wrap{background:var(--bg-panel);border:1px solid #2A3540;padding:14px 14px 8px;display:flex;flex-direction:column;gap:10px}
+.pts-wrap-title{font-family:Verdana,sans-serif;font-size:11px;font-weight:bold;color:var(--txt-dim);text-align:center;letter-spacing:2px;text-transform:uppercase}
+/* Bar chart area */
+.vbar-area{display:flex;gap:0;overflow-x:auto;align-items:flex-end;height:260px;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--bg-hdr) var(--bg-panel)}
+.vbar-area::-webkit-scrollbar{height:3px}
+.vbar-area::-webkit-scrollbar-thumb{background:var(--bg-hdr)}
+.vbar-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1 1 0;min-width:22px;max-width:40px;cursor:pointer}
+.vbar-pts-lbl{font-size:9px;color:var(--txt-dim);font-weight:bold;line-height:1;min-height:11px}
+.vbar-pts-lbl.sel{color:var(--gold)}
+.vbar-bar{width:80%;border-radius:2px 2px 0 0;transition:background .2s, height .4s;min-height:2px}
+.vbar-bar-default{background:#3D4D5E}
+.vbar-bar-sel{background:var(--gold)}
+.vbar-name{font-size:7px;color:var(--txt-dim);transform:rotate(-50deg);transform-origin:top right;white-space:nowrap;margin-top:6px;height:44px;width:44px;text-align:right;line-height:1}
+.vbar-name.sel{color:var(--gold)}
+/* Ranking table */
+.pts-rank-table{display:flex;gap:10px;overflow-x:auto}
+.pts-rank-col{flex:0 0 auto;min-width:160px}
+.pts-rank-col table{border-collapse:collapse;width:100%;font-size:11px}
+.pts-rank-col th{background:var(--bg-hdr);color:#EEE;padding:3px 8px;font-size:10px;text-align:center;border-bottom:1px solid #014A62;white-space:nowrap}
+.pts-rank-col th.th-pts-c{background:var(--bg-pts-hdr)}
+.pts-rank-col td{padding:2px 8px;border-bottom:1px solid rgba(255,255,255,.03);white-space:nowrap;font-size:11px;height:20px}
+.ptr-a td{background:var(--bg-row-a)}
+.ptr-b td{background:var(--bg-row-b)}
+.ptr-sel td{background:#3E3318!important;color:var(--gold)!important;font-weight:bold}
+.td-pr-rank{text-align:center;color:var(--txt-dim);width:28px;font-size:10px}
+.ptr-sel .td-pr-rank{color:var(--gold)}
+.td-pr-name{text-align:left;padding-left:6px!important;min-width:80px}
+.td-pr-pts{text-align:right;padding-right:8px!important;font-weight:bold;color:var(--gold);font-family:Verdana,sans-serif;font-size:12px}
+.ptr-sel .td-pr-pts{color:var(--gold)}
 
 /* ── PARTIDO TAB ── */
 .match-layout{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
@@ -143,6 +147,9 @@ main{padding:10px}
 .td-pred-lv{font-weight:bold;color:var(--txt);font-size:12px;width:38px}
 .td-pred-pts{width:28px;font-size:12px}
 .pred-pending{color:var(--txt-dim)}
+.td-pred-icon{text-align:center;width:26px;padding:2px 3px}
+.pred-icon-draw{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#444;color:var(--txt-dim);font-size:9px;font-weight:bold;border:1px solid #666}
+.pred-icon-flag .flag{width:18px;height:18px}
 
 /* ── RANKING ── */
 .ranking-wrap{background:var(--bg-panel);border:1px solid #2A3540;padding:8px 10px;margin-bottom:10px;overflow:hidden}
@@ -414,22 +421,12 @@ footer a:hover{color:var(--gold)}
 
     <!-- ══ TAB 2: PUNTUACIÓN ══ -->
     <div class="tab-pane" id="tab-puntuacion">
-      <div class="pts-layout">
-        <!-- Tabla de clasificación -->
-        <div class="pts-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:36px">#</th>
-                <th style="text-align:left;padding-left:12px">Participante</th>
-                <th class="th-pts-col">Puntos</th>
-              </tr>
-            </thead>
-            <tbody id="pts-table-body"></tbody>
-          </table>
-        </div>
-        <!-- Gráfica de barras horizontal -->
-        <div class="chart-wrap" id="bar-chart"></div>
+      <div class="pts-wrap">
+        <div class="pts-wrap-title">Puntuación</div>
+        <!-- Vertical bar chart -->
+        <div class="vbar-area" id="bar-chart"></div>
+        <!-- Ranking table split in columns -->
+        <div class="pts-rank-table" id="pts-rank-table"></div>
       </div>
     </div>
 
@@ -450,6 +447,7 @@ footer a:hover{color:var(--gold)}
               <tr>
                 <th style="width:20px">#</th>
                 <th style="text-align:left;padding-left:8px">Participante</th>
+                <th style="width:26px"></th>
                 <th>L-V</th>
                 <th class="th-pts-col" id="match-pts-header">Pts</th>
               </tr>
@@ -846,39 +844,48 @@ function renderPuntuacion() {
   const hasSim = Object.keys(S.simScores).length > 0;
   const tot    = simTotals();
   const sel    = S.selectedPart;
-
-  // Sort by rank (as-is from sheet)
   const sorted = [...S.participants].sort((a,b) => a.rank - b.rank);
+  const maxPts = Math.max(...sorted.map(p => hasSim ? (tot[p.name]??p.points) : p.points), 1);
+  const CHART_H = 200; // px available for bars
 
-  // Table
-  const tbody = document.getElementById('pts-table-body');
-  tbody.innerHTML = sorted.map((p, i) => {
-    const pts   = hasSim ? (tot[p.name] ?? p.points) : p.points;
-    const isSel = sel === p.name;
-    const rowCls = isSel ? 'pts-tr-sel' : (i % 2 === 0 ? 'pts-tr-a' : 'pts-tr-b');
-    const medals = {1:'🥇',2:'🥈',3:'🥉'};
-    return `<tr class="${rowCls}">
-      <td class="td-pts-rank">${medals[p.rank] || p.rank + '°'}</td>
-      <td class="td-pts-name">${p.name}</td>
-      <td class="td-pts-val">${pts}</td>
-    </tr>`;
-  }).join('');
-
-  // Horizontal bar chart — rows aligned with table
-  const chart  = document.getElementById('bar-chart');
-  const maxPts = Math.max(...sorted.map(p => hasSim ? (tot[p.name] ?? p.points) : p.points), 1);
+  // ── Vertical bar chart ──
+  const chart = document.getElementById('bar-chart');
   chart.innerHTML = sorted.map(p => {
-    const pts   = hasSim ? (tot[p.name] ?? p.points) : p.points;
+    const pts   = hasSim ? (tot[p.name]??p.points) : p.points;
     const isSel = sel === p.name;
-    const pct   = Math.max((pts / maxPts) * 100, 1).toFixed(1);
-    return `<div class="hbar-row">
-      <div class="hbar-track">
-        <div class="hbar-fill ${isSel ? 'hbar-fill-sel' : 'hbar-fill-default'}"
-             style="width:${pct}%"></div>
-      </div>
-      <div class="hbar-val ${isSel ? 'hbar-val-sel' : ''}">${pts}</div>
+    const barH  = Math.max(Math.round((pts/maxPts)*CHART_H), 3);
+    return `<div class="vbar-col" onclick="selectPart('${p.name}')">
+      <div class="vbar-pts-lbl ${isSel?'sel':''}">${pts}</div>
+      <div class="vbar-bar ${isSel?'vbar-bar-sel':'vbar-bar-default'}" style="height:${barH}px"></div>
+      <div class="vbar-name ${isSel?'sel':''}">${p.name}</div>
     </div>`;
   }).join('');
+
+  // ── Ranking table — split into 2 columns of ~16 each ──
+  const half  = Math.ceil(sorted.length / 2);
+  const cols  = [sorted.slice(0, half), sorted.slice(half)];
+  const medals = {1:'🥇',2:'🥈',3:'🥉'};
+  const rankWrap = document.getElementById('pts-rank-table');
+  rankWrap.innerHTML = cols.map(col => `
+    <div class="pts-rank-col">
+      <table>
+        <thead><tr>
+          <th style="width:28px">#</th>
+          <th style="text-align:left;padding-left:6px">Participante</th>
+          <th class="th-pts-c">Pts</th>
+        </tr></thead>
+        <tbody>${col.map((p,i) => {
+          const pts   = hasSim ? (tot[p.name]??p.points) : p.points;
+          const isSel = sel === p.name;
+          const rCls  = isSel ? 'ptr-sel' : (i%2===0?'ptr-a':'ptr-b');
+          return `<tr class="${rCls}">
+            <td class="td-pr-rank">${medals[p.rank]||p.rank+'°'}</td>
+            <td class="td-pr-name">${p.name}</td>
+            <td class="td-pr-pts">${pts}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`).join('');
 }
 
 /* ── PARTIDO TAB ── */
@@ -981,17 +988,26 @@ function renderMatchDetail() {
 
   const tbody = document.getElementById('match-preds-body');
   tbody.innerHTML = parts.map((p, i) => {
-    const pr     = (S.preds[m.id] || {})[p.name];
     const isSel  = sel === p.name;
     const rowCls = isSel ? 'mp-sel' : (i % 2 === 0 ? 'mp-a' : 'mp-b');
 
     let predCell = '<span class="pred-pending">—</span>';
     let ptsCell  = '<span style="color:var(--txt-gray)">—</span>';
+    let iconCell = '';
 
-    if (pr && pr.l !== null) {
-      predCell = `<span class="pred-score">${pr.l} - ${pr.v}</span>`;
+    if (p.predL !== null) {
+      predCell = `<span class="pred-score">${p.predL} - ${p.predV}</span>`;
+      // Winner icon
+      const diff = p.predL - p.predV;
+      if (diff === 0) {
+        iconCell = `<div class="pred-icon-draw">E</div>`;
+      } else if (diff > 0) {
+        iconCell = `<div class="pred-icon-flag">${flagImg(m.cod_l||m.local)}</div>`;
+      } else {
+        iconCell = `<div class="pred-icon-flag">${flagImg(m.cod_v||m.visitante)}</div>`;
+      }
       if (sc) {
-        const pts = calcPoints(sc.l, sc.v, pr.l, pr.v);
+        const pts = calcPoints(sc.l, sc.v, p.predL, p.predV);
         const cls = pc(pts, true);
         ptsCell = `<span class="mpts ${cls}">${pts}</span>`;
       } else {
@@ -1002,6 +1018,7 @@ function renderMatchDetail() {
     return `<tr class="${rowCls}">
       <td class="td-rank-num">${i+1}</td>
       <td class="td-part-name">${p.name}</td>
+      <td class="td-pred-icon">${iconCell}</td>
       <td class="td-pred-lv">${predCell}</td>
       <td class="td-pred-pts">${ptsCell}</td>
     </tr>`;
