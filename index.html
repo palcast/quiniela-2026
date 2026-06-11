@@ -12,23 +12,22 @@
   --bg-row-b:   #3F3F3F;
   --bg-score:   #1A2D3A;
   --bg-score-b: #1F3645;
-  --bg-hdr:     #015C79;
-  --bg-pts-hdr: #014F69;
-  --bg-sel-hdr: #002C3A;  /* selected col header */
-  --sel-title: #7DDFB8;  /* mint on dark bg */
+  --bg-hdr:     #3A7682;
+  --bg-pts-hdr: #2F616B;
+  --bg-sel-hdr: #4A8A70;
   --txt:        #DBDBDB;
   --txt-dim:    #ABABAB;
   --txt-gray:   #585858;
-  --pts-5: #FF3333;
-  --pts-4: #FFB02F;
-  --pts-3: #A3CF77;
+  --pts-5: #FFB02F;
+  --pts-4: #38BDF8;
+  --pts-3: #A78BFA;
   --pts-0: #3A3A3A;
   --sim:   #9B6FD4;
   --sim-bg:rgba(155,111,212,0.15);
   --gold:  #F0B429;
   /* fixed col heights — must match between both tables */
   --row-h: 38px;
-  --hdr-h: 26px;
+  --hdr-h: 46px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Calibri,'Segoe UI',sans-serif;font-size:13px;background:var(--bg-root);color:var(--txt);min-height:100vh;overflow-x:hidden}
@@ -101,6 +100,9 @@ main{padding:10px}
 .flt{background:var(--bg-row-a);border:1px solid #444;color:var(--txt-dim);padding:3px 10px;font-family:Calibri,sans-serif;font-size:11px;cursor:pointer}
 .flt:hover{border-color:var(--bg-hdr);color:var(--txt)}
 .flt.on{background:var(--bg-hdr);border-color:var(--bg-hdr);color:#fff}
+.srch{margin-left:auto;background:var(--bg-row-a);border:1px solid #444;color:var(--txt);padding:3px 8px;font-family:Calibri,sans-serif;font-size:12px;outline:none;width:155px}
+.srch::placeholder{color:var(--txt-gray)}
+.srch:focus{border-color:var(--bg-hdr)}
 
 /* ── DUAL TABLE LAYOUT ── */
 /*
@@ -112,30 +114,25 @@ main{padding:10px}
 .grid-wrap{display:flex;overflow:hidden;max-height:65vh}
 
 /* LEFT — fixed, no horizontal scroll */
-.left-wrap{flex:0 0 auto;overflow:hidden;z-index:2;box-shadow:4px 0 8px rgba(0,0,0,.55)}
+.left-wrap{flex:0 0 auto;overflow:hidden;z-index:2;box-shadow:4px 0 8px rgba(0,0,0,.45)}
 .left-wrap table{border-collapse:collapse;font-size:13px;font-family:Calibri,sans-serif;table-layout:fixed}
 
-/* RIGHT — container, no scroll itself */
-.right-wrap{flex:1 1 auto;overflow:hidden;display:flex;flex-direction:column}
+/* RIGHT — scrolls horizontally */
+.right-wrap{flex:1 1 auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#444 var(--bg-panel)}
+.right-wrap::-webkit-scrollbar{height:5px}
+.right-wrap::-webkit-scrollbar-track{background:var(--bg-panel)}
+.right-wrap::-webkit-scrollbar-thumb{background:#555}
 .right-wrap table{border-collapse:collapse;font-size:13px;font-family:Calibri,sans-serif}
 
-/* RIGHT header — no scroll, fixed */
-#right-head-wrap{overflow:hidden;flex:0 0 auto}
-
-/* RIGHT body — scrolls both directions */
+/* Shared vertical scroll on a wrapper div */
 .scroll-body{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#444 var(--bg-panel)}
 .scroll-body::-webkit-scrollbar{width:5px}
 .scroll-body::-webkit-scrollbar-thumb{background:#555}
-#right-body-wrap{overflow-x:auto;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#444 var(--bg-panel)}
-#right-body-wrap::-webkit-scrollbar{height:5px;width:5px}
-#right-body-wrap::-webkit-scrollbar-track{background:var(--bg-panel)}
-#right-body-wrap::-webkit-scrollbar-thumb{background:#555}
 
 /* ── HEADER ROWS ── */
-th{background:var(--bg-hdr);color:#EEE;padding:4px 6px;font-size:12px;font-weight:bold;text-align:center;white-space:nowrap;border-right:1px solid #014A62;border-bottom:1px solid #014A62;height:var(--hdr-h)}
-#left-head th{height:52px}
-th.th-pts{background:var(--bg-pts-hdr);border-right-color:#013F52}
-th.th-sel{background:var(--bg-sel-hdr);border-right-color:#001E28;color:var(--sel-title)}
+th{background:var(--bg-hdr);color:#EEE;padding:5px 6px;font-size:12px;font-weight:bold;text-align:center;white-space:nowrap;border-right:1px solid #2F6670;border-bottom:1px solid #2F6670;height:var(--hdr-h)}
+th.th-pts{background:var(--bg-pts-hdr);border-right-color:#255560}
+th.th-sel{background:var(--bg-sel-hdr);border-right-color:#3A7060}
 .th-pname{cursor:pointer;padding:1px 4px;display:inline-block;transition:color .12s;color:#EEE;font-weight:bold}
 .th-pname:hover{color:var(--gold)}
 .th-pname.sel{color:var(--gold)}
@@ -177,14 +174,14 @@ tr.editing .td-goal{background:#0D2030!important}
 .goal-inp::-webkit-outer-spin-button,.goal-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .goal-inp.active{display:block}
 
-/* Selected participant cols — same dimensions as right table cols */
-.td-sel{text-align:center;width:36px;min-width:36px;max-width:36px}
-tr.row-a .td-sel{background:var(--bg-score)}
-tr.row-b .td-sel{background:var(--bg-score-b)}
-.td-sel-pts{text-align:center;width:30px;min-width:30px;max-width:30px}
-tr.row-a .td-sel-pts{background:var(--bg-row-a)}
-tr.row-b .td-sel-pts{background:var(--bg-row-b)}
-th.th-sel-pts{background:#001E28;border-right-color:#001018;color:var(--sel-title)}
+/* Selected participant cols */
+.td-sel{text-align:center;width:62px;min-width:62px;max-width:62px}
+tr.row-a .td-sel{background:#253830}
+tr.row-b .td-sel{background:#263930}
+.td-sel-pts{text-align:center;width:38px;min-width:38px;max-width:38px}
+tr.row-a .td-sel-pts{background:#1E3028}
+tr.row-b .td-sel-pts{background:#1F3128}
+th.th-sel-pts{background:#3A7060;border-right-color:#2A6050}
 
 /* Forecast chip */
 .chip{display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:bold;color:var(--txt-dim)}
@@ -192,7 +189,7 @@ th.th-sel-pts{background:#001E28;border-right-color:#001018;color:var(--sel-titl
 
 /* Points */
 .pv{font-size:13px;font-weight:bold;display:inline-block;min-width:18px;text-align:center}
-.pv.p5{color:var(--pts-5);text-shadow:0 0 8px rgba(255,51,51,.35)}
+.pv.p5{color:var(--pts-5);text-shadow:0 0 8px rgba(255,176,47,.4)}
 .pv.p4{color:var(--pts-4)}
 .pv.p3{color:var(--pts-3)}
 .pv.p0{color:var(--pts-0);font-weight:normal}
@@ -200,13 +197,11 @@ th.th-sel-pts{background:#001E28;border-right-color:#001018;color:var(--sel-titl
 
 /* Right table cells */
 .td-mini{text-align:center;width:36px;min-width:36px}
-tr.row-a .td-mini{background:var(--bg-score)}
-tr.row-b .td-mini{background:var(--bg-score-b)}
 .td-mpts{text-align:center;width:30px;min-width:30px}
 .mini{display:inline-flex;align-items:center;gap:1px;font-size:12px;color:var(--txt-dim)}
 .mini-sep{opacity:.35}
 .mpts{font-size:13px;font-weight:bold;text-align:center;display:inline-block;min-width:16px;color:var(--pts-0)}
-.mpts.p5{color:var(--pts-5);text-shadow:0 0 8px rgba(255,51,51,.35)}
+.mpts.p5{color:var(--pts-5);text-shadow:0 0 8px rgba(255,176,47,.4)}
 .mpts.p4{color:var(--pts-4)}
 .mpts.p3{color:var(--pts-3)}
 .mpts.p0{color:var(--pts-0);font-weight:normal}
@@ -226,6 +221,7 @@ footer a:hover{color:var(--gold)}
   header{padding:6px 8px}
   .h-pills{display:none}
   main{padding:6px}
+  .srch{width:90px}
 
   /* Hide team name columns on mobile */
   .td-name{display:none}
@@ -253,7 +249,6 @@ footer a:hover{color:var(--gold)}
   /* Right table pts cols */
   .td-mini{width:30px;min-width:30px}
   .td-mpts{width:26px;min-width:26px}
-  /* bg-score already applied via row rules above */
   .mini{font-size:11px}
   .mpts{font-size:12px}
   .pv{font-size:12px}
@@ -314,6 +309,7 @@ footer a:hover{color:var(--gold)}
           <button class="flt"    onclick="setFilter('played',this)">Jugados</button>
           <button class="flt"    onclick="setFilter('pending',this)">Pendientes</button>
         </div>
+        <input class="srch" id="srch" placeholder="Buscar equipo…" oninput="renderTable()">
       </div>
 
       <!-- Dual-table grid -->
@@ -331,11 +327,9 @@ footer a:hover{color:var(--gold)}
         </div>
         <!-- RIGHT: scrollable participants -->
         <div class="right-wrap" id="right-wrap">
-          <div id="right-head-wrap">
-            <table>
-              <thead id="right-head"></thead>
-            </table>
-          </div>
+          <table>
+            <thead id="right-head"></thead>
+          </table>
           <div class="scroll-body" id="right-body-wrap">
             <table>
               <tbody id="right-body"></tbody>
@@ -524,35 +518,42 @@ function buildHeaders(){
   // LEFT header: fecha | local | flagL | golL | golV | flagV | visitante | selPron | selPts
   document.getElementById('left-head').innerHTML=`
     <tr>
-      <th style="text-align:left;width:82px;min-width:82px">Fecha</th>
-      <th class="th-name" style="text-align:right;width:88px;min-width:88px">Local</th>
-      <th style="width:26px;min-width:26px"></th>
-      <th class="th-pts" style="width:34px;min-width:34px;font-size:11px;font-weight:normal">L</th>
-      <th class="th-pts" style="width:34px;min-width:34px;font-size:11px;font-weight:normal">V</th>
-      <th style="width:26px;min-width:26px"></th>
-      <th class="th-name" style="text-align:left;width:88px;min-width:88px">Visitante</th>
-      <th style="background:#2C2C2C;border-right-color:#3A3A3A;width:36px;min-width:36px;font-size:11px">L-V</th>
-      <th class="th-pts" style="background:#014F69;width:30px;min-width:30px;font-size:11px">${sel?`<span style="color:var(--gold);font-weight:bold;display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">\${sel}</span><span style="font-weight:normal;font-size:10px">P</span>`:'P'}</th>
+      <th rowspan="2" style="text-align:left;width:82px;min-width:82px">Fecha</th>
+      <th class="th-name" rowspan="2" style="text-align:right;width:88px;min-width:88px">Local</th>
+      <th rowspan="2" style="width:26px;min-width:26px"></th>
+      <th class="th-pts" style="width:34px;min-width:34px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">L</th>
+      <th class="th-pts" style="width:34px;min-width:34px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
+      <th rowspan="2" style="width:26px;min-width:26px"></th>
+      <th class="th-name" rowspan="2" style="text-align:left;width:88px;min-width:88px">Visitante</th>
+      <th colspan="2" style="background:#2C2C2C;border-right-color:#3A3A3A">${sel?`<span style="color:var(--gold);font-weight:bold">${sel}</span>`:\'— Seleccionar —'}</th>
+    </tr>
+    <tr>
+      <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
+      <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
+      <th style="font-size:11px;font-weight:normal;width:36px;min-width:36px">L-V</th>
+      <th class="th-pts" style="font-size:11px;width:30px;min-width:30px">P</th>
     </tr>`;
 
   // RIGHT header: per participant × 2 cols
   document.getElementById('right-head').innerHTML=`
     <tr>${S.participants.map(p=>`
-      <th colspan="2" style="background:#2C2C2C;border-right-color:#3A3A3A"><span class="th-pname${sel===p.name?' sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span></th>`).join('')}
+      <th colspan="2"><span class="th-pname${sel===p.name?' sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span></th>`).join('')}
     </tr>
     <tr>${S.participants.map(()=>`
-      <th style="font-size:11px;width:36px;min-width:36px">L-V</th>
-      <th class="th-pts" style="font-size:11px;width:30px;min-width:30px">P</th>`).join('')}
+      <th style="font-size:11px;width:36px;min-width:36px">P.</th>
+      <th class="th-pts" style="font-size:11px;width:30px;min-width:30px">Pts</th>`).join('')}
     </tr>`;
 }
 
 /* ── RENDER TABLE ── */
 function renderTable(){
+  const q=document.getElementById('srch').value.toLowerCase().trim();
   let matches=S.matches.filter(m=>{
     if(S.filter==='played')return m.real_l!==null;
     if(S.filter==='pending')return m.real_l===null;
     return true;
   });
+  if(q)matches=matches.filter(m=>m.local.toLowerCase().includes(q)||m.visitante.toLowerCase().includes(q)||m.grupo.toLowerCase().includes(q));
 
   const sel=S.selectedPart;
   const leftRows=[];
@@ -576,8 +577,8 @@ function renderTable(){
       if(pr&&pr.l!==null){
         const pts=hasScore?calcPoints(sc.l,sc.v,pr.l,pr.v):null;
         const cls=pc(pts,hasScore);
-        selPred=`<div class="mini">${pr.l}<span class="mini-sep">-</span>${pr.v}</div>`;
-        selPts=hasScore?`<span class="mpts ${cls}">${pts}</span>`:`<span class="mpts pnd">?</span>`;
+        selPred=`<div class="chip">${pr.l}<span class="chip-sep">-</span>${pr.v}</div>`;
+        selPts=hasScore?`<span class="pv ${cls}">${pts}</span>`:`<span class="pv pnd">?</span>`;
       }
     }
 
@@ -597,7 +598,7 @@ function renderTable(){
       <td class="td-sel-pts">${selPts}</td>
     </tr>`);
 
-    // Right: sel first, then participant cols
+    // Right: participant cols
     const pCols=S.participants.map(p=>{
       const pr=(S.preds[m.id]||{})[p.name];
       if(!pr||pr.l===null)return`<td class="td-mini" style="color:var(--txt-gray)">—</td><td class="td-mpts" style="color:var(--txt-gray)">—</td>`;
@@ -634,7 +635,6 @@ function syncHeights(){
     const maxH=wrap.offsetHeight-lh;
     document.getElementById('left-body-wrap').style.maxHeight=maxH+'px';
     document.getElementById('right-body-wrap').style.maxHeight=maxH+'px';
-    document.getElementById('right-body-wrap').style.height=maxH+'px';
   });
 }
 
@@ -642,17 +642,9 @@ function syncHeights(){
 function initScrollSync(){
   const lb=document.getElementById('left-body-wrap');
   const rb=document.getElementById('right-body-wrap');
-  const rh=document.getElementById('right-head-wrap');
   let lock=false;
-  // Sync vertical scroll between left and right bodies
   lb.addEventListener('scroll',()=>{if(lock)return;lock=true;rb.scrollTop=lb.scrollTop;lock=false});
-  rb.addEventListener('scroll',()=>{
-    if(lock)return;lock=true;
-    lb.scrollTop=rb.scrollTop;
-    // Sync header horizontal scroll with body
-    rh.scrollLeft=rb.scrollLeft;
-    lock=false;
-  });
+  rb.addEventListener('scroll',()=>{if(lock)return;lock=true;lb.scrollTop=rb.scrollTop;lock=false});
 }
 
 /* ── GOAL EDITOR ── */
