@@ -63,7 +63,7 @@ body{font-family:Calibri,'Segoe UI',sans-serif;font-size:13px;background:var(--b
 
 /* ── HEADER ── */
 header{position:sticky;top:0;z-index:100;background:var(--bg-root);border-bottom:2px solid var(--bg-hdr);padding:8px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.logo{font-family:Verdana,sans-serif;font-size:14px;font-weight:bold;color:var(--gold);white-space:nowrap;letter-spacing:1px}
+.logo{font-family:Verdana,sans-serif;font-size:14px;font-weight:bold;color:#015C79;white-space:nowrap;letter-spacing:1px}
 .h-pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .pill{background:var(--bg-row-a);border:1px solid #444;padding:2px 9px;font-size:11px;color:var(--txt-dim);white-space:nowrap}
 .pill strong{color:var(--gold)}
@@ -222,7 +222,8 @@ main{padding:10px}
 th{background:var(--bg-hdr);color:#EEE;padding:4px 5px;font-size:11px;font-weight:bold;text-align:center;white-space:nowrap;border-right:1px solid #014A62;border-bottom:1px solid #014A62}
 th.th-pts{background:var(--bg-pts-hdr);border-right-color:#013F52}
 th.th-sel{background:var(--bg-sel-hdr);border-right-color:#001E28;color:var(--sel-title)}
-.th-pname{cursor:pointer;padding:1px 4px;display:inline-block;transition:color .12s;color:#EEE;font-weight:bold}
+.th-pname{cursor:pointer;padding:1px 2px;display:block;transition:color .12s;color:#EEE;font-weight:bold;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center}
 .th-pname:hover{color:var(--gold)}
 .th-pname.sel{color:var(--gold)}
 
@@ -397,7 +398,7 @@ footer a:hover{color:var(--gold)}
   <!-- TAB BAR -->
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('tab-puntuacion',this)">🏆 Puntuación</button>
-    <button class="tab-btn" onclick="switchTab('tab-marcador',this)">⚽ Marcadores</button>
+    <button class="tab-btn" onclick="switchTab('tab-marcador',this)">📊 Marcadores</button>
     <button class="tab-btn" onclick="switchTab('tab-partido',this)">🔍 Partido</button>
   </div>
 
@@ -709,7 +710,7 @@ function buildHeaders(){
   // RIGHT header: per participant × 2 cols
   document.getElementById('right-head').innerHTML=`
     <tr>${S.participants.map(p=>`
-      <th colspan="2" style="background:#2C2C2C;border-right-color:#3A3A3A"><span class="th-pname${sel===p.name?' sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span></th>`).join('')}
+      <th colspan="2" style="background:#2C2C2C;border-right-color:#3A3A3A;width:56px;min-width:56px;max-width:56px;overflow:hidden"><span class="th-pname${sel===p.name?' sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span></th>`).join('')}
     </tr>
     <tr>${S.participants.map(()=>`
       <th style="font-size:11px;width:30px;min-width:30px;max-width:30px">L-V</th>
