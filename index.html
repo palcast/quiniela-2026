@@ -432,6 +432,7 @@ async function loadData(){
     document.getElementById('sheet-lnk').href=`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit`;
     document.getElementById('loading-screen').classList.add('gone');
     document.getElementById('app').classList.add('show');
+    initColgroups();
   }catch(e){
     console.error(e);
     document.getElementById('loading-screen').classList.add('gone');
@@ -514,22 +515,6 @@ function buildHeaders(){
   const sel=S.selectedPart;
   const C=COLS;
 
-  // Inject colgroup into left body table so widths match header exactly
-  const leftBodyTable = document.querySelector('#left-body-wrap table');
-  if(leftBodyTable){
-    leftBodyTable.innerHTML = `<colgroup>
-      <col style="width:${C.fecha}px">
-      <col class="col-name" style="width:${C.local}px">
-      <col style="width:${C.flagL}px">
-      <col style="width:${C.goalL}px">
-      <col style="width:${C.goalV}px">
-      <col style="width:${C.flagV}px">
-      <col class="col-name" style="width:${C.visitor}px">
-      <col style="width:${C.selPred}px">
-      <col style="width:${C.selPts}px">
-    </colgroup><tbody id="left-body"></tbody>`;
-  }
-
   // Left header with matching colgroup
   document.getElementById('left-head').innerHTML=`
     <colgroup>
@@ -560,11 +545,19 @@ function buildHeaders(){
       <th class="th-sel th-sel-pts" style="font-size:11px">P</th>
     </tr>`;
 
-  // Right header colgroup
-  const rightBodyTable = document.querySelector('#right-body-wrap table');
   const rColgroup = S.participants.map(()=>`<col style="width:${C.partPred}px"><col style="width:${C.partPts}px">`).join('');
-  if(rightBodyTable){
-    rightBodyTable.innerHTML = `<colgroup>${rColgroup}</colgroup><tbody id="right-body"></tbody>`;
+
+  // Sync right body table colgroup
+  const rbt = document.querySelector('#right-body-wrap table');
+  if(rbt){
+    const oldCg = rbt.querySelector('colgroup');
+    if(oldCg) rbt.removeChild(oldCg);
+    const newCg = document.createElement('colgroup');
+    S.participants.forEach(()=>{
+      const c1=document.createElement('col'); c1.style.width=C.partPred+'px'; newCg.appendChild(c1);
+      const c2=document.createElement('col'); c2.style.width=C.partPts+'px'; newCg.appendChild(c2);
+    });
+    rbt.insertBefore(newCg, rbt.firstChild);
   }
 
   document.getElementById('right-head').innerHTML=`
@@ -740,6 +733,29 @@ function resetSim(){S.simScores={};buildRanking();renderTable()}
 /* ── AUTO REFRESH ── */
 if(CONFIG.AUTO_REFRESH_MIN>0){
   setInterval(()=>{if(Object.keys(S.simScores).length===0)loadData()},CONFIG.AUTO_REFRESH_MIN*60*1000);
+}
+
+/* ── INIT COLGROUPS (called once, stable DOM) ── */
+function initColgroups(){
+  const C = COLS;
+  // Left body table colgroup
+  const lbt = document.querySelector('#left-body-wrap table');
+  if(lbt && !lbt.querySelector('colgroup')){
+    const cg = document.createElement('colgroup');
+    const cols = [
+      {w:C.fecha,cls:''}, {w:C.local,cls:'col-name'}, {w:C.flagL,cls:''},
+      {w:C.goalL,cls:''}, {w:C.goalV,cls:''}, {w:C.flagV,cls:''},
+      {w:C.visitor,cls:'col-name'}, {w:C.selPred,cls:''}, {w:C.selPts,cls:''}
+    ];
+    cols.forEach(c=>{
+      const col=document.createElement('col');
+      col.style.width=c.w+'px';
+      if(c.cls)col.className=c.cls;
+      cg.appendChild(col);
+    });
+    lbt.insertBefore(cg, lbt.firstChild);
+  }
+  // Right body table colgroup — set after participants load, so called from buildHeaders too
 }
 
 /* ── BOOT ── */
