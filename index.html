@@ -172,13 +172,13 @@ tr.editing .td-goal{background:#0D2030!important}
 .goal-inp::-webkit-outer-spin-button,.goal-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .goal-inp.active{display:block}
 
-/* Selected participant cols */
-.td-sel{text-align:center;width:62px;min-width:62px;max-width:62px}
-tr.row-a .td-sel{background:#253830}
-tr.row-b .td-sel{background:#263930}
-.td-sel-pts{text-align:center;width:38px;min-width:38px;max-width:38px}
-tr.row-a .td-sel-pts{background:#1E3028}
-tr.row-b .td-sel-pts{background:#1F3128}
+/* Selected participant cols — same dimensions as right table cols */
+.td-sel{text-align:center;width:36px;min-width:36px;max-width:36px}
+tr.row-a .td-sel{background:var(--bg-row-a)}
+tr.row-b .td-sel{background:var(--bg-row-b)}
+.td-sel-pts{text-align:center;width:30px;min-width:30px;max-width:30px}
+tr.row-a .td-sel-pts{background:var(--bg-row-a)}
+tr.row-b .td-sel-pts{background:var(--bg-row-b)}
 th.th-sel-pts{background:var(--bg-pts-hdr);border-right-color:#255560;color:var(--sel-title)}
 
 /* Forecast chip */
@@ -521,13 +521,13 @@ function buildHeaders(){
       <th class="th-pts" style="width:34px;min-width:34px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
       <th rowspan="2" style="width:26px;min-width:26px"></th>
       <th class="th-name" rowspan="2" style="text-align:left;width:88px;min-width:88px">Visitante</th>
-      <th class="th-sel" colspan="2" style="font-weight:bold">${sel||'— Seleccionar —'}</th>
+      <th colspan="2" style="color:var(--sel-title)">${sel||'— Seleccionar —'}</th>
     </tr>
     <tr>
       <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
       <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
-      <th class="th-sel" style="font-size:11px;font-weight:normal">L-V</th>
-      <th class="th-sel th-sel-pts" style="font-size:11px">P</th>
+      <th style="font-size:11px;color:var(--sel-title);width:36px;min-width:36px">L-V</th>
+      <th class="th-pts th-sel-pts" style="font-size:11px;color:var(--sel-title);width:30px;min-width:30px">P</th>
     </tr>`;
 
   // RIGHT header: per participant × 2 cols
@@ -571,8 +571,8 @@ function renderTable(){
       if(pr&&pr.l!==null){
         const pts=hasScore?calcPoints(sc.l,sc.v,pr.l,pr.v):null;
         const cls=pc(pts,hasScore);
-        selPred=`<div class="chip">${pr.l}<span class="chip-sep">-</span>${pr.v}</div>`;
-        selPts=hasScore?`<span class="pv ${cls}">${pts}</span>`:`<span class="pv pnd">?</span>`;
+        selPred=`<div class="mini">${pr.l}<span class="mini-sep">-</span>${pr.v}</div>`;
+        selPts=hasScore?`<span class="mpts ${cls}">${pts}</span>`:`<span class="mpts pnd">?</span>`;
       }
     }
 
@@ -592,7 +592,7 @@ function renderTable(){
       <td class="td-sel-pts">${selPts}</td>
     </tr>`);
 
-    // Right: participant cols
+    // Right: sel first, then participant cols
     const pCols=S.participants.map(p=>{
       const pr=(S.preds[m.id]||{})[p.name];
       if(!pr||pr.l===null)return`<td class="td-mini" style="color:var(--txt-gray)">—</td><td class="td-mpts" style="color:var(--txt-gray)">—</td>`;
