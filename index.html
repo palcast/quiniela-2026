@@ -84,7 +84,7 @@ select:hover{border-color:var(--pts-5)}
 main{padding:10px}
 
 /* ── PUNTUACION TAB ── */
-.pts-layout{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.pts-layout{display:flex;gap:0;align-items:flex-start;flex-wrap:wrap}
 .pts-table-wrap{flex:0 0 auto;background:var(--bg-panel);border:1px solid #2A3540;min-width:220px}
 .pts-table-wrap table{border-collapse:collapse;width:100%;font-size:12px}
 .pts-table-wrap th{background:var(--bg-hdr);color:#EEE;padding:5px 10px;font-size:11px;text-align:center;border-bottom:1px solid #014A62;white-space:nowrap}
@@ -100,19 +100,16 @@ main{padding:10px}
 .td-pts-name{text-align:left;padding-left:12px}
 .td-pts-val{text-align:right;padding-right:12px;font-weight:bold;font-family:Verdana,sans-serif;font-size:13px;color:var(--gold)}
 
-.chart-wrap{flex:1 1 300px;background:var(--bg-panel);border:1px solid #2A3540;padding:12px 10px 6px;min-height:280px;position:relative}
-.chart-title{font-family:Verdana,sans-serif;font-size:11px;font-weight:bold;color:var(--txt-dim);text-align:center;margin-bottom:10px;letter-spacing:1px}
-.bar-chart{display:flex;align-items:flex-end;gap:3px;height:220px;padding:0 4px;overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--bg-hdr) var(--bg-panel)}
-.bar-chart::-webkit-scrollbar{height:3px}
-.bar-chart::-webkit-scrollbar-thumb{background:var(--bg-hdr)}
-.bar-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto;min-width:28px}
-.bar-val{font-size:9px;color:var(--txt-dim);line-height:1}
-.bar-sel .bar-val{color:var(--gold)}
-.bar{width:22px;background:#444;border-radius:2px 2px 0 0;transition:background .2s;min-height:2px;cursor:pointer}
-.bar-default{background:#4A5568}
-.bar-sel-bar{background:var(--gold)!important}
-.bar-name{font-size:8px;color:var(--txt-dim);transform:rotate(-45deg);transform-origin:top right;white-space:nowrap;margin-top:4px;height:36px;width:36px;text-align:right}
-.bar-sel .bar-name{color:var(--gold)}
+.chart-wrap{flex:1 1 260px;background:var(--bg-panel);border:1px solid #2A3540;padding:8px 10px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg-hdr) var(--bg-panel)}
+.chart-wrap::-webkit-scrollbar{width:3px}
+.chart-wrap::-webkit-scrollbar-thumb{background:var(--bg-hdr)}
+.hbar-row{display:flex;align-items:center;gap:6px;height:22px;margin-bottom:2px}
+.hbar-track{flex:1 1 auto;height:14px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden;position:relative}
+.hbar-fill{height:100%;border-radius:2px;transition:width .4s ease;min-width:2px}
+.hbar-fill-default{background:#4A5568}
+.hbar-fill-sel{background:var(--gold)}
+.hbar-val{flex:0 0 30px;text-align:right;font-size:11px;font-weight:bold;color:var(--txt-dim);font-family:Verdana,sans-serif}
+.hbar-val-sel{color:var(--gold)}
 
 /* ── PARTIDO TAB ── */
 .match-layout{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
@@ -133,18 +130,19 @@ main{padding:10px}
 .rs-a td{background:var(--bg-row-a)}.rs-b td{background:var(--bg-row-b)}
 .rs-icon{font-size:12px}
 
-.match-preds-table{flex:1 1 280px;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden}
-.match-preds-table table{border-collapse:collapse;width:100%;font-size:12px}
-.match-preds-table th{background:var(--bg-hdr);color:#EEE;padding:5px 10px;font-size:11px;text-align:center;border-bottom:1px solid #014A62;border-right:1px solid #014A62}
+.match-preds-table{flex:0 0 auto;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden;min-width:190px;max-width:260px}
+.match-preds-table table{border-collapse:collapse;width:100%;font-size:11px}
+.match-preds-table th{background:var(--bg-hdr);color:#EEE;padding:4px 8px;font-size:10px;font-weight:bold;text-align:center;border-bottom:1px solid #014A62;border-right:1px solid #014A62;white-space:nowrap}
 .match-preds-table th.th-pts-col{background:var(--bg-pts-hdr)}
-.match-preds-table td{padding:4px 8px;border-bottom:1px solid rgba(255,255,255,.04);border-right:1px solid rgba(255,255,255,.04);text-align:center}
+.match-preds-table td{padding:2px 6px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03);text-align:center;height:22px;white-space:nowrap}
 .mp-a td{background:var(--bg-row-a)}.mp-b td{background:var(--bg-row-b)}
-.mp-sel td{background:#3E3318!important}
-.mp-sel td{color:var(--gold)!important}
-.td-part-name{text-align:left!important;padding-left:10px!important;font-weight:bold}
+.mp-sel td{background:#3E3318!important;color:var(--gold)!important}
+.td-rank-num{color:var(--txt-dim);font-size:10px;width:20px;text-align:center}
+.td-part-name{text-align:left!important;padding-left:8px!important;font-weight:bold;font-size:11px;min-width:70px}
 .mp-sel .td-part-name{color:var(--gold)}
-.pred-score{font-weight:bold;color:var(--txt)}
-.pred-pending{color:var(--txt-dim);font-style:italic}
+.td-pred-lv{font-weight:bold;color:var(--txt);font-size:12px;width:38px}
+.td-pred-pts{width:28px;font-size:12px}
+.pred-pending{color:var(--txt-dim)}
 
 /* ── RANKING ── */
 .ranking-wrap{background:var(--bg-panel);border:1px solid #2A3540;padding:8px 10px;margin-bottom:10px;overflow:hidden}
@@ -430,11 +428,8 @@ footer a:hover{color:var(--gold)}
             <tbody id="pts-table-body"></tbody>
           </table>
         </div>
-        <!-- Gráfica de barras -->
-        <div class="chart-wrap">
-          <div class="chart-title">PUNTUACIÓN</div>
-          <div class="bar-chart" id="bar-chart"></div>
-        </div>
+        <!-- Gráfica de barras horizontal -->
+        <div class="chart-wrap" id="bar-chart"></div>
       </div>
     </div>
 
@@ -453,8 +448,9 @@ footer a:hover{color:var(--gold)}
           <table>
             <thead>
               <tr>
-                <th style="text-align:left;padding-left:10px">Participante</th>
-                <th>Pronóstico</th>
+                <th style="width:20px">#</th>
+                <th style="text-align:left;padding-left:8px">Participante</th>
+                <th>L-V</th>
                 <th class="th-pts-col" id="match-pts-header">Pts</th>
               </tr>
             </thead>
@@ -868,19 +864,19 @@ function renderPuntuacion() {
     </tr>`;
   }).join('');
 
-  // Bar chart
+  // Horizontal bar chart — rows aligned with table
   const chart  = document.getElementById('bar-chart');
   const maxPts = Math.max(...sorted.map(p => hasSim ? (tot[p.name] ?? p.points) : p.points), 1);
   chart.innerHTML = sorted.map(p => {
-    const pts    = hasSim ? (tot[p.name] ?? p.points) : p.points;
-    const isSel  = sel === p.name;
-    const pct    = Math.max((pts / maxPts) * 200, 2);
-    return `<div class="bar-col ${isSel ? 'bar-sel' : ''}">
-      <div class="bar-val">${pts}</div>
-      <div class="bar ${isSel ? 'bar-sel-bar' : 'bar-default'}"
-           style="height:${pct}px"
-           title="${p.name}: ${pts} pts"></div>
-      <div class="bar-name">${p.name}</div>
+    const pts   = hasSim ? (tot[p.name] ?? p.points) : p.points;
+    const isSel = sel === p.name;
+    const pct   = Math.max((pts / maxPts) * 100, 1).toFixed(1);
+    return `<div class="hbar-row">
+      <div class="hbar-track">
+        <div class="hbar-fill ${isSel ? 'hbar-fill-sel' : 'hbar-fill-default'}"
+             style="width:${pct}%"></div>
+      </div>
+      <div class="hbar-val ${isSel ? 'hbar-val-sel' : ''}">${pts}</div>
     </div>`;
   }).join('');
 }
@@ -963,15 +959,25 @@ function renderMatchDetail() {
   document.getElementById('match-pts-header').textContent = sc ? 'Pts' : 'Pronóstico';
 
   // ── Predictions table ──
-  // Sort: if played, by pts desc then name; if not, alphabetically
-  let parts = [...S.participants];
-  if (sc) {
-    parts = parts.map(p => {
-      const pr  = (S.preds[m.id] || {})[p.name];
-      const pts = (pr && pr.l !== null) ? calcPoints(sc.l, sc.v, pr.l, pr.v) : -1;
-      return { ...p, matchPts: pts };
-    }).sort((a, b) => b.matchPts - a.matchPts || a.name.localeCompare(b.name));
-  }
+  // Sort by: 1st criterio = diff goles (L-V), 2nd = total goles (mayor a menor)
+  let parts = [...S.participants].map(p => {
+    const pr   = (S.preds[m.id] || {})[p.name];
+    const l    = (pr && pr.l !== null) ? pr.l : null;
+    const v    = (pr && pr.v !== null) ? pr.v : null;
+    const diff = (l !== null && v !== null) ? (l - v) : null;
+    const tot  = (l !== null && v !== null) ? (l + v) : null;
+    const pts  = (sc && l !== null) ? calcPoints(sc.l, sc.v, l, v) : null;
+    return { ...p, predL: l, predV: v, predDiff: diff, predTot: tot, matchPts: pts };
+  }).sort((a, b) => {
+    // Participants without prediction go to the bottom
+    if (a.predDiff === null && b.predDiff === null) return 0;
+    if (a.predDiff === null) return 1;
+    if (b.predDiff === null) return -1;
+    // 1st: diferencia de goles L-V (mayor a menor)
+    if (b.predDiff !== a.predDiff) return b.predDiff - a.predDiff;
+    // 2nd: total de goles (mayor a menor)
+    return b.predTot - a.predTot;
+  });
 
   const tbody = document.getElementById('match-preds-body');
   tbody.innerHTML = parts.map((p, i) => {
@@ -994,9 +1000,10 @@ function renderMatchDetail() {
     }
 
     return `<tr class="${rowCls}">
+      <td class="td-rank-num">${i+1}</td>
       <td class="td-part-name">${p.name}</td>
-      <td>${predCell}</td>
-      <td>${ptsCell}</td>
+      <td class="td-pred-lv">${predCell}</td>
+      <td class="td-pred-pts">${ptsCell}</td>
     </tr>`;
   }).join('');
 }
