@@ -14,7 +14,8 @@
   --bg-score-b: #1F3645;
   --bg-hdr:     #3A7682;
   --bg-pts-hdr: #2F616B;
-  --bg-sel-hdr: #4A8A70;
+  --bg-sel-hdr: #4A8A70;  /* kept for reference */
+  --sel-title: #7DDFB8;  /* mint — distinguishes selected column title */
   --txt:        #DBDBDB;
   --txt-dim:    #ABABAB;
   --txt-gray:   #585858;
@@ -129,7 +130,7 @@ main{padding:10px}
 /* ── HEADER ROWS ── */
 th{background:var(--bg-hdr);color:#EEE;padding:5px 6px;font-size:12px;font-weight:bold;text-align:center;white-space:nowrap;border-right:1px solid #2F6670;border-bottom:1px solid #2F6670;height:var(--hdr-h)}
 th.th-pts{background:var(--bg-pts-hdr);border-right-color:#255560}
-th.th-sel{background:var(--bg-sel-hdr);border-right-color:#3A7060}
+th.th-sel{background:var(--bg-hdr);border-right-color:#2F6670;color:var(--sel-title)}
 .th-pname{cursor:pointer;padding:1px 4px;display:inline-block;transition:color .12s;color:#EEE;font-weight:bold}
 .th-pname:hover{color:var(--gold)}
 .th-pname.sel{color:var(--gold)}
@@ -178,7 +179,7 @@ tr.row-b .td-sel{background:#263930}
 .td-sel-pts{text-align:center;width:38px;min-width:38px;max-width:38px}
 tr.row-a .td-sel-pts{background:#1E3028}
 tr.row-b .td-sel-pts{background:#1F3128}
-th.th-sel-pts{background:#3A7060;border-right-color:#2A6050}
+th.th-sel-pts{background:var(--bg-pts-hdr);border-right-color:#255560;color:var(--sel-title)}
 
 /* Forecast chip */
 .chip{display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:bold;color:var(--txt-dim)}
@@ -520,12 +521,12 @@ function buildHeaders(){
       <th class="th-pts" style="width:34px;min-width:34px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
       <th rowspan="2" style="width:26px;min-width:26px"></th>
       <th class="th-name" rowspan="2" style="text-align:left;width:88px;min-width:88px">Visitante</th>
-      <th class="th-sel" colspan="2">${sel||'— Seleccionar —'}</th>
+      <th class="th-sel" colspan="2" style="font-weight:bold">${sel||'— Seleccionar —'}</th>
     </tr>
     <tr>
       <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
       <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
-      <th class="th-sel" style="font-size:11px">L-V</th>
+      <th class="th-sel" style="font-size:11px;font-weight:normal">L-V</th>
       <th class="th-sel th-sel-pts" style="font-size:11px">P</th>
     </tr>`;
 
