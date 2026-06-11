@@ -526,16 +526,14 @@ function buildHeaders(){
       <th rowspan="2" style="text-align:left;width:82px;min-width:82px">Fecha</th>
       <th class="th-name" rowspan="2" style="text-align:right;width:88px;min-width:88px">Local</th>
       <th rowspan="2" style="width:26px;min-width:26px"></th>
-      <th class="th-pts" style="width:34px;min-width:34px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">L</th>
-      <th class="th-pts" style="width:34px;min-width:34px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
+      <th class="th-pts" rowspan="2" style="width:34px;min-width:34px;font-size:11px;font-weight:normal">L</th>
+      <th class="th-pts" rowspan="2" style="width:34px;min-width:34px;font-size:11px;font-weight:normal">V</th>
       <th rowspan="2" style="width:26px;min-width:26px"></th>
       <th class="th-name" rowspan="2" style="text-align:left;width:88px;min-width:88px">Visitante</th>
-      <th colspan="2" style="color:var(--sel-title)">${sel||'— Seleccionar —'}</th>
+      <th colspan="2" style="background:#2C2C2C;border-right-color:#3A3A3A">${sel?`<span style="color:var(--gold);font-weight:bold">${sel}</span>`:'— Seleccionar —'}</th>
     </tr>
     <tr>
-      <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
-      <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
-      <th style="font-size:11px;color:var(--sel-title);width:36px;min-width:36px">L-V</th>
+      <th style="background:#2C2C2C;border-right-color:#3A3A3A;font-size:11px;font-weight:normal;color:var(--sel-title);width:36px;min-width:36px">L-V</th>
       <th class="th-pts th-sel-pts" style="font-size:11px;color:var(--sel-title);width:30px;min-width:30px">P</th>
     </tr>`;
 
