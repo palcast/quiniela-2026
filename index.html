@@ -968,8 +968,6 @@ function resetSim() {
   renderTable();
 }
 
-/* ── AUTO REFRESH (only when no sim active) ── */
-if (CONFIG.AUTO_REFRESH_MIN > 0) {
 /* ── COMPUTE STICKY OFFSETS — measured after DOM renders ── */
 function applyStickyOffsets() {
   const firstRow = document.querySelector('#tbl-body tr');
@@ -977,26 +975,22 @@ function applyStickyOffsets() {
   const bodyCells = firstRow.querySelectorAll('td.sticky');
   if (!bodyCells.length) return;
 
-  // Measure real widths from first row
   const offsets = [];
   let acc = 0;
   bodyCells.forEach(td => { offsets.push(acc); acc += td.offsetWidth; });
 
-  // Apply to every body row
   document.querySelectorAll('#tbl-body tr').forEach(row => {
     row.querySelectorAll('td.sticky').forEach((td, i) => {
       td.style.left = (offsets[i] ?? 0) + 'px';
     });
   });
 
-  // Apply to thead — measure independently
   const hCells = document.querySelectorAll('thead th.sticky');
   const hOffsets = [];
   let hAcc = 0;
   hCells.forEach(th => { hOffsets.push(hAcc); hAcc += th.offsetWidth; });
   hCells.forEach((th, i) => { th.style.left = (hOffsets[i] ?? 0) + 'px'; });
 
-  // Shadow on last sticky cell per row
   document.querySelectorAll('#tbl-body tr').forEach(row => {
     const cells = row.querySelectorAll('td.sticky');
     cells.forEach(td => td.classList.remove('sticky-last'));
@@ -1006,7 +1000,7 @@ function applyStickyOffsets() {
   if (hCells.length) hCells[hCells.length - 1].classList.add('sticky-last');
 }
 
-/* ── AUTO REFRESH (only when no sim active) ── */
+/* ── AUTO REFRESH ── */
 if (CONFIG.AUTO_REFRESH_MIN > 0) {
   setInterval(() => { if (Object.keys(S.simScores).length === 0) loadData(); }, CONFIG.AUTO_REFRESH_MIN * 60 * 1000);
 }
