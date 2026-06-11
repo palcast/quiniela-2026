@@ -23,12 +23,12 @@
   --txt-dark:   #3A1A1A;
   --txt-gray:   #585858;
   /* Points colors — hierarchical, dark-bg friendly */
-  --pts-5:  #4ADE80;   /* bright green  — exact score       */
+  --pts-5:  #FFB02F;   /* gold          — exact score       */
   --pts-4:  #38BDF8;   /* sky blue      — result + diff     */
   --pts-3:  #A78BFA;   /* soft purple   — result only       */
   --pts-0:  #3A3A3A;   /* near-invisible — miss             */
   /* Ranking position colors */
-  --rank-1: #4ADE80;
+  --rank-1: #FFB02F;
   --rank-2: #38BDF8;
   --rank-3: #A78BFA;
   /* Simulation */
@@ -269,20 +269,56 @@ thead { position: sticky; top: 0; z-index: 10; }
 .th-pname.sel { color: var(--pts-5); }
 
 /* ── STICKY LEFT COLUMNS ── */
-/* Col positions (cumulative left offsets — adjust if col widths change) */
-.sticky { position: sticky; z-index: 2; }
-.sticky-0  { left: 0;     background: inherit; }   /* Fecha/Hora  ~95px  */
-.sticky-1  { left: 95px;  background: inherit; }   /* Local       ~95px  */
-.sticky-2  { left: 190px; background: inherit; }   /* Flag local  ~26px  */
-.sticky-3  { left: 216px; background: inherit; }   /* Gol L       ~28px  */
-.sticky-4  { left: 244px; background: inherit; }   /* Gol V       ~28px  */
-.sticky-5  { left: 272px; background: inherit; }   /* Flag visit  ~26px  */
-.sticky-6  { left: 298px; background: inherit; }   /* Visitante   ~95px  */
-.sticky-7  { left: 393px; background: inherit; }   /* Sel Pron    ~60px  */
-.sticky-8  { left: 453px; background: inherit; }   /* Sel Pts     ~40px  */
-/* Shadow on last sticky col */
-.sticky-8  { box-shadow: 3px 0 6px rgba(0,0,0,.4); }
+/* Widths: meta=80, local=90, flagL=26, goalL=32, goalV=32, flagV=26, visitor=90, selPron=62, selPts=40 */
+/* Cumulative lefts: 0, 80, 170, 196, 228, 260, 286, 376, 438 */
+.sticky   { position: sticky; z-index: 2; }
+.sticky-0 { left: 0px;   }
+.sticky-1 { left: 80px;  }
+.sticky-2 { left: 170px; }
+.sticky-3 { left: 196px; }
+.sticky-4 { left: 228px; }
+.sticky-5 { left: 260px; }
+.sticky-6 { left: 286px; }
+.sticky-7 { left: 376px; }
+.sticky-8 { left: 438px; box-shadow: 3px 0 8px rgba(0,0,0,.5); }
 thead .sticky { z-index: 12; }
+
+/* Sticky cells need explicit bg — row-a */
+tbody tr.row-a .sticky-0,
+tbody tr.row-a .sticky-1,
+tbody tr.row-a .sticky-2,
+tbody tr.row-a .sticky-5,
+tbody tr.row-a .sticky-6 { background: var(--bg-row-a); }
+tbody tr.row-a .sticky-3,
+tbody tr.row-a .sticky-4 { background: var(--bg-score); }
+tbody tr.row-a .sticky-7 { background: #253830; }
+tbody tr.row-a .sticky-8 { background: #1E3028; }
+
+/* row-b */
+tbody tr.row-b .sticky-0,
+tbody tr.row-b .sticky-1,
+tbody tr.row-b .sticky-2,
+tbody tr.row-b .sticky-5,
+tbody tr.row-b .sticky-6 { background: var(--bg-row-b); }
+tbody tr.row-b .sticky-3,
+tbody tr.row-b .sticky-4 { background: var(--bg-score-b); }
+tbody tr.row-b .sticky-7 { background: #263930; }
+tbody tr.row-b .sticky-8 { background: #1F3128; }
+
+/* thead sticky bg */
+thead .sticky-0,
+thead .sticky-1,
+thead .sticky-2,
+thead .sticky-5,
+thead .sticky-6 { background: var(--bg-header); }
+thead .sticky-3,
+thead .sticky-4 { background: var(--bg-pts-hdr); }
+thead .sticky-7,
+thead .sticky-8 { background: #4A8A70; }
+
+/* editing row goal cells */
+tr.editing .sticky-3,
+tr.editing .sticky-4 { background: #0D2030 !important; }
 
 /* Data rows */
 tbody tr.row-a { background: var(--bg-row-a); }
@@ -297,7 +333,7 @@ td {
 }
 
 /* Match cells — new layout */
-.td-meta     { text-align: left; padding: 3px 6px; white-space: nowrap; vertical-align: middle; }
+.td-meta     { text-align: left; padding: 3px 5px; white-space: nowrap; vertical-align: middle; width: 80px; min-width: 80px; }
 .m-row1      { display: flex; align-items: center; gap: 5px; }
 .m-grupo     { font-size: 11px; font-weight: bold; color: var(--bg-header); min-width: 12px; }
 .m-fecha     { font-size: 11px; color: var(--txt-dim); }
@@ -305,8 +341,8 @@ td {
 .b-pend      { background: rgba(155,111,212,.15); color: var(--sim); border: 1px solid rgba(155,111,212,.3); padding: 0 4px; font-size: 9px; font-weight: bold; display: inline-block; margin-left:17px; margin-top:1px; }
 .b-sim       { background: var(--sim-bg); color: var(--sim); border: 1px solid rgba(155,111,212,.4); padding: 0 4px; font-size: 9px; font-weight: bold; display: inline-block; margin-left:17px; margin-top:1px; }
 .td-team-name { padding: 3px 4px; vertical-align: middle; white-space: nowrap; }
-.td-team-name.local   { text-align: right; min-width: 85px; }
-.td-team-name.visitor { text-align: left;  min-width: 85px; }
+.td-team-name.local   { text-align: right; min-width: 70px; max-width: 90px; }
+.td-team-name.visitor { text-align: left;  min-width: 70px; max-width: 90px; }
 .m-name      { font-weight: bold; font-size: 13px; color: var(--txt); }
 .td-flag     { padding: 3px 2px; width: 24px; text-align: center; vertical-align: middle; }
 /* goal cell styles defined above */
@@ -314,12 +350,12 @@ td {
 /* Score display cell */
 /* ── EXCEL-STYLE EDITABLE GOAL CELLS ── */
 .td-goal {
-  padding: 0; min-width: 28px; width: 28px;
+  padding: 0; min-width: 32px; width: 32px;
   text-align: center; vertical-align: middle;
   background: var(--bg-score);
   position: relative;
 }
-tbody tr.row-b .td-goal { background: var(--bg-score-b); }
+/* row-b goal bg handled by sticky rules */
 tbody tr:hover .td-goal { filter: brightness(1.12); }
 
 /* The displayed number — fills the whole cell */
@@ -368,7 +404,7 @@ tr.editing .td-goal .goal-inp.active { background: #0A1825; color: var(--pts-5);
 
 /* Points value — uses conditional colors from Excel */
 .pv { font-size: 13px; font-weight: bold; display: inline-block; min-width: 18px; text-align: center; }
-.pv.p5  { color: var(--pts-5); text-shadow: 0 0 8px rgba(74,222,128,.4); }
+.pv.p5  { color: var(--pts-5); text-shadow: 0 0 8px rgba(255,176,47,.4); }
 .pv.p4  { color: var(--pts-4); }
 .pv.p3  { color: var(--pts-3); }
 .pv.p0  { color: var(--pts-0); font-weight: normal; }
@@ -378,7 +414,7 @@ tr.editing .td-goal .goal-inp.active { background: #0A1825; color: var(--pts-5);
 .mini { display: inline-flex; align-items: center; gap: 1px; font-size: 12px; color: var(--txt-dim); }
 .mini-sep { opacity: .35; }
 .mpts       { font-size: 13px; font-weight: bold; text-align: center; display: inline-block; min-width: 16px; color: var(--txt-gray); }
-.mpts.p5   { color: var(--pts-5); text-shadow: 0 0 8px rgba(74,222,128,.4); }
+.mpts.p5   { color: var(--pts-5); text-shadow: 0 0 8px rgba(255,176,47,.4); }
 .mpts.p4   { color: var(--pts-4); }
 .mpts.p3   { color: var(--pts-3); }
 .mpts.p0   { color: var(--pts-0); font-weight: normal; }
@@ -742,13 +778,13 @@ function buildTblHead() {
   // Fixed cols: Fecha | Local | FlagL | GolesL | GolesV | FlagV | Visitante | [sel x2] | [parts x2 each]
   thead.innerHTML = `
     <tr class="hr1">
-      <th rowspan="2" class="sticky sticky-0" style="vertical-align:middle;text-align:left;min-width:95px">Fecha / Hora</th>
-      <th rowspan="2" class="sticky sticky-1" style="text-align:right;min-width:95px;padding-right:6px">Local</th>
+      <th rowspan="2" class="sticky sticky-0" style="vertical-align:middle;text-align:left;min-width:80px">Fecha / Hora</th>
+      <th rowspan="2" class="sticky sticky-1" style="text-align:right;min-width:90px;padding-right:6px">Local</th>
       <th rowspan="2" class="sticky sticky-2" style="width:26px"></th>
-      <th class="th-pts sticky sticky-3" style="width:28px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">L</th>
-      <th class="th-pts sticky sticky-4" style="width:28px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
+      <th class="th-pts sticky sticky-3" style="width:32px;min-width:32px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">L</th>
+      <th class="th-pts sticky sticky-4" style="width:32px;min-width:32px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
       <th rowspan="2" class="sticky sticky-5" style="width:26px"></th>
-      <th rowspan="2" class="sticky sticky-6" style="text-align:left;min-width:95px;padding-left:6px">Visitante</th>
+      <th rowspan="2" class="sticky sticky-6" style="text-align:left;min-width:90px;padding-left:6px">Visitante</th>
       <th class="th-sel sticky sticky-7" id="th-sel-name" colspan="2" style="background:#4A8A70">${S.selectedPart||'— Seleccionar —'}</th>
       ${parts.map(p=>`
         <th colspan="2">
