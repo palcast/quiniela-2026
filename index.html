@@ -72,8 +72,79 @@ select:hover{border-color:var(--pts-5)}
 .sim-reset{margin-left:auto;background:transparent;border:1px solid var(--sim);color:var(--sim);padding:2px 10px;font-family:Calibri,sans-serif;font-size:11px;cursor:pointer}
 .sim-reset:hover{background:var(--sim-bg)}
 
+/* ── TABS ── */
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--bg-hdr);margin:0;padding:0 10px;background:var(--bg-root)}
+.tab-btn{background:transparent;border:none;color:var(--txt-dim);padding:8px 18px;font-family:Calibri,sans-serif;font-size:13px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap}
+.tab-btn:hover{color:var(--txt)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:bold}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
 /* ── MAIN ── */
 main{padding:10px}
+
+/* ── PUNTUACION TAB ── */
+.pts-layout{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.pts-table-wrap{flex:0 0 auto;background:var(--bg-panel);border:1px solid #2A3540;min-width:220px}
+.pts-table-wrap table{border-collapse:collapse;width:100%;font-size:12px}
+.pts-table-wrap th{background:var(--bg-hdr);color:#EEE;padding:5px 10px;font-size:11px;text-align:center;border-bottom:1px solid #014A62;white-space:nowrap}
+.pts-table-wrap th.th-pts-col{background:var(--bg-pts-hdr)}
+.pts-table-wrap td{padding:4px 10px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap}
+.pts-tr-a td{background:var(--bg-row-a)}
+.pts-tr-b td{background:var(--bg-row-b)}
+.pts-tr-sel td{background:#3E3318!important}
+.pts-tr-sel td.td-pts-rank{color:var(--gold);font-weight:bold}
+.pts-tr-sel td.td-pts-name{color:var(--gold);font-weight:bold}
+.pts-tr-sel td.td-pts-val{color:var(--gold);font-weight:bold}
+.td-pts-rank{text-align:center;color:var(--txt-dim);width:36px}
+.td-pts-name{text-align:left;padding-left:12px}
+.td-pts-val{text-align:right;padding-right:12px;font-weight:bold;font-family:Verdana,sans-serif;font-size:13px;color:var(--gold)}
+
+.chart-wrap{flex:1 1 300px;background:var(--bg-panel);border:1px solid #2A3540;padding:12px 10px 6px;min-height:280px;position:relative}
+.chart-title{font-family:Verdana,sans-serif;font-size:11px;font-weight:bold;color:var(--txt-dim);text-align:center;margin-bottom:10px;letter-spacing:1px}
+.bar-chart{display:flex;align-items:flex-end;gap:3px;height:220px;padding:0 4px;overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--bg-hdr) var(--bg-panel)}
+.bar-chart::-webkit-scrollbar{height:3px}
+.bar-chart::-webkit-scrollbar-thumb{background:var(--bg-hdr)}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto;min-width:28px}
+.bar-val{font-size:9px;color:var(--txt-dim);line-height:1}
+.bar-sel .bar-val{color:var(--gold)}
+.bar{width:22px;background:#444;border-radius:2px 2px 0 0;transition:background .2s;min-height:2px;cursor:pointer}
+.bar-default{background:#4A5568}
+.bar-sel-bar{background:var(--gold)!important}
+.bar-name{font-size:8px;color:var(--txt-dim);transform:rotate(-45deg);transform-origin:top right;white-space:nowrap;margin-top:4px;height:36px;width:36px;text-align:right}
+.bar-sel .bar-name{color:var(--gold)}
+
+/* ── PARTIDO TAB ── */
+.match-layout{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.match-selector{background:var(--bg-panel);border:1px solid #2A3540;padding:10px;margin-bottom:10px}
+.match-selector select{width:100%;max-width:500px;background:var(--bg-row-a);border:1px solid var(--bg-hdr);color:var(--txt);padding:6px 10px;font-family:Calibri,sans-serif;font-size:13px;outline:none}
+
+.match-info-box{flex:0 0 auto;background:var(--bg-panel);border:1px solid #2A3540;padding:14px 18px;min-width:200px}
+.match-teams-big{text-align:center;margin-bottom:12px}
+.match-teams-big .team{font-size:13px;font-weight:bold;color:var(--txt);display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:4px}
+.match-score-big{font-family:Verdana,sans-serif;font-size:28px;font-weight:bold;color:var(--txt);text-align:center;margin:8px 0;letter-spacing:4px}
+.match-score-big.pending{color:var(--txt-gray);font-size:18px}
+.match-date-lbl{font-size:10px;color:var(--txt-dim);text-align:center;margin-bottom:10px}
+
+.result-summary{margin-top:10px}
+.result-summary table{border-collapse:collapse;width:100%;font-size:12px}
+.result-summary th{background:var(--bg-hdr);color:#EEE;padding:4px 8px;font-size:10px;text-align:center;border-bottom:1px solid #014A62}
+.result-summary td{padding:3px 8px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04)}
+.rs-a td{background:var(--bg-row-a)}.rs-b td{background:var(--bg-row-b)}
+.rs-icon{font-size:12px}
+
+.match-preds-table{flex:1 1 280px;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden}
+.match-preds-table table{border-collapse:collapse;width:100%;font-size:12px}
+.match-preds-table th{background:var(--bg-hdr);color:#EEE;padding:5px 10px;font-size:11px;text-align:center;border-bottom:1px solid #014A62;border-right:1px solid #014A62}
+.match-preds-table th.th-pts-col{background:var(--bg-pts-hdr)}
+.match-preds-table td{padding:4px 8px;border-bottom:1px solid rgba(255,255,255,.04);border-right:1px solid rgba(255,255,255,.04);text-align:center}
+.mp-a td{background:var(--bg-row-a)}.mp-b td{background:var(--bg-row-b)}
+.mp-sel td{background:#3E3318!important}
+.mp-sel td{color:var(--gold)!important}
+.td-part-name{text-align:left!important;padding-left:10px!important;font-weight:bold}
+.mp-sel .td-part-name{color:var(--gold)}
+.pred-score{font-weight:bold;color:var(--txt)}
+.pred-pending{color:var(--txt-dim);font-style:italic}
 
 /* ── RANKING ── */
 .ranking-wrap{background:var(--bg-panel);border:1px solid #2A3540;padding:8px 10px;margin-bottom:10px;overflow:hidden}
@@ -296,53 +367,103 @@ footer a:hover{color:var(--gold)}
     <button class="sim-reset" onclick="resetSim()">✕ Limpiar simulación</button>
   </div>
 
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('tab-marcador',this)">⚽ Marcadores</button>
+    <button class="tab-btn" onclick="switchTab('tab-puntuacion',this)">🏆 Puntuación</button>
+    <button class="tab-btn" onclick="switchTab('tab-partido',this)">🔍 Partido</button>
+  </div>
+
   <main>
-    <div class="ranking-wrap">
-      <div class="sec-label">
-        🏆 CLASIFICACIÓN
-        <span id="rank-sim-note" style="display:none;color:var(--sim);font-size:9px"> — SIMULADA</span>
-      </div>
-      <div class="rank-scroll" id="rank-scroll"></div>
-    </div>
 
-    <div class="tbl-panel">
-      <div class="tbl-toolbar">
-        <div class="sec-label" style="margin:0">⚽ PARTIDOS</div>
-        <div class="flt-grp">
-          <button class="flt on" onclick="setFilter('all',this)">Todos</button>
-          <button class="flt"    onclick="setFilter('played',this)">Jugados</button>
-          <button class="flt"    onclick="setFilter('pending',this)">Pendientes</button>
+    <!-- ══ TAB 1: MARCADORES ══ -->
+    <div class="tab-pane active" id="tab-marcador">
+      <div class="ranking-wrap">
+        <div class="sec-label">
+          🏆 CLASIFICACIÓN
+          <span id="rank-sim-note" style="display:none;color:var(--sim);font-size:9px"> — SIMULADA</span>
+        </div>
+        <div class="rank-scroll" id="rank-scroll"></div>
+      </div>
+
+      <div class="tbl-panel">
+        <div class="tbl-toolbar">
+          <div class="sec-label" style="margin:0">⚽ PARTIDOS</div>
+          <div class="flt-grp">
+            <button class="flt on" onclick="setFilter('all',this)">Todos</button>
+            <button class="flt"    onclick="setFilter('played',this)">Jugados</button>
+            <button class="flt"    onclick="setFilter('pending',this)">Pendientes</button>
+          </div>
+        </div>
+        <div class="grid-wrap" id="grid-wrap">
+          <div class="left-wrap" id="left-wrap">
+            <table><thead id="left-head"></thead></table>
+            <div class="scroll-body" id="left-body-wrap">
+              <table><tbody id="left-body"></tbody></table>
+            </div>
+          </div>
+          <div class="right-wrap" id="right-wrap">
+            <div id="right-head-wrap">
+              <table><thead id="right-head"></thead></table>
+            </div>
+            <div class="scroll-body" id="right-body-wrap">
+              <table><tbody id="right-body"></tbody></table>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- Dual-table grid -->
-      <div class="grid-wrap" id="grid-wrap">
-        <!-- LEFT: fixed columns -->
-        <div class="left-wrap" id="left-wrap">
+    <!-- ══ TAB 2: PUNTUACIÓN ══ -->
+    <div class="tab-pane" id="tab-puntuacion">
+      <div class="pts-layout">
+        <!-- Tabla de clasificación -->
+        <div class="pts-table-wrap">
           <table>
-            <thead id="left-head"></thead>
+            <thead>
+              <tr>
+                <th style="width:36px">#</th>
+                <th style="text-align:left;padding-left:12px">Participante</th>
+                <th class="th-pts-col">Puntos</th>
+              </tr>
+            </thead>
+            <tbody id="pts-table-body"></tbody>
           </table>
-          <div class="scroll-body" id="left-body-wrap">
-            <table>
-              <tbody id="left-body"></tbody>
-            </table>
-          </div>
         </div>
-        <!-- RIGHT: scrollable participants -->
-        <div class="right-wrap" id="right-wrap">
-          <div id="right-head-wrap">
-            <table>
-              <thead id="right-head"></thead>
-            </table>
-          </div>
-          <div class="scroll-body" id="right-body-wrap">
-            <table>
-              <tbody id="right-body"></tbody>
-            </table>
-          </div>
+        <!-- Gráfica de barras -->
+        <div class="chart-wrap">
+          <div class="chart-title">PUNTUACIÓN</div>
+          <div class="bar-chart" id="bar-chart"></div>
         </div>
       </div>
     </div>
+
+    <!-- ══ TAB 3: PARTIDO ══ -->
+    <div class="tab-pane" id="tab-partido">
+      <div class="match-selector">
+        <select id="match-select" onchange="renderMatchDetail()">
+          <option value="">— Seleccionar partido —</option>
+        </select>
+      </div>
+      <div class="match-layout" id="match-layout" style="display:none">
+        <!-- Info del partido -->
+        <div class="match-info-box" id="match-info-box"></div>
+        <!-- Tabla de pronósticos -->
+        <div class="match-preds-table">
+          <table>
+            <thead>
+              <tr>
+                <th style="text-align:left;padding-left:10px">Participante</th>
+                <th>Pronóstico</th>
+                <th class="th-pts-col" id="match-pts-header">Pts</th>
+              </tr>
+            </thead>
+            <tbody id="match-preds-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <footer>
@@ -713,6 +834,172 @@ function setFilter(f,btn){
 
 /* ── RESET SIM ── */
 function resetSim(){S.simScores={};buildRanking();renderTable()}
+
+/* ── TAB SWITCHING ── */
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'tab-puntuacion') renderPuntuacion();
+  if (id === 'tab-partido')    renderMatchSelector();
+}
+
+/* ── PUNTUACION TAB ── */
+function renderPuntuacion() {
+  const hasSim = Object.keys(S.simScores).length > 0;
+  const tot    = simTotals();
+  const sel    = S.selectedPart;
+
+  // Sort by rank (as-is from sheet)
+  const sorted = [...S.participants].sort((a,b) => a.rank - b.rank);
+
+  // Table
+  const tbody = document.getElementById('pts-table-body');
+  tbody.innerHTML = sorted.map((p, i) => {
+    const pts   = hasSim ? (tot[p.name] ?? p.points) : p.points;
+    const isSel = sel === p.name;
+    const rowCls = isSel ? 'pts-tr-sel' : (i % 2 === 0 ? 'pts-tr-a' : 'pts-tr-b');
+    const medals = {1:'🥇',2:'🥈',3:'🥉'};
+    return `<tr class="${rowCls}">
+      <td class="td-pts-rank">${medals[p.rank] || p.rank + '°'}</td>
+      <td class="td-pts-name">${p.name}</td>
+      <td class="td-pts-val">${pts}</td>
+    </tr>`;
+  }).join('');
+
+  // Bar chart
+  const chart  = document.getElementById('bar-chart');
+  const maxPts = Math.max(...sorted.map(p => hasSim ? (tot[p.name] ?? p.points) : p.points), 1);
+  chart.innerHTML = sorted.map(p => {
+    const pts    = hasSim ? (tot[p.name] ?? p.points) : p.points;
+    const isSel  = sel === p.name;
+    const pct    = Math.max((pts / maxPts) * 200, 2);
+    return `<div class="bar-col ${isSel ? 'bar-sel' : ''}">
+      <div class="bar-val">${pts}</div>
+      <div class="bar ${isSel ? 'bar-sel-bar' : 'bar-default'}"
+           style="height:${pct}px"
+           title="${p.name}: ${pts} pts"></div>
+      <div class="bar-name">${p.name}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── PARTIDO TAB ── */
+function renderMatchSelector() {
+  const sel = document.getElementById('match-select');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— Seleccionar partido —</option>';
+  S.matches.forEach(m => {
+    const played = m.real_l !== null;
+    const label  = `${m.fecha} ${m.hora} · ${m.local} vs ${m.visitante}${played ? ` (${m.real_l}-${m.real_v})` : ' — pendiente'}`;
+    const opt    = document.createElement('option');
+    opt.value    = m.id;
+    opt.textContent = label;
+    sel.appendChild(opt);
+  });
+  if (prev) { sel.value = prev; renderMatchDetail(); }
+}
+
+function renderMatchDetail() {
+  const id  = document.getElementById('match-select').value;
+  const lay = document.getElementById('match-layout');
+  if (!id) { lay.style.display = 'none'; return; }
+  lay.style.display = 'flex';
+
+  const m      = S.matches.find(x => x.id === id);
+  if (!m) return;
+  const sc     = eff(m);
+  const played = m.real_l !== null || S.simScores[m.id] !== undefined;
+  const sel    = S.selectedPart;
+
+  // ── Info box ──
+  const flagL = flagImg(m.cod_l || m.local);
+  const flagV = flagImg(m.cod_v || m.visitante);
+  const scoreHTML = sc
+    ? `<div class="match-score-big">${sc.l} — ${sc.v}</div>`
+    : `<div class="match-score-big pending">vs</div>`;
+
+  // Result breakdown (only if played)
+  let summaryHTML = '';
+  if (sc) {
+    const counts = {p5:0, p4:0, p3:0, p0:0};
+    S.participants.forEach(p => {
+      const pr = (S.preds[m.id] || {})[p.name];
+      if (!pr || pr.l === null) return;
+      const pts = calcPoints(sc.l, sc.v, pr.l, pr.v);
+      if      (pts === 5) counts.p5++;
+      else if (pts === 4) counts.p4++;
+      else if (pts === 3) counts.p3++;
+      else                counts.p0++;
+    });
+    const sign = x => x > 0 ? '▲' : x < 0 ? '▼' : '=';
+    const realSign = sign(sc.l - sc.v);
+    summaryHTML = `
+      <div class="result-summary" style="margin-top:12px">
+        <table>
+          <thead><tr><th>Resultado</th><th>Participantes</th></tr></thead>
+          <tbody>
+            <tr class="rs-a"><td style="text-align:left;padding-left:8px;font-size:13px">${realSign}</td><td>—</td></tr>
+            ${counts.p5>0?`<tr class="rs-b"><td><span style="color:var(--pts-5);font-weight:bold">5 pts</span></td><td>${counts.p5}</td></tr>`:''}
+            ${counts.p4>0?`<tr class="rs-a"><td><span style="color:var(--pts-4);font-weight:bold">4 pts</span></td><td>${counts.p4}</td></tr>`:''}
+            ${counts.p3>0?`<tr class="rs-b"><td><span style="color:var(--pts-3);font-weight:bold">3 pts</span></td><td>${counts.p3}</td></tr>`:''}
+            ${counts.p0>0?`<tr class="rs-a"><td><span style="color:var(--txt-gray)">0 pts</span></td><td>${counts.p0}</td></tr>`:''}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  document.getElementById('match-info-box').innerHTML = `
+    <div class="match-date-lbl">Gr.${m.grupo} · ${m.fecha} ${m.hora}</div>
+    <div class="match-teams-big">
+      <div class="team">${flagL} ${m.local}</div>
+      ${scoreHTML}
+      <div class="team">${flagV} ${m.visitante}</div>
+    </div>
+    ${summaryHTML}`;
+
+  // ── Pts header ──
+  document.getElementById('match-pts-header').textContent = sc ? 'Pts' : 'Pronóstico';
+
+  // ── Predictions table ──
+  // Sort: if played, by pts desc then name; if not, alphabetically
+  let parts = [...S.participants];
+  if (sc) {
+    parts = parts.map(p => {
+      const pr  = (S.preds[m.id] || {})[p.name];
+      const pts = (pr && pr.l !== null) ? calcPoints(sc.l, sc.v, pr.l, pr.v) : -1;
+      return { ...p, matchPts: pts };
+    }).sort((a, b) => b.matchPts - a.matchPts || a.name.localeCompare(b.name));
+  }
+
+  const tbody = document.getElementById('match-preds-body');
+  tbody.innerHTML = parts.map((p, i) => {
+    const pr     = (S.preds[m.id] || {})[p.name];
+    const isSel  = sel === p.name;
+    const rowCls = isSel ? 'mp-sel' : (i % 2 === 0 ? 'mp-a' : 'mp-b');
+
+    let predCell = '<span class="pred-pending">—</span>';
+    let ptsCell  = '<span style="color:var(--txt-gray)">—</span>';
+
+    if (pr && pr.l !== null) {
+      predCell = `<span class="pred-score">${pr.l} - ${pr.v}</span>`;
+      if (sc) {
+        const pts = calcPoints(sc.l, sc.v, pr.l, pr.v);
+        const cls = pc(pts, true);
+        ptsCell = `<span class="mpts ${cls}">${pts}</span>`;
+      } else {
+        ptsCell = '<span style="color:var(--txt-gray)">?</span>';
+      }
+    }
+
+    return `<tr class="${rowCls}">
+      <td class="td-part-name">${p.name}</td>
+      <td>${predCell}</td>
+      <td>${ptsCell}</td>
+    </tr>`;
+  }).join('');
+}
 
 /* ── AUTO REFRESH ── */
 if(CONFIG.AUTO_REFRESH_MIN>0){
