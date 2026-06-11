@@ -104,12 +104,12 @@ main{padding:10px}
 .vbar-area::-webkit-scrollbar-thumb{background:var(--bg-hdr)}
 .vbar-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1 1 0;min-width:22px;max-width:40px;cursor:pointer}
 .vbar-pts-lbl{font-size:9px;color:var(--txt-dim);font-weight:bold;line-height:1;height:12px;display:flex;align-items:flex-end;justify-content:center}
-.vbar-pts-lbl.sel{color:#3B82F6}
+.vbar-pts-lbl.sel{color:var(--gold)}
 .vbar-bar{width:80%;border-radius:2px 2px 0 0;transition:background .2s, height .4s;min-height:2px}
 .vbar-bar-default{background:#3D4D5E}
-.vbar-bar-sel{background:#3B82F6}
-.vbar-name{font-size:7px;color:var(--txt-dim);transform:rotate(-45deg);transform-origin:top left;white-space:nowrap;margin-top:4px;height:40px;width:40px;text-align:left;line-height:1}
-.vbar-name.sel{color:#3B82F6}
+.vbar-bar-sel{background:var(--gold)}
+.vbar-name{font-size:7px;color:var(--txt-dim);transform:rotate(-45deg);transform-origin:top left;white-space:nowrap;margin-top:10px;height:40px;width:40px;text-align:left;line-height:1}
+.vbar-name.sel{color:var(--gold)}
 /* Ranking table */
 .pts-rank-table{display:flex;gap:10px;overflow-x:auto}
 .pts-rank-col{flex:0 0 auto;min-width:160px}
@@ -119,12 +119,12 @@ main{padding:10px}
 .pts-rank-col td{padding:2px 8px;border-bottom:1px solid rgba(255,255,255,.03);white-space:nowrap;font-size:11px;height:20px}
 .ptr-a td{background:var(--bg-row-a)}
 .ptr-b td{background:var(--bg-row-b)}
-.ptr-sel td{background:#1A2A4A!important;color:#3B82F6!important;font-weight:bold}
+.ptr-sel td{background:#3E3318!important;color:var(--gold)!important;font-weight:bold}
 .td-pr-rank{text-align:center;color:var(--txt-dim);width:28px;font-size:10px}
-.ptr-sel .td-pr-rank{color:#3B82F6}
+.ptr-sel .td-pr-rank{color:var(--gold)}
 .td-pr-name{text-align:left;padding-left:6px!important;min-width:80px}
-.td-pr-pts{text-align:right;padding-right:8px!important;font-weight:bold;color:var(--txt-dim);font-family:Verdana,sans-serif;font-size:12px}
-.ptr-sel .td-pr-pts{color:#3B82F6}
+.td-pr-pts{text-align:right;padding-right:8px!important;font-weight:bold;color:var(--gold);font-family:Verdana,sans-serif;font-size:12px}
+.ptr-sel .td-pr-pts{color:var(--gold)}
 
 /* ── PARTIDO TAB ── */
 .match-layout{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
@@ -151,10 +151,10 @@ main{padding:10px}
 .match-preds-table th.th-pts-col{background:var(--bg-pts-hdr)}
 .match-preds-table td{padding:2px 6px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03);text-align:center;height:22px;white-space:nowrap}
 .mp-a td{background:var(--bg-row-a)}.mp-b td{background:var(--bg-row-b)}
-.mp-sel td{background:#1A2A4A!important;color:#3B82F6!important}
+.mp-sel td{background:#3E3318!important;color:var(--gold)!important}
 .td-rank-num{color:var(--txt-dim);font-size:10px;width:20px;text-align:center}
 .td-part-name{text-align:left!important;padding-left:8px!important;font-weight:bold;font-size:11px;min-width:70px}
-.mp-sel .td-part-name{color:#3B82F6}
+.mp-sel .td-part-name{color:var(--gold)}
 .td-pred-lv{font-weight:bold;color:var(--txt);font-size:12px;width:38px}
 .td-pred-pts{width:28px;font-size:12px}
 .pred-pending{color:var(--txt-dim)}
@@ -170,7 +170,7 @@ main{padding:10px}
 .rank-scroll::-webkit-scrollbar-thumb{background:var(--bg-hdr)}
 .rc{flex:0 0 auto;background:var(--bg-row-a);border:1px solid #444;padding:5px 8px;text-align:center;min-width:70px;cursor:pointer;transition:border-color .15s,background .15s}
 .rc:hover{border-color:var(--bg-hdr);background:#404040}
-.rc.on{border-color:#3B82F6;background:#1A2A4A}
+.rc.on{border-color:var(--pts-5);background:#3E3318}
 .rc.r1{border-color:rgba(255,215,0,.38)}
 .rc.r2{border-color:rgba(192,192,192,.28)}
 .rc.r3{border-color:rgba(205,127,50,.32)}
@@ -224,7 +224,7 @@ th.th-pts{background:var(--bg-pts-hdr);border-right-color:#013F52}
 th.th-sel{background:var(--bg-sel-hdr);border-right-color:#001E28;color:var(--sel-title)}
 .th-pname{cursor:pointer;padding:1px 4px;display:inline-block;transition:color .12s;color:#EEE;font-weight:bold}
 .th-pname:hover{color:var(--gold)}
-.th-pname.sel{color:#3B82F6}
+.th-pname.sel{color:var(--gold)}
 
 /* ── DATA ROWS ── */
 td{padding:4px 5px;vertical-align:middle;white-space:nowrap;border-right:1px solid rgba(255,255,255,.04);height:var(--row-h)}
@@ -671,6 +671,12 @@ function selectPart(name){
   const rc=document.getElementById(`rc-${name}`);
   if(rc){rc.classList.add('on');rc.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})}
   buildHeaders();renderTable();syncHeights();
+  // Re-render active tab so highlights update immediately
+  const activeTab=document.querySelector('.tab-pane.active');
+  if(activeTab){
+    if(activeTab.id==='tab-puntuacion') renderPuntuacion();
+    if(activeTab.id==='tab-partido')    renderMatchDetail();
+  }
 }
 
 /* ── BUILD HEADERS ── */
@@ -686,7 +692,7 @@ function buildHeaders(){
       <th class="th-pts" rowspan="2" style="width:34px;min-width:34px;font-size:11px;font-weight:normal">V</th>
       <th rowspan="2" style="width:26px;min-width:26px"></th>
       <th class="th-name" rowspan="2" style="text-align:left;width:88px;min-width:88px">Visitante</th>
-      <th colspan="2" style="background:#2C2C2C;border-right-color:#3A3A3A">${sel?`<span style="color:#3B82F6;font-weight:bold">${sel}</span>`:'— Seleccionar —'}</th>
+      <th colspan="2" style="background:#2C2C2C;border-right-color:#3A3A3A">${sel?`<span style="color:var(--gold);font-weight:bold">${sel}</span>`:'— Seleccionar —'}</th>
     </tr>
     <tr>
       <th style="background:var(--bg-hdr);border-right-color:#014A62;font-size:11px;font-weight:normal;width:36px;min-width:36px">L-V</th>
@@ -1016,7 +1022,7 @@ function renderMatchDetail() {
     ${summaryHTML}`;
 
   // ── Pts header ──
-  document.getElementById('match-pts-header').textContent = sc ? 'Pts' : 'Pronóstico';
+  document.getElementById('match-pts-header').textContent = 'Pts';
 
   // ── Predictions table ──
   // Sort by: 1st criterio = diff goles (L-V), 2nd = total goles (mayor a menor)
@@ -1065,7 +1071,7 @@ function renderMatchDetail() {
         const cls = pc(pts, true);
         ptsCell = `<span class="mpts ${cls}">${pts}</span>`;
       } else {
-        ptsCell = '<span style="color:var(--txt-gray)">?</span>';
+        ptsCell = '';
       }
     }
 
