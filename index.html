@@ -100,9 +100,6 @@ main{padding:10px}
 .flt{background:var(--bg-row-a);border:1px solid #444;color:var(--txt-dim);padding:3px 10px;font-family:Calibri,sans-serif;font-size:11px;cursor:pointer}
 .flt:hover{border-color:var(--bg-hdr);color:var(--txt)}
 .flt.on{background:var(--bg-hdr);border-color:var(--bg-hdr);color:#fff}
-.srch{margin-left:auto;background:var(--bg-row-a);border:1px solid #444;color:var(--txt);padding:3px 8px;font-family:Calibri,sans-serif;font-size:12px;outline:none;width:155px}
-.srch::placeholder{color:var(--txt-gray)}
-.srch:focus{border-color:var(--bg-hdr)}
 
 /* ── DUAL TABLE LAYOUT ── */
 /*
@@ -221,7 +218,6 @@ footer a:hover{color:var(--gold)}
   header{padding:6px 8px}
   .h-pills{display:none}
   main{padding:6px}
-  .srch{width:90px}
 
   /* Hide team name columns on mobile */
   .td-name{display:none}
@@ -309,7 +305,6 @@ footer a:hover{color:var(--gold)}
           <button class="flt"    onclick="setFilter('played',this)">Jugados</button>
           <button class="flt"    onclick="setFilter('pending',this)">Pendientes</button>
         </div>
-        <input class="srch" id="srch" placeholder="Buscar equipo…" oninput="renderTable()">
       </div>
 
       <!-- Dual-table grid -->
@@ -530,8 +525,8 @@ function buildHeaders(){
     <tr>
       <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
       <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
-      <th class="th-sel" style="font-size:11px">Pron.</th>
-      <th class="th-sel th-sel-pts" style="font-size:11px">Pts</th>
+      <th class="th-sel" style="font-size:11px">L-V</th>
+      <th class="th-sel th-sel-pts" style="font-size:11px">P</th>
     </tr>`;
 
   // RIGHT header: per participant × 2 cols
@@ -540,20 +535,18 @@ function buildHeaders(){
       <th colspan="2"><span class="th-pname${sel===p.name?' sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span></th>`).join('')}
     </tr>
     <tr>${S.participants.map(()=>`
-      <th style="font-size:11px;width:36px;min-width:36px">P.</th>
-      <th class="th-pts" style="font-size:11px;width:30px;min-width:30px">Pts</th>`).join('')}
+      <th style="font-size:11px;width:36px;min-width:36px">L-V</th>
+      <th class="th-pts" style="font-size:11px;width:30px;min-width:30px">P</th>`).join('')}
     </tr>`;
 }
 
 /* ── RENDER TABLE ── */
 function renderTable(){
-  const q=document.getElementById('srch').value.toLowerCase().trim();
   let matches=S.matches.filter(m=>{
     if(S.filter==='played')return m.real_l!==null;
     if(S.filter==='pending')return m.real_l===null;
     return true;
   });
-  if(q)matches=matches.filter(m=>m.local.toLowerCase().includes(q)||m.visitante.toLowerCase().includes(q)||m.grupo.toLowerCase().includes(q));
 
   const sel=S.selectedPart;
   const leftRows=[];
