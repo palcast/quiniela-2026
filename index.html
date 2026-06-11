@@ -50,6 +50,17 @@ body{font-family:Calibri,'Segoe UI',sans-serif;font-size:13px;background:var(--b
 #app{display:none}
 #app.show{display:block}
 
+/* ── PARTICIPANT SELECTOR MODAL ── */
+#select-modal{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center}
+#select-modal.gone{display:none}
+.modal-box{background:var(--bg-panel);border:2px solid var(--bg-hdr);padding:28px 32px;text-align:center;max-width:340px;width:90%}
+.modal-title{font-family:Verdana,sans-serif;font-size:15px;font-weight:bold;color:var(--gold);margin-bottom:6px;letter-spacing:1px}
+.modal-sub{font-size:12px;color:var(--txt-dim);margin-bottom:18px}
+.modal-select{width:100%;background:var(--bg-row-a);border:1px solid var(--bg-hdr);color:var(--txt);padding:8px 12px;font-family:Calibri,sans-serif;font-size:14px;outline:none;margin-bottom:14px}
+.modal-btn{background:var(--bg-hdr);border:none;color:#fff;padding:8px 28px;font-family:Calibri,sans-serif;font-size:14px;font-weight:bold;cursor:pointer;letter-spacing:1px;transition:background .2s}
+.modal-btn:hover{background:#017090}
+.modal-btn:disabled{background:#333;color:var(--txt-gray);cursor:not-allowed}
+
 /* ── HEADER ── */
 header{position:sticky;top:0;z-index:100;background:var(--bg-root);border-bottom:2px solid var(--bg-hdr);padding:8px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .logo{font-family:Verdana,sans-serif;font-size:14px;font-weight:bold;color:var(--gold);white-space:nowrap;letter-spacing:1px}
@@ -347,6 +358,19 @@ footer a:hover{color:var(--gold)}
   <button class="flt on" onclick="location.reload()" style="margin-top:10px;padding:6px 18px;cursor:pointer">Reintentar</button>
 </div>
 
+<!-- PARTICIPANT SELECTOR MODAL -->
+<div id="select-modal">
+  <div class="modal-box">
+    <div class="modal-title">⚽ QUINIELA MUNDIAL 2026</div>
+    <div class="modal-sub">Selecciona tu nombre para ver tus pronósticos destacados</div>
+    <select class="modal-select" id="modal-part-sel" onchange="document.getElementById('modal-confirm').disabled=!this.value">
+      <option value="">— Elige tu nombre —</option>
+    </select>
+    <br>
+    <button class="modal-btn" id="modal-confirm" disabled onclick="confirmParticipant()">Entrar</button>
+  </div>
+</div>
+
 <div id="app">
   <header>
     <div class="logo">⚽ QUINIELA MUNDIAL 2026</div>
@@ -374,23 +398,15 @@ footer a:hover{color:var(--gold)}
 
   <!-- TAB BAR -->
   <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('tab-marcador',this)">⚽ Marcadores</button>
-    <button class="tab-btn" onclick="switchTab('tab-puntuacion',this)">🏆 Puntuación</button>
+    <button class="tab-btn active" onclick="switchTab('tab-puntuacion',this)">🏆 Puntuación</button>
+    <button class="tab-btn" onclick="switchTab('tab-marcador',this)">⚽ Marcadores</button>
     <button class="tab-btn" onclick="switchTab('tab-partido',this)">🔍 Partido</button>
   </div>
 
   <main>
 
     <!-- ══ TAB 1: MARCADORES ══ -->
-    <div class="tab-pane active" id="tab-marcador">
-      <div class="ranking-wrap">
-        <div class="sec-label">
-          🏆 CLASIFICACIÓN
-          <span id="rank-sim-note" style="display:none;color:var(--sim);font-size:9px"> — SIMULADA</span>
-        </div>
-        <div class="rank-scroll" id="rank-scroll"></div>
-      </div>
-
+    <div class="tab-pane" id="tab-marcador">
       <div class="tbl-panel">
         <div class="tbl-toolbar">
           <div class="sec-label" style="margin:0">⚽ PARTIDOS</div>
@@ -420,9 +436,13 @@ footer a:hover{color:var(--gold)}
     </div>
 
     <!-- ══ TAB 2: PUNTUACIÓN ══ -->
-    <div class="tab-pane" id="tab-puntuacion">
+    <div class="tab-pane active" id="tab-puntuacion">
       <div class="pts-wrap">
-        <div class="pts-wrap-title">Puntuación</div>
+        <div class="pts-wrap-title">Puntuación
+          <span id="rank-sim-note" style="display:none;color:var(--sim);font-size:9px;letter-spacing:0;font-family:Calibri,sans-serif"> — SIMULADA</span>
+        </div>
+        <!-- Hidden rank scroll needed by buildRanking() -->
+        <div id="rank-scroll" style="display:none"></div>
         <!-- Vertical bar chart -->
         <div class="vbar-area" id="bar-chart"></div>
         <!-- Ranking table split in columns -->
@@ -562,6 +582,12 @@ async function loadData(){
     document.getElementById('sheet-lnk').href=`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit`;
     document.getElementById('loading-screen').classList.add('gone');
     document.getElementById('app').classList.add('show');
+    // Show participant selection modal if no one selected yet
+    if(!S.selectedPart){
+      document.getElementById('select-modal').classList.remove('gone');
+    } else {
+      document.getElementById('select-modal').classList.add('gone');
+    }
   }catch(e){
     console.error(e);
     document.getElementById('loading-screen').classList.add('gone');
@@ -618,10 +644,26 @@ function buildRanking(){
 /* ── SELECT ── */
 function populateSel(){
   const sel=document.getElementById('part-sel');
-  const prev=sel.value;
-  sel.innerHTML='<option value="">— Seleccionar —</option>';
+  const prev=sel.value||S.selectedPart;
+  sel.innerHTML='';
   S.participants.forEach(p=>{const o=document.createElement('option');o.value=p.name;o.textContent=`${p.name} (${p.rank}°)`;sel.appendChild(o)});
   if(prev&&S.participants.find(p=>p.name===prev)){sel.value=prev;S.selectedPart=prev}
+  // Also populate modal select
+  const msel=document.getElementById('modal-part-sel');
+  if(msel){
+    msel.innerHTML='<option value="">— Elige tu nombre —</option>';
+    S.participants.forEach(p=>{const o=document.createElement('option');o.value=p.name;o.textContent=p.name;msel.appendChild(o)});
+  }
+}
+
+function confirmParticipant(){
+  const name=document.getElementById('modal-part-sel').value;
+  if(!name)return;
+  document.getElementById('select-modal').classList.add('gone');
+  selectPart(name);
+  // Default to puntuacion tab
+  switchTab('tab-puntuacion', document.querySelector('.tab-btn.active'));
+  renderPuntuacion();
 }
 function selectPart(name){
   S.selectedPart=name;
@@ -923,31 +965,41 @@ function renderMatchDetail() {
     ? `<div class="match-score-big">${sc.l} — ${sc.v}</div>`
     : `<div class="match-score-big pending">vs</div>`;
 
-  // Result breakdown (only if played)
+  // Result breakdown — by predicted result (local/draw/visitor)
   let summaryHTML = '';
-  if (sc) {
-    const counts = {p5:0, p4:0, p3:0, p0:0};
+  {
+    const counts = {local:0, draw:0, visitor:0};
     S.participants.forEach(p => {
       const pr = (S.preds[m.id] || {})[p.name];
       if (!pr || pr.l === null) return;
-      const pts = calcPoints(sc.l, sc.v, pr.l, pr.v);
-      if      (pts === 5) counts.p5++;
-      else if (pts === 4) counts.p4++;
-      else if (pts === 3) counts.p3++;
-      else                counts.p0++;
+      const d = pr.l - pr.v;
+      if      (d > 0) counts.local++;
+      else if (d === 0) counts.draw++;
+      else counts.visitor++;
     });
-    const sign = x => x > 0 ? '▲' : x < 0 ? '▼' : '=';
-    const realSign = sign(sc.l - sc.v);
+    const flL = flagImg(m.cod_l || m.local);
+    const flV = flagImg(m.cod_v || m.visitante);
+    const drawIcon = `<div class="pred-icon-draw" style="width:20px;height:20px;font-size:10px">E</div>`;
+    // Highlight real result row if played
+    const realRes = sc ? (sc.l > sc.v ? 'local' : sc.l < sc.v ? 'visitor' : 'draw') : null;
+    const hlStyle = 'background:#1A3020;';
     summaryHTML = `
       <div class="result-summary" style="margin-top:12px">
         <table>
           <thead><tr><th>Resultado</th><th>Participantes</th></tr></thead>
           <tbody>
-            <tr class="rs-a"><td style="text-align:left;padding-left:8px;font-size:13px">${realSign}</td><td>—</td></tr>
-            ${counts.p5>0?`<tr class="rs-b"><td><span style="color:var(--pts-5);font-weight:bold">5 pts</span></td><td>${counts.p5}</td></tr>`:''}
-            ${counts.p4>0?`<tr class="rs-a"><td><span style="color:var(--pts-4);font-weight:bold">4 pts</span></td><td>${counts.p4}</td></tr>`:''}
-            ${counts.p3>0?`<tr class="rs-b"><td><span style="color:var(--pts-3);font-weight:bold">3 pts</span></td><td>${counts.p3}</td></tr>`:''}
-            ${counts.p0>0?`<tr class="rs-a"><td><span style="color:var(--txt-gray)">0 pts</span></td><td>${counts.p0}</td></tr>`:''}
+            <tr class="rs-a" style="${realRes==='local'?hlStyle:''}">
+              <td style="padding:4px 8px">${flL}</td>
+              <td>${counts.local}</td>
+            </tr>
+            <tr class="rs-b" style="${realRes==='draw'?hlStyle:''}">
+              <td style="padding:4px 8px">${drawIcon}</td>
+              <td>${counts.draw}</td>
+            </tr>
+            <tr class="rs-a" style="${realRes==='visitor'?hlStyle:''}">
+              <td style="padding:4px 8px">${flV}</td>
+              <td>${counts.visitor}</td>
+            </tr>
           </tbody>
         </table>
       </div>`;
