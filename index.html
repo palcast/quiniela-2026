@@ -100,9 +100,6 @@ main{padding:10px}
 .flt{background:var(--bg-row-a);border:1px solid #444;color:var(--txt-dim);padding:3px 10px;font-family:Calibri,sans-serif;font-size:11px;cursor:pointer}
 .flt:hover{border-color:var(--bg-hdr);color:var(--txt)}
 .flt.on{background:var(--bg-hdr);border-color:var(--bg-hdr);color:#fff}
-.srch{margin-left:auto;background:var(--bg-row-a);border:1px solid #444;color:var(--txt);padding:3px 8px;font-family:Calibri,sans-serif;font-size:12px;outline:none;width:155px}
-.srch::placeholder{color:var(--txt-gray)}
-.srch:focus{border-color:var(--bg-hdr)}
 
 /* ── DUAL TABLE LAYOUT ── */
 /*
@@ -115,7 +112,7 @@ main{padding:10px}
 
 /* LEFT — fixed, no horizontal scroll */
 .left-wrap{flex:0 0 auto;overflow:hidden;z-index:2;box-shadow:4px 0 8px rgba(0,0,0,.45)}
-.left-wrap table{border-collapse:collapse;font-size:13px;font-family:Calibri,sans-serif;table-layout:fixed}
+.left-wrap table{border-collapse:collapse;font-size:13px;font-family:Calibri,sans-serif;table-layout:fixed;width:100%}
 
 /* RIGHT — scrolls horizontally */
 .right-wrap{flex:1 1 auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#444 var(--bg-panel)}
@@ -146,7 +143,7 @@ tr.row-pending{opacity:.75}
 tr.row-pending:hover{opacity:1}
 
 /* ── LEFT TABLE CELLS ── */
-.td-meta{text-align:left;padding:3px 6px;width:82px;min-width:82px;max-width:82px}
+.td-meta{text-align:left;padding:3px 6px}
 .m-row1{display:flex;align-items:center;gap:5px}
 .m-grupo{font-size:11px;font-weight:bold;color:var(--bg-hdr);min-width:12px}
 .m-fecha{font-size:11px;color:var(--txt-dim)}
@@ -154,16 +151,16 @@ tr.row-pending:hover{opacity:1}
 .b-pend{background:rgba(155,111,212,.15);color:var(--sim);border:1px solid rgba(155,111,212,.3);padding:0 4px;font-size:9px;font-weight:bold;display:inline-block;margin-left:17px;margin-top:1px}
 .b-sim{background:var(--sim-bg);color:var(--sim);border:1px solid rgba(155,111,212,.4);padding:0 4px;font-size:9px;font-weight:bold;display:inline-block;margin-left:17px;margin-top:1px}
 
-.td-name{padding:3px 5px;white-space:nowrap}
-.td-name.local{text-align:right;width:88px;min-width:88px;max-width:88px}
-.td-name.visitor{text-align:left;width:88px;min-width:88px;max-width:88px}
+.td-name{padding:3px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.td-name.local{text-align:right}
+.td-name.visitor{text-align:left}
 .m-name{font-weight:bold;font-size:13px;color:var(--txt)}
 
-.td-flag{padding:2px 3px;width:26px;min-width:26px;max-width:26px;text-align:center}
+.td-flag{padding:2px 3px;text-align:center}
 .flag{width:20px;height:20px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle;border:1px solid rgba(255,255,255,.15)}
 
 /* Goal cells */
-.td-goal{padding:0;width:34px;min-width:34px;max-width:34px;text-align:center;cursor:text}
+.td-goal{padding:0;text-align:center;cursor:text}
 tr.row-a .td-goal{background:var(--bg-score)}
 tr.row-b .td-goal{background:var(--bg-score-b)}
 tr.editing .td-goal{background:#0D2030!important}
@@ -175,16 +172,16 @@ tr.editing .td-goal{background:#0D2030!important}
 .goal-inp.active{display:block}
 
 /* Selected participant cols */
-.td-sel{text-align:center;width:62px;min-width:62px;max-width:62px}
+.td-sel{text-align:center;overflow:hidden}
 tr.row-a .td-sel{background:#253830}
 tr.row-b .td-sel{background:#263930}
-.td-sel-pts{text-align:center;width:38px;min-width:38px;max-width:38px}
+.td-sel-pts{text-align:center}
 tr.row-a .td-sel-pts{background:#1E3028}
 tr.row-b .td-sel-pts{background:#1F3128}
 th.th-sel-pts{background:#3A7060;border-right-color:#2A6050}
 
 /* Forecast chip */
-.chip{display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:bold;color:var(--txt-dim)}
+.chip{display:inline-flex;align-items:center;gap:1px;font-size:11px;font-weight:bold;color:var(--txt-dim)}
 .chip-sep{opacity:.4;font-weight:normal}
 
 /* Points */
@@ -221,11 +218,11 @@ footer a:hover{color:var(--gold)}
   header{padding:6px 8px}
   .h-pills{display:none}
   main{padding:6px}
-  .srch{width:90px}
 
   /* Hide team name columns on mobile */
   .td-name{display:none}
   th.th-name{display:none}
+  col.col-name{display:none}
 
   /* Bigger flags on mobile since they're the only team identifier */
   .flag{width:26px;height:26px}
@@ -236,19 +233,13 @@ footer a:hover{color:var(--gold)}
   .goal-inp{font-size:14px;padding:3px 1px}
   .td-goal{width:30px;min-width:30px;max-width:30px}
 
-  /* Compact meta cell */
-  .td-meta{width:66px;min-width:66px;max-width:66px}
   .m-fecha{font-size:10px}
   .m-hora{font-size:12px}
   .m-grupo{font-size:10px}
 
   /* Tighter selected cols */
-  .td-sel{width:50px;min-width:50px;max-width:50px}
   .td-sel-pts{width:30px;min-width:30px;max-width:30px}
 
-  /* Right table pts cols */
-  .td-mini{width:30px;min-width:30px}
-  .td-mpts{width:26px;min-width:26px}
   .mini{font-size:11px}
   .mpts{font-size:12px}
   .pv{font-size:12px}
@@ -309,7 +300,6 @@ footer a:hover{color:var(--gold)}
           <button class="flt"    onclick="setFilter('played',this)">Jugados</button>
           <button class="flt"    onclick="setFilter('pending',this)">Pendientes</button>
         </div>
-        <input class="srch" id="srch" placeholder="Buscar equipo…" oninput="renderTable()">
       </div>
 
       <!-- Dual-table grid -->
@@ -512,42 +502,85 @@ function selectPart(name){
   buildHeaders();renderTable();syncHeights();
 }
 
+/* ── COLUMN WIDTHS (single source of truth) ── */
+const COLS = {
+  fecha: 82, local: 88, flagL: 28, goalL: 34, goalV: 34,
+  flagV: 28, visitor: 88, selPred: 46, selPts: 30,
+  partPred: 36, partPts: 28,
+};
+
 /* ── BUILD HEADERS ── */
 function buildHeaders(){
   const sel=S.selectedPart;
-  // LEFT header: fecha | local | flagL | golL | golV | flagV | visitante | selPron | selPts
+  const C=COLS;
+
+  // Inject colgroup into left body table so widths match header exactly
+  const leftBodyTable = document.querySelector('#left-body-wrap table');
+  if(leftBodyTable){
+    leftBodyTable.innerHTML = `<colgroup>
+      <col style="width:${C.fecha}px">
+      <col class="col-name" style="width:${C.local}px">
+      <col style="width:${C.flagL}px">
+      <col style="width:${C.goalL}px">
+      <col style="width:${C.goalV}px">
+      <col style="width:${C.flagV}px">
+      <col class="col-name" style="width:${C.visitor}px">
+      <col style="width:${C.selPred}px">
+      <col style="width:${C.selPts}px">
+    </colgroup><tbody id="left-body"></tbody>`;
+  }
+
+  // Left header with matching colgroup
   document.getElementById('left-head').innerHTML=`
+    <colgroup>
+      <col style="width:${C.fecha}px">
+      <col class="col-name" style="width:${C.local}px">
+      <col style="width:${C.flagL}px">
+      <col style="width:${C.goalL}px">
+      <col style="width:${C.goalV}px">
+      <col style="width:${C.flagV}px">
+      <col class="col-name" style="width:${C.visitor}px">
+      <col style="width:${C.selPred}px">
+      <col style="width:${C.selPts}px">
+    </colgroup>
     <tr>
-      <th rowspan="2" style="text-align:left;width:82px;min-width:82px">Fecha</th>
-      <th class="th-name" rowspan="2" style="text-align:right;width:88px;min-width:88px">Local</th>
-      <th rowspan="2" style="width:26px;min-width:26px"></th>
-      <th class="th-pts" style="width:34px;min-width:34px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">L</th>
-      <th class="th-pts" style="width:34px;min-width:34px;font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
-      <th rowspan="2" style="width:26px;min-width:26px"></th>
-      <th class="th-name" rowspan="2" style="text-align:left;width:88px;min-width:88px">Visitante</th>
+      <th rowspan="2" style="text-align:left">Fecha</th>
+      <th class="th-name" rowspan="2" style="text-align:right">Local</th>
+      <th rowspan="2"></th>
+      <th class="th-pts" style="font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">L</th>
+      <th class="th-pts" style="font-size:10px;font-weight:normal;color:rgba(255,255,255,.7)">V</th>
+      <th rowspan="2"></th>
+      <th class="th-name" rowspan="2" style="text-align:left">Visitante</th>
       <th class="th-sel" colspan="2">${sel||'— Seleccionar —'}</th>
     </tr>
     <tr>
       <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
       <th class="th-pts" style="font-size:9px;color:rgba(255,255,255,.5);font-weight:normal">▸ sim</th>
-      <th class="th-sel" style="font-size:11px">Pron.</th>
-      <th class="th-sel th-sel-pts" style="font-size:11px">Pts</th>
+      <th class="th-sel" style="font-size:11px">L-V</th>
+      <th class="th-sel th-sel-pts" style="font-size:11px">P</th>
     </tr>`;
 
-  // RIGHT header: per participant × 2 cols
+  // Right header colgroup
+  const rightBodyTable = document.querySelector('#right-body-wrap table');
+  const rColgroup = S.participants.map(()=>`<col style="width:${C.partPred}px"><col style="width:${C.partPts}px">`).join('');
+  if(rightBodyTable){
+    rightBodyTable.innerHTML = `<colgroup>${rColgroup}</colgroup><tbody id="right-body"></tbody>`;
+  }
+
   document.getElementById('right-head').innerHTML=`
+    <colgroup>${rColgroup}</colgroup>
     <tr>${S.participants.map(p=>`
       <th colspan="2"><span class="th-pname${sel===p.name?' sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span></th>`).join('')}
     </tr>
     <tr>${S.participants.map(()=>`
-      <th style="font-size:11px;width:36px;min-width:36px">P.</th>
-      <th class="th-pts" style="font-size:11px;width:30px;min-width:30px">Pts</th>`).join('')}
+      <th style="font-size:11px">L-V</th>
+      <th class="th-pts" style="font-size:11px">P</th>`).join('')}
     </tr>`;
 }
 
 /* ── RENDER TABLE ── */
 function renderTable(){
-  const q=document.getElementById('srch').value.toLowerCase().trim();
+  const q='';
   let matches=S.matches.filter(m=>{
     if(S.filter==='played')return m.real_l!==null;
     if(S.filter==='pending')return m.real_l===null;
