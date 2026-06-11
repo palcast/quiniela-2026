@@ -178,8 +178,8 @@ tr.editing .td-goal{background:#0D2030!important}
 
 /* Selected participant cols — same dimensions as right table cols */
 .td-sel{text-align:center;width:36px;min-width:36px;max-width:36px}
-tr.row-a .td-sel{background:var(--bg-row-a)}
-tr.row-b .td-sel{background:var(--bg-row-b)}
+tr.row-a .td-sel{background:var(--bg-score)}
+tr.row-b .td-sel{background:var(--bg-score-b)}
 .td-sel-pts{text-align:center;width:30px;min-width:30px;max-width:30px}
 tr.row-a .td-sel-pts{background:var(--bg-row-a)}
 tr.row-b .td-sel-pts{background:var(--bg-row-b)}
@@ -199,6 +199,8 @@ th.th-sel-pts{background:#001E28;border-right-color:#001018;color:var(--sel-titl
 
 /* Right table cells */
 .td-mini{text-align:center;width:36px;min-width:36px}
+tr.row-a .td-mini{background:var(--bg-score)}
+tr.row-b .td-mini{background:var(--bg-score-b)}
 .td-mpts{text-align:center;width:30px;min-width:30px}
 .mini{display:inline-flex;align-items:center;gap:1px;font-size:12px;color:var(--txt-dim)}
 .mini-sep{opacity:.35}
@@ -250,6 +252,7 @@ footer a:hover{color:var(--gold)}
   /* Right table pts cols */
   .td-mini{width:30px;min-width:30px}
   .td-mpts{width:26px;min-width:26px}
+  /* bg-score already applied via row rules above */
   .mini{font-size:11px}
   .mpts{font-size:12px}
   .pv{font-size:12px}
@@ -539,7 +542,7 @@ function buildHeaders(){
   // RIGHT header: per participant × 2 cols
   document.getElementById('right-head').innerHTML=`
     <tr>${S.participants.map(p=>`
-      <th colspan="2"><span class="th-pname${sel===p.name?' sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span></th>`).join('')}
+      <th colspan="2" style="background:#2C2C2C;border-right-color:#3A3A3A"><span class="th-pname${sel===p.name?' sel':''}" id="thp-${p.name}" onclick="selectPart('${p.name}')">${p.name}</span></th>`).join('')}
     </tr>
     <tr>${S.participants.map(()=>`
       <th style="font-size:11px;width:36px;min-width:36px">L-V</th>
