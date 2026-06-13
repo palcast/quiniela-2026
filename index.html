@@ -84,8 +84,9 @@ select:hover{border-color:var(--pts-5)}
 .sim-reset:hover{background:var(--sim-bg)}
 
 /* ── TABS ── */
-.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--bg-hdr);margin:0;padding:0 10px;background:var(--bg-root)}
-.tab-btn{background:transparent;border:none;color:var(--txt-dim);padding:8px 18px;font-family:Calibri,sans-serif;font-size:13px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap}
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--bg-hdr);margin:0;padding:0 6px;background:var(--bg-root)}
+.tab-btn{background:transparent;border:none;color:var(--txt-dim);padding:8px 14px;font-family:Calibri,sans-serif;font-size:13px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap}
+.tab-btn-icon{padding:8px 12px;font-size:16px}
 .tab-btn:hover{color:var(--txt)}
 .tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:bold}
 .tab-pane{display:none}
@@ -127,40 +128,42 @@ main{padding:10px}
 .ptr-sel .td-pr-pts{color:var(--gold)}
 
 /* ── PARTIDO TAB ── */
-.match-layout{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
-.match-selector{background:var(--bg-panel);border:1px solid #2A3540;padding:10px;margin-bottom:10px}
-.match-selector select{width:100%;max-width:500px;background:var(--bg-row-a);border:1px solid var(--bg-hdr);color:var(--txt);padding:6px 10px;font-family:Calibri,sans-serif;font-size:13px;outline:none}
+.match-selector{padding:8px 10px;margin-bottom:8px}
+.match-selector select{width:100%;background:var(--bg-row-a);border:1px solid var(--bg-hdr);color:var(--txt);padding:6px 10px;font-family:Calibri,sans-serif;font-size:13px;outline:none}
 
-.match-info-box{flex:0 0 auto;background:var(--bg-panel);border:1px solid #2A3540;padding:14px 18px;min-width:200px}
-.match-teams-big{text-align:center;margin-bottom:12px}
-.match-teams-big .team{font-size:13px;font-weight:bold;color:var(--txt);display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:4px}
-.match-score-big{font-family:Verdana,sans-serif;font-size:28px;font-weight:bold;color:var(--txt);text-align:center;margin:8px 0;letter-spacing:4px}
-.match-score-big.pending{color:var(--txt-gray);font-size:18px}
-.match-date-lbl{font-size:10px;color:var(--txt-dim);text-align:center;margin-bottom:10px}
+/* Top row: info box + summary side by side */
+.match-top{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap}
+.match-info-box{flex:1 1 160px;background:var(--bg-panel);border:1px solid #2A3540;padding:10px 14px;min-width:140px}
+.match-teams-big{text-align:center;margin-bottom:6px}
+.match-teams-big .team{font-size:12px;font-weight:bold;color:var(--txt);display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:3px}
+.match-score-big{font-family:Verdana,sans-serif;font-size:24px;font-weight:bold;color:var(--txt);text-align:center;margin:5px 0;letter-spacing:3px}
+.match-score-big.pending{color:var(--txt-gray);font-size:16px}
+.match-date-lbl{font-size:10px;color:var(--txt-dim);text-align:center;margin-bottom:6px}
 
-.result-summary{margin-top:10px}
+.result-summary{flex:1 1 120px;background:var(--bg-panel);border:1px solid #2A3540;padding:8px}
 .result-summary table{border-collapse:collapse;width:100%;font-size:12px}
 .result-summary th{background:var(--bg-hdr);color:#EEE;padding:4px 8px;font-size:10px;text-align:center;border-bottom:1px solid #014A62}
-.result-summary td{padding:3px 8px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04)}
+.result-summary td{padding:4px 8px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04)}
 .rs-a td{background:var(--bg-row-a)}.rs-b td{background:var(--bg-row-b)}
-.rs-icon{font-size:12px}
 
-.match-preds-table{flex:0 0 auto;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden;min-width:190px;max-width:260px}
+/* Bottom: two-column predictions */
+.match-preds-wrap{display:flex;gap:6px}
+.match-preds-table{flex:1 1 0;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden;min-width:0}
 .match-preds-table table{border-collapse:collapse;width:100%;font-size:11px}
-.match-preds-table th{background:var(--bg-hdr);color:#EEE;padding:4px 8px;font-size:10px;font-weight:bold;text-align:center;border-bottom:1px solid #014A62;border-right:1px solid #014A62;white-space:nowrap}
+.match-preds-table th{background:var(--bg-hdr);color:#EEE;padding:4px 5px;font-size:10px;font-weight:bold;text-align:center;border-bottom:1px solid #014A62;border-right:1px solid #014A62;white-space:nowrap}
 .match-preds-table th.th-pts-col{background:var(--bg-pts-hdr)}
-.match-preds-table td{padding:2px 6px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03);text-align:center;height:22px;white-space:nowrap}
+.match-preds-table td{padding:2px 4px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03);text-align:center;height:21px;white-space:nowrap}
 .mp-a td{background:var(--bg-row-a)}.mp-b td{background:var(--bg-row-b)}
 .mp-sel td{background:rgba(240,180,41,0.1)!important;color:var(--gold)!important}
-.td-rank-num{color:var(--txt-dim);font-size:10px;width:20px;text-align:center}
-.td-part-name{text-align:left!important;padding-left:8px!important;font-weight:bold;font-size:11px;min-width:70px}
+.td-rank-num{color:var(--txt-dim);font-size:10px;width:16px;text-align:center;padding:0 2px}
+.td-part-name{text-align:left!important;padding-left:5px!important;font-weight:bold;font-size:11px}
 .mp-sel .td-part-name{color:var(--gold)}
-.td-pred-lv{font-weight:bold;color:var(--txt);font-size:12px;width:38px}
-.td-pred-pts{width:28px;font-size:12px}
+.td-pred-lv{font-weight:bold;color:var(--txt);font-size:11px;width:32px}
+.td-pred-pts{width:22px;font-size:11px}
 .pred-pending{color:var(--txt-dim)}
-.td-pred-icon{text-align:center;width:26px;padding:2px 3px}
-.pred-icon-draw{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#444;color:var(--txt-dim);font-size:9px;font-weight:bold;border:1px solid #666}
-.pred-icon-flag .flag{width:18px;height:18px}
+.td-pred-icon{text-align:center;width:20px;padding:1px 2px}
+.pred-icon-draw{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#444;color:var(--txt-dim);font-size:8px;font-weight:bold;border:1px solid #666}
+.pred-icon-flag .flag{width:16px;height:16px}
 
 /* ── RANKING ── */
 .ranking-wrap{background:var(--bg-panel);border:1px solid #2A3540;padding:8px 10px;margin-bottom:10px;overflow:hidden}
@@ -424,7 +427,7 @@ footer a:hover{color:var(--gold)}
     <button class="tab-btn active" onclick="switchTab('tab-puntuacion',this)">🏆 Puntuación</button>
     <button class="tab-btn" onclick="switchTab('tab-marcador',this)">⚽ Marcadores</button>
     <button class="tab-btn" onclick="switchTab('tab-partido',this)">🔍 Partido</button>
-    <button class="tab-btn" onclick="switchTab('tab-reglas',this)">📋 Reglas</button>
+    <button class="tab-btn tab-btn-icon" onclick="switchTab('tab-reglas',this)" title="Reglas">📋</button>
   </div>
 
   <main>
@@ -481,24 +484,14 @@ footer a:hover{color:var(--gold)}
           <option value="">— Seleccionar partido —</option>
         </select>
       </div>
-      <div class="match-layout" id="match-layout" style="display:none">
-        <!-- Info del partido -->
-        <div class="match-info-box" id="match-info-box"></div>
-        <!-- Tabla de pronósticos -->
-        <div class="match-preds-table">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:20px">#</th>
-                <th style="text-align:left;padding-left:8px">Participante</th>
-                <th style="width:26px"></th>
-                <th>L-V</th>
-                <th class="th-pts-col" id="match-pts-header">Pts</th>
-              </tr>
-            </thead>
-            <tbody id="match-preds-body"></tbody>
-          </table>
+      <div id="match-layout" style="display:none">
+        <!-- Top: info + summary horizontal -->
+        <div class="match-top">
+          <div class="match-info-box" id="match-info-box"></div>
+          <div id="match-summary-box"></div>
         </div>
+        <!-- Bottom: two-column predictions -->
+        <div class="match-preds-wrap" id="match-preds-wrap"></div>
       </div>
     </div>
 
@@ -1085,14 +1078,20 @@ function renderMatchSelector() {
     opt.textContent = label;
     sel.appendChild(opt);
   });
-  if (prev) { sel.value = prev; renderMatchDetail(); }
+  if (prev && S.matches.find(m => m.id === prev)) {
+    sel.value = prev; renderMatchDetail();
+  } else {
+    // Auto-select next pending match
+    const next = S.matches.find(m => m.real_l === null);
+    if (next) { sel.value = next.id; renderMatchDetail(); }
+  }
 }
 
 function renderMatchDetail() {
   const id  = document.getElementById('match-select').value;
   const lay = document.getElementById('match-layout');
   if (!id) { lay.style.display = 'none'; return; }
-  lay.style.display = 'flex';
+  lay.style.display = 'block';
 
   const m      = S.matches.find(x => x.id === id);
   if (!m) return;
@@ -1153,11 +1152,10 @@ function renderMatchDetail() {
       <div class="team">${flagL} ${m.local}</div>
       ${scoreHTML}
       <div class="team">${flagV} ${m.visitante}</div>
-    </div>
-    ${summaryHTML}`;
+    </div>`;
 
-  // ── Pts header ──
-  document.getElementById('match-pts-header').textContent = 'Pts';
+  document.getElementById('match-summary-box').innerHTML =
+    `<div class="result-summary">${summaryHTML.replace('<div class="result-summary" style="margin-top:12px">','').replace('</div>','')}</div>`;
 
   // ── Predictions table ──
   // Sort by: 1st criterio = diff goles (L-V), 2nd = total goles (mayor a menor)
@@ -1181,35 +1179,25 @@ function renderMatchDetail() {
     return dir * (a.predTot - b.predTot);
   });
 
-  const tbody = document.getElementById('match-preds-body');
-  tbody.innerHTML = parts.map((p, i) => {
+  // Build rows HTML
+  function buildPredRow(p, i) {
     const isSel  = sel === p.name;
     const rowCls = isSel ? 'mp-sel' : (i % 2 === 0 ? 'mp-a' : 'mp-b');
-
     let predCell = '<span class="pred-pending">—</span>';
-    let ptsCell  = '<span style="color:var(--txt-gray)">—</span>';
+    let ptsCell  = '';
     let iconCell = '';
-
     if (p.predL !== null) {
-      predCell = `<span class="pred-score">${p.predL} - ${p.predV}</span>`;
-      // Winner icon
+      predCell = `<span class="pred-score">${p.predL}-${p.predV}</span>`;
       const diff = p.predL - p.predV;
-      if (diff === 0) {
-        iconCell = `<div class="pred-icon-draw">E</div>`;
-      } else if (diff > 0) {
-        iconCell = `<div class="pred-icon-flag">${flagImg(m.cod_l||m.local)}</div>`;
-      } else {
-        iconCell = `<div class="pred-icon-flag">${flagImg(m.cod_v||m.visitante)}</div>`;
-      }
+      if (diff === 0)       iconCell = `<div class="pred-icon-draw">E</div>`;
+      else if (diff > 0)    iconCell = `<div class="pred-icon-flag">${flagImg(m.cod_l||m.local)}</div>`;
+      else                  iconCell = `<div class="pred-icon-flag">${flagImg(m.cod_v||m.visitante)}</div>`;
       if (sc) {
         const pts = calcPoints(sc.l, sc.v, p.predL, p.predV);
         const cls = pc(pts, true);
         ptsCell = `<span class="mpts ${cls}">${pts}</span>`;
-      } else {
-        ptsCell = '';
       }
     }
-
     return `<tr class="${rowCls}">
       <td class="td-rank-num">${i+1}</td>
       <td class="td-part-name">${p.name}</td>
@@ -1217,7 +1205,27 @@ function renderMatchDetail() {
       <td class="td-pred-lv">${predCell}</td>
       <td class="td-pred-pts">${ptsCell}</td>
     </tr>`;
-  }).join('');
+  }
+
+  const thRow = `<tr>
+    <th style="width:16px">#</th>
+    <th style="text-align:left;padding-left:5px">Participante</th>
+    <th style="width:20px"></th>
+    <th>L-V</th>
+    <th class="th-pts-col">Pts</th>
+  </tr>`;
+
+  const half = Math.ceil(parts.length / 2);
+  const col1 = parts.slice(0, half);
+  const col2 = parts.slice(half);
+
+  document.getElementById('match-preds-wrap').innerHTML = [col1, col2].map(col => `
+    <div class="match-preds-table">
+      <table>
+        <thead>${thRow}</thead>
+        <tbody>${col.map((p,i) => buildPredRow(p, col === col1 ? i : half+i)).join('')}</tbody>
+      </table>
+    </div>`).join('');
 }
 
 /* ── AUTO REFRESH ── */
