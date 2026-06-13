@@ -128,11 +128,11 @@ main{padding:10px}
 .ptr-sel .td-pr-pts{color:var(--gold)}
 
 /* ── PARTIDO TAB ── */
-.match-selector{padding:8px 10px;margin-bottom:8px;text-align:center}
+.match-selector{padding:8px 10px;margin-bottom:8px}
 .match-selector select{width:100%;background:var(--bg-row-a);border:1px solid var(--bg-hdr);color:var(--txt);padding:6px 10px;font-family:Calibri,sans-serif;font-size:13px;outline:none}
 
 /* Top row: info box + summary side by side */
-.match-top{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;justify-content:center}
+.match-top{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap}
 .match-info-box{flex:0 0 auto;width:160px;background:var(--bg-panel);border:1px solid #2A3540;padding:10px 14px}
 .match-teams-big{text-align:center;margin-bottom:6px}
 .match-teams-big .team{font-size:12px;font-weight:bold;color:var(--txt);display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:3px}
@@ -148,20 +148,20 @@ main{padding:10px}
 
 /* Bottom: two-column predictions */
 .match-preds-wrap{display:flex;gap:6px;justify-content:center}
-.match-preds-table{flex:0 0 auto;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden}
+.match-preds-table{flex:0 0 auto;width:200px;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden}
 .match-preds-table table{border-collapse:collapse;width:100%;font-size:11px}
 .match-preds-table th{background:var(--bg-hdr);color:#EEE;padding:4px 5px;font-size:10px;font-weight:bold;text-align:center;border-bottom:1px solid #014A62;border-right:1px solid #014A62;white-space:nowrap}
 .match-preds-table th.th-pts-col{background:var(--bg-pts-hdr)}
-.match-preds-table td{padding:2px 5px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03);text-align:center;height:21px;white-space:nowrap}
+.match-preds-table td{padding:2px 4px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03);text-align:center;height:21px;white-space:nowrap}
 .mp-a td{background:var(--bg-row-a)}.mp-b td{background:var(--bg-row-b)}
 .mp-sel td{background:rgba(240,180,41,0.1)!important;color:var(--gold)!important}
-.td-rank-num{color:var(--txt-dim);font-size:10px;width:20px;text-align:center;padding:0 3px}
-.td-part-name{text-align:left!important;padding-left:6px!important;font-weight:bold;font-size:11px}
+.td-rank-num{color:var(--txt-dim);font-size:10px;width:16px;text-align:center;padding:0 2px}
+.td-part-name{text-align:left!important;padding-left:5px!important;font-weight:bold;font-size:11px;max-width:80px;overflow:hidden;text-overflow:ellipsis}
 .mp-sel .td-part-name{color:var(--gold)}
-.td-pred-lv{font-weight:bold;color:var(--txt);font-size:11px;width:36px}
-.td-pred-pts{width:28px;font-size:11px}
+.td-pred-lv{font-weight:bold;color:var(--txt);font-size:11px;width:32px}
+.td-pred-pts{width:22px;font-size:11px}
 .pred-pending{color:var(--txt-dim)}
-.td-pred-icon{text-align:center;width:22px;padding:1px 3px}
+.td-pred-icon{text-align:center;width:20px;padding:1px 2px}
 .pred-icon-draw{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#444;color:var(--txt-dim);font-size:8px;font-weight:bold;border:1px solid #666}
 .pred-icon-flag .flag{width:16px;height:16px}
 
