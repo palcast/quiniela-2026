@@ -128,40 +128,40 @@ main{padding:10px}
 .ptr-sel .td-pr-pts{color:var(--gold)}
 
 /* ── PARTIDO TAB ── */
-.match-selector{padding:8px 10px;margin-bottom:8px}
+.match-selector{padding:8px 10px;margin-bottom:8px;text-align:center}
 .match-selector select{width:100%;background:var(--bg-row-a);border:1px solid var(--bg-hdr);color:var(--txt);padding:6px 10px;font-family:Calibri,sans-serif;font-size:13px;outline:none}
 
 /* Top row: info box + summary side by side */
-.match-top{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap}
-.match-info-box{flex:1 1 160px;background:var(--bg-panel);border:1px solid #2A3540;padding:10px 14px;min-width:140px}
+.match-top{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;justify-content:center}
+.match-info-box{flex:0 0 auto;width:160px;background:var(--bg-panel);border:1px solid #2A3540;padding:10px 14px}
 .match-teams-big{text-align:center;margin-bottom:6px}
 .match-teams-big .team{font-size:12px;font-weight:bold;color:var(--txt);display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:3px}
 .match-score-big{font-family:Verdana,sans-serif;font-size:24px;font-weight:bold;color:var(--txt);text-align:center;margin:5px 0;letter-spacing:3px}
 .match-score-big.pending{color:var(--txt-gray);font-size:16px}
 .match-date-lbl{font-size:10px;color:var(--txt-dim);text-align:center;margin-bottom:6px}
 
-.result-summary{flex:1 1 120px;background:var(--bg-panel);border:1px solid #2A3540;padding:8px}
+.result-summary{flex:0 0 auto;width:120px;background:var(--bg-panel);border:1px solid #2A3540;padding:8px}
 .result-summary table{border-collapse:collapse;width:100%;font-size:12px}
 .result-summary th{background:var(--bg-hdr);color:#EEE;padding:4px 8px;font-size:10px;text-align:center;border-bottom:1px solid #014A62}
 .result-summary td{padding:4px 8px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04)}
 .rs-a td{background:var(--bg-row-a)}.rs-b td{background:var(--bg-row-b)}
 
 /* Bottom: two-column predictions */
-.match-preds-wrap{display:flex;gap:6px}
-.match-preds-table{flex:1 1 0;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden;min-width:0}
+.match-preds-wrap{display:flex;gap:6px;justify-content:center}
+.match-preds-table{flex:0 0 auto;width:168px;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden}
 .match-preds-table table{border-collapse:collapse;width:100%;font-size:11px}
 .match-preds-table th{background:var(--bg-hdr);color:#EEE;padding:4px 5px;font-size:10px;font-weight:bold;text-align:center;border-bottom:1px solid #014A62;border-right:1px solid #014A62;white-space:nowrap}
 .match-preds-table th.th-pts-col{background:var(--bg-pts-hdr)}
-.match-preds-table td{padding:2px 4px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03);text-align:center;height:21px;white-space:nowrap}
+.match-preds-table td{padding:2px 2px;border-bottom:1px solid rgba(255,255,255,.03);border-right:1px solid rgba(255,255,255,.03);text-align:center;height:21px;white-space:nowrap}
 .mp-a td{background:var(--bg-row-a)}.mp-b td{background:var(--bg-row-b)}
 .mp-sel td{background:rgba(240,180,41,0.1)!important;color:var(--gold)!important}
-.td-rank-num{color:var(--txt-dim);font-size:10px;width:16px;text-align:center;padding:0 2px}
-.td-part-name{text-align:left!important;padding-left:5px!important;font-weight:bold;font-size:11px}
+.td-rank-num{color:var(--txt-dim);font-size:10px;width:14px;text-align:center;padding:0 1px}
+.td-part-name{text-align:left!important;padding-left:3px!important;font-weight:bold;font-size:11px;max-width:58px;width:58px;overflow:hidden;text-overflow:ellipsis}
 .mp-sel .td-part-name{color:var(--gold)}
-.td-pred-lv{font-weight:bold;color:var(--txt);font-size:11px;width:32px}
-.td-pred-pts{width:22px;font-size:11px}
+.td-pred-lv{font-weight:bold;color:var(--txt);font-size:11px;width:28px}
+.td-pred-pts{width:26px;font-size:11px}
 .pred-pending{color:var(--txt-dim)}
-.td-pred-icon{text-align:center;width:20px;padding:1px 2px}
+.td-pred-icon{text-align:center;width:18px;padding:1px 1px}
 .pred-icon-draw{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#444;color:var(--txt-dim);font-size:8px;font-weight:bold;border:1px solid #666}
 .pred-icon-flag .flag{width:16px;height:16px}
 
@@ -1199,7 +1199,7 @@ function renderMatchDetail() {
       }
     }
     return `<tr class="${rowCls}">
-      <td class="td-rank-num">${i+1}</td>
+      <td class="td-rank-num">${p.rank}°</td>
       <td class="td-part-name">${p.name}</td>
       <td class="td-pred-icon">${iconCell}</td>
       <td class="td-pred-lv">${predCell}</td>
@@ -1215,15 +1215,17 @@ function renderMatchDetail() {
     <th class="th-pts-col">Pts</th>
   </tr>`;
 
-  const half = Math.ceil(parts.length / 2);
+  const useTwoCols = parts.length > 16;
+  const half = useTwoCols ? Math.ceil(parts.length / 2) : parts.length;
   const col1 = parts.slice(0, half);
-  const col2 = parts.slice(half);
+  const col2 = useTwoCols ? parts.slice(half) : [];
 
-  document.getElementById('match-preds-wrap').innerHTML = [col1, col2].map(col => `
+  const cols = useTwoCols ? [col1, col2] : [col1];
+  document.getElementById('match-preds-wrap').innerHTML = cols.map((col, ci) => `
     <div class="match-preds-table">
       <table>
         <thead>${thRow}</thead>
-        <tbody>${col.map((p,i) => buildPredRow(p, col === col1 ? i : half+i)).join('')}</tbody>
+        <tbody>${col.map((p,i) => buildPredRow(p, ci === 0 ? i : half+i)).join('')}</tbody>
       </table>
     </div>`).join('');
 }
