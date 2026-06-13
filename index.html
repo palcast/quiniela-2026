@@ -1109,17 +1109,10 @@ function renderAnalytics() {
   function levRow(st,i,isClave) {
     const cls=i%2===0?'an-tr-a':'an-tr-b';
     const fl=flagImg(st.m.cod_l||st.m.local), fv=flagImg(st.m.cod_v||st.m.visitante);
-    let metricCell;
-    if (isClave) {
-      metricCell = `<td style="text-align:center;font-size:11px;color:var(--pts-4);font-weight:bold;width:30px">${st.uniqueCombos}</td>`;
-    } else {
-      const comboCnt={};
-      parts.forEach(p=>{const pr=(S.preds[st.m.id]||{})[p.name];if(pr&&pr.l!==null){const k=`${pr.l}-${pr.v}`;comboCnt[k]=(comboCnt[k]||0)+1;}});
-      const top=Object.entries(comboCnt).sort((a,b)=>b[1]-a[1])[0];
-      metricCell = `<td style="text-align:center;font-size:11px;color:var(--pts-3);font-weight:bold;width:30px">${top?top[1]:0}</td>`;
-    }
+    // Both clave and irrelevante show uniqueCombos (distinct scorelines), white color
+    const metricCell = `<td style="text-align:center;font-size:11px;color:#EEE;font-weight:bold;width:28px">${st.uniqueCombos}</td>`;
     return `<tr class="${cls}">
-      <td style="padding:3px 6px;font-size:11px">${fl}${fv} ${st.label}</td>
+      <td style="padding:3px 6px;font-size:10px;color:var(--txt-dim);white-space:nowrap">${st.m.fecha} ${st.m.hora}</td>
       ${metricCell}
       <td style="text-align:center;padding:2px 6px;white-space:nowrap;font-size:10px">
         ${fl}<span style="color:var(--txt-dim);margin:0 2px">${st.resCnt.L}</span>
@@ -1134,14 +1127,14 @@ function renderAnalytics() {
       <div class="an-section">
         <div class="an-section-title">⚡ Top 10 partidos clave (mayor disparidad)</div>
         <table class="an-table">
-          <thead><tr><th class="an-th-left">Partido</th><th title="Marcadores distintos">Mkd</th><th>L / E / V</th></tr></thead>
+          <thead><tr><th class="an-th-left">Fecha / Hora</th><th title="Marcadores distintos">Mkd</th><th>L / E / V</th></tr></thead>
           <tbody>${top10disp.map((s,i)=>levRow(s,i,true)).join('')}</tbody>
         </table>
       </div>
       <div class="an-section">
         <div class="an-section-title">😴 Top 10 partidos irrelevantes (menor disparidad)</div>
         <table class="an-table">
-          <thead><tr><th class="an-th-left">Partido</th><th title="Mismo marcador (más común)">Igl</th><th>L / E / V</th></tr></thead>
+          <thead><tr><th class="an-th-left">Fecha / Hora</th><th title="Marcadores distintos">Mkd</th><th>L / E / V</th></tr></thead>
           <tbody>${bot10disp.map((s,i)=>levRow(s,i,false)).join('')}</tbody>
         </table>
       </div>
