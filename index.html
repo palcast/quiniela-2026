@@ -1002,6 +1002,19 @@ function resetSim(){
   }
 }
 
+/* ── GO TO MATCH FROM ANALYTICS ── */
+function goToMatch(matchId) {
+  // Switch to Partido tab
+  const btn = document.querySelector('.tab-btn[onclick*="tab-partido"]');
+  switchTab('tab-partido', btn);
+  // Select the match
+  const sel = document.getElementById('match-select');
+  if (sel) {
+    sel.value = matchId;
+    renderMatchDetail();
+  }
+}
+
 /* ── TAB SWITCHING ── */
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -1053,8 +1066,10 @@ function renderAnalytics() {
   }).filter(Boolean);
 
   const byDisp=[...allMatchDisp].sort((a,b)=>b.disparity-a.disparity);
-  const top10disp=byDisp.slice(0,10);
-  const bot10disp=byDisp.slice(-10).reverse();
+  // Take top/bot 10 by disparity, then sort each group by fecha ascending
+  const sortByFecha=(arr)=>[...arr].sort((a,b)=>a.m.fecha.localeCompare(b.m.fecha)||(a.m.hora||'').localeCompare(b.m.hora||''));
+  const top10disp=sortByFecha(byDisp.slice(0,10));
+  const bot10disp=sortByFecha(byDisp.slice(-10).reverse());
 
   // ── Points per played match ──
   const matchStats=played.map(m=>{
@@ -1109,15 +1124,16 @@ function renderAnalytics() {
   function levRow(st,i,isClave) {
     const cls=i%2===0?'an-tr-a':'an-tr-b';
     const fl=flagImg(st.m.cod_l||st.m.local), fv=flagImg(st.m.cod_v||st.m.visitante);
-    // Both clave and irrelevante show uniqueCombos (distinct scorelines), white color
     const metricCell = `<td style="text-align:center;font-size:11px;color:#EEE;font-weight:bold;width:28px">${st.uniqueCombos}</td>`;
-    return `<tr class="${cls}">
-      <td style="padding:3px 6px;font-size:10px;color:var(--txt-dim);white-space:nowrap">${st.m.fecha} ${st.m.hora}</td>
+    return `<tr class="${cls}" style="cursor:pointer" onclick="goToMatch('${st.m.id}')" title="Ver partido en detalle">
+      <td style="padding:3px 6px;font-size:10px;color:var(--txt-dim);white-space:nowrap">
+        <span style="color:var(--bg-hdr);font-size:9px;margin-right:3px">▶</span>${st.m.fecha} ${st.m.hora}
+      </td>
       ${metricCell}
-      <td style="text-align:center;padding:2px 6px;white-space:nowrap;font-size:10px">
-        ${fl}<span style="color:var(--txt-dim);margin:0 2px">${st.resCnt.L}</span>
-        <span style="background:#555;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;font-size:8px;color:#ddd">E</span><span style="color:var(--txt-dim);margin:0 2px">${st.resCnt.E}</span>
-        ${fv}<span style="color:var(--txt-dim);margin-left:2px">${st.resCnt.V}</span>
+      <td style="text-align:center;padding:2px 8px;white-space:nowrap;font-size:10px">
+        ${fl}<span style="color:var(--txt-dim);margin:0 4px">${st.resCnt.L}</span>
+        <span style="background:#555;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;font-size:8px;color:#ddd;margin:0 2px">E</span><span style="color:var(--txt-dim);margin:0 4px">${st.resCnt.E}</span>
+        ${fv}<span style="color:var(--txt-dim);margin-left:4px">${st.resCnt.V}</span>
       </td>
     </tr>`;
   }
