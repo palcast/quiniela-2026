@@ -306,111 +306,83 @@ tr.row-b .td-mini{background:var(--bg-score-b)}
 function renderAnalytics() {
   const wrap = document.getElementById('analytics-wrap');
   const played = S.matches.filter(m => m.real_l !== null);
+  const allMatches = S.matches;
   if (!played.length) { wrap.innerHTML = '<div style="text-align:center;color:var(--txt-gray);padding:30px;font-size:12px">Aún no hay partidos jugados.</div>'; return; }
 
   const sel = S.selectedPart;
   const parts = S.participants;
 
-  // ── Helper: majority result for a match ──
-  function majority(mid) {
-    const cnt = {L:0,E:0,V:0};
-    parts.forEach(p => {
-      const pr = (S.preds[mid]||{})[p.name];
-      if (!pr || pr.l===null) return;
-      const d = pr.l - pr.v;
-      if (d>0) cnt.L++; else if (d===0) cnt.E++; else cnt.V++;
-    });
-    const max = Math.max(cnt.L,cnt.E,cnt.V);
-    return max===cnt.L?'L':max===cnt.E?'E':'V';
-  }
+  function stddev(arr){if(!arr.length)return 0;const mn=arr.reduce((a,b)=>a+b,0)/arr.length;return Math.sqrt(arr.reduce((a,b)=>a+(b-mn)**2,0)/arr.length);}
 
-  // ── Points per match (avg across all participants) ──
-  const matchStats = played.map(m => {
-    let totalPts=0, count=0, exact=0, correct=0;
-    const predResults = [];
+  // ── Disparity over ALL 72 matches (pronósticos only) ──
+  const allMatchDisp = allMatches.map(m => {
+    const predResults=[],ls=[],vs=[];
     parts.forEach(p => {
-      const pr = (S.preds[m.id]||{})[p.name];
-      if (!pr || pr.l===null) return;
-      const pts = calcPoints(m.real_l, m.real_v, pr.l, pr.v);
-      totalPts += pts; count++;
-      if (pts===5) exact++;
-      if (pts>=3) correct++;
-      const d = pr.l - pr.v;
+      const pr=(S.preds[m.id]||{})[p.name];
+      if(!pr||pr.l===null) return;
+      const d=pr.l-pr.v;
       predResults.push(d>0?'L':d===0?'E':'V');
+      ls.push(pr.l); vs.push(pr.v);
     });
-    // Disparidad: % que NO coincide con la mayoría (result split)
-    const resCnt = {L:0,E:0,V:0};
-    predResults.forEach(r => resCnt[r]++);
-    const maxVotes = Math.max(resCnt.L,resCnt.E,resCnt.V);
-    const splitScore = count>0 ? (1 - maxVotes/count) : 0; // 0=todos igual, 0.67=máx split
+    const n=predResults.length;
+    if(!n) return null;
+    const resCnt={L:0,E:0,V:0};
+    predResults.forEach(r=>resCnt[r]++);
+    const maxVotes=Math.max(resCnt.L,resCnt.E,resCnt.V);
+    const splitScore=1-maxVotes/n;
+    const scoreDisp=(stddev(ls)+stddev(vs))/2;
+    const disparity=splitScore*0.6+Math.min(scoreDisp/2,1)*0.4;
+    const combos=new Set(parts.map(p=>{const pr=(S.preds[m.id]||{})[p.name];return pr&&pr.l!==null?`${pr.l}-${pr.v}`:null}).filter(Boolean));
+    return {m,resCnt,n,splitScore,scoreDisp,disparity,uniqueCombos:combos.size,label:`${m.local} vs ${m.visitante}`};
+  }).filter(Boolean);
 
-    // Score dispersion (std dev of predicted goles local)
-    const ls = parts.map(p=>(S.preds[m.id]||{})[p.name]).filter(p=>p&&p.l!==null).map(p=>p.l);
-    const vs = parts.map(p=>(S.preds[m.id]||{})[p.name]).filter(p=>p&&p.v!==null).map(p=>p.v);
-    function stddev(arr){if(!arr.length)return 0;const m=arr.reduce((a,b)=>a+b,0)/arr.length;return Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length);}
-    const scoreDisp = (stddev(ls)+stddev(vs))/2;
-    // Combined disparity
-    const disparity = splitScore*0.6 + Math.min(scoreDisp/2,1)*0.4;
+  const byDisp=[...allMatchDisp].sort((a,b)=>b.disparity-a.disparity);
+  const top10disp=byDisp.slice(0,10);
+  const bot10disp=byDisp.slice(-10).reverse();
 
-    return {
-      m, avg: count?totalPts/count:0, total:totalPts, count,
-      exact, correct, splitScore, scoreDisp, disparity,
-      label:`${m.local} vs ${m.visitante}`
-    };
+  // ── Points per played match ──
+  const matchStats=played.map(m=>{
+    let totalPts=0,count=0;
+    parts.forEach(p=>{
+      const pr=(S.preds[m.id]||{})[p.name];
+      if(!pr||pr.l===null) return;
+      totalPts+=calcPoints(m.real_l,m.real_v,pr.l,pr.v); count++;
+    });
+    return {m,avg:count?totalPts/count:0,count,label:`${m.local} vs ${m.visitante}`};
   });
-
-  // ── TOP/BOTTOM matches by avg pts ──
-  const byAvg = [...matchStats].sort((a,b)=>b.avg-a.avg);
-  const top3pts  = byAvg.slice(0,3);
-  const bot3pts  = byAvg.slice(-3).reverse();
-
-  // ── Top 10 disparity (clave) and least (irrelevantes) ──
-  const byDisp = [...matchStats].sort((a,b)=>b.disparity-a.disparity);
-  const top10disp = byDisp.slice(0,10);
-  const bot10disp = byDisp.slice(-10).reverse();
+  const byAvg=[...matchStats].sort((a,b)=>b.avg-a.avg);
+  const top3pts=byAvg.slice(0,3);
+  const bot3pts=byAvg.slice(-3).reverse();
 
   // ── Per-participant stats ──
-  const partStats = parts.map(p => {
-    let exact=0, correct=0, total=0, played2=0, majorityMatch=0;
-    played.forEach(m => {
-      const pr = (S.preds[m.id]||{})[p.name];
-      if (!pr || pr.l===null) return;
-      const pts = calcPoints(m.real_l, m.real_v, pr.l, pr.v);
-      total+=pts; played2++;
-      if (pts===5) exact++;
-      if (pts>=3) correct++;
-      // Majority match
-      const d = pr.l - pr.v;
-      const myRes = d>0?'L':d===0?'E':'V';
-      if (myRes === majority(m.id)) majorityMatch++;
+  const partStats=parts.map(p=>{
+    let exact=0,correct=0,p2=0;
+    played.forEach(m=>{
+      const pr=(S.preds[m.id]||{})[p.name];
+      if(!pr||pr.l===null) return;
+      const pts=calcPoints(m.real_l,m.real_v,pr.l,pr.v);
+      p2++; if(pts===5)exact++; if(pts>=3)correct++;
     });
-    const majorityRate = played2>0 ? majorityMatch/played2 : 0;
-    return {name:p.name, rank:p.rank, exact, correct, total, played:played2, majorityRate};
+    return {name:p.name,rank:p.rank,exact,correct,played:p2};
   });
-  const byExact   = [...partStats].sort((a,b)=>b.exact-a.exact);
-  const byCorrect = [...partStats].sort((a,b)=>b.correct-a.correct);
-  const byMajRate = [...partStats].sort((a,b)=>b.majorityRate-a.majorityRate);
-  const maxExact   = Math.max(...partStats.map(p=>p.exact),1);
-  const maxCorrect = Math.max(...partStats.map(p=>p.correct),1);
+  const byExact=[...partStats].sort((a,b)=>b.exact-a.exact);
+  const byCorrect=[...partStats].sort((a,b)=>b.correct-a.correct);
+  const maxExact=Math.max(...partStats.map(p=>p.exact),1);
+  const maxCorrect=Math.max(...partStats.map(p=>p.correct),1);
 
-  // ── Row helpers ──
-  function matchRow(st, i, showBadge) {
-    const cls = i%2===0?'an-tr-a':'an-tr-b';
-    const badge = showBadge==='hi'
-      ? `<span class="an-badge an-badge-hi">↑${st.avg.toFixed(1)}</span>`
-      : showBadge==='lo'
-      ? `<span class="an-badge an-badge-lo">↓${st.avg.toFixed(1)}</span>`
-      : `<span style="color:var(--txt-dim);font-size:10px">${st.avg.toFixed(1)} pts</span>`;
+  // ── Row builders ──
+  function matchRow(st,i) {
+    const cls=i%2===0?'an-tr-a':'an-tr-b';
     return `<tr class="${cls}">
       <td style="padding:3px 8px;font-size:11px">${flagImg(st.m.cod_l||st.m.local)}${flagImg(st.m.cod_v||st.m.visitante)} ${st.label}</td>
-      <td class="an-td-pts">${badge}</td>
+      <td class="an-td-pts" style="color:#EEE;font-weight:bold">${st.avg.toFixed(1)}</td>
     </tr>`;
   }
-  function partRow(st, i, valFn, maxVal, barColor) {
-    const isSel = st.name===sel;
-    const cls = isSel?'an-tr-sel':i%2===0?'an-tr-a':'an-tr-b';
-    const val = valFn(st);
-    const pct = maxVal>0?Math.round(val/maxVal*100):0;
+  function partRow(st,i,valFn,maxVal,barColor) {
+    const isSel=st.name===sel;
+    const cls=isSel?'an-tr-sel':i%2===0?'an-tr-a':'an-tr-b';
+    const val=valFn(st);
+    const pct=maxVal>0?Math.round(val/maxVal*100):0;
     return `<tr class="${cls}">
       <td style="padding:3px 6px;font-size:11px;width:20px;color:var(--txt-dim);text-align:center">${st.rank}°</td>
       <td style="padding:3px 6px;font-size:11px">${st.name}</td>
@@ -418,55 +390,64 @@ function renderAnalytics() {
       <td class="an-td-num">${val}</td>
     </tr>`;
   }
-  function dispRow(st, i) {
-    const cls = i%2===0?'an-tr-a':'an-tr-b';
-    const pct = Math.round(st.splitScore*100);
+  function levRow(st,i,isClave) {
+    const cls=i%2===0?'an-tr-a':'an-tr-b';
+    const fl=flagImg(st.m.cod_l||st.m.local), fv=flagImg(st.m.cod_v||st.m.visitante);
+    let metricCell;
+    if (isClave) {
+      metricCell = `<td style="text-align:center;font-size:11px;color:var(--pts-4);font-weight:bold;width:30px">${st.uniqueCombos}</td>`;
+    } else {
+      const comboCnt={};
+      parts.forEach(p=>{const pr=(S.preds[st.m.id]||{})[p.name];if(pr&&pr.l!==null){const k=`${pr.l}-${pr.v}`;comboCnt[k]=(comboCnt[k]||0)+1;}});
+      const top=Object.entries(comboCnt).sort((a,b)=>b[1]-a[1])[0];
+      metricCell = `<td style="text-align:center;font-size:11px;color:var(--pts-3);font-weight:bold;width:30px">${top?top[1]:0}</td>`;
+    }
     return `<tr class="${cls}">
-      <td style="padding:3px 8px;font-size:11px">${flagImg(st.m.cod_l||st.m.local)}${flagImg(st.m.cod_v||st.m.visitante)} ${st.label}</td>
-      <td class="an-td-bar"><div class="an-bar-track"><div class="an-bar-fill blue" style="width:${Math.round(st.disparity*100)}%"></div></div></td>
+      <td style="padding:3px 6px;font-size:11px">${fl}${fv} ${st.label}</td>
+      ${metricCell}
+      <td style="text-align:center;padding:2px 6px;white-space:nowrap;font-size:10px">
+        ${fl}<span style="color:var(--txt-dim);margin:0 2px">${st.resCnt.L}</span>
+        <span style="background:#555;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;font-size:8px;color:#ddd">E</span><span style="color:var(--txt-dim);margin:0 2px">${st.resCnt.E}</span>
+        ${fv}<span style="color:var(--txt-dim);margin-left:2px">${st.resCnt.V}</span>
+      </td>
     </tr>`;
   }
 
-  // ── Render ──
   wrap.innerHTML = `
+    <div class="an-two-col">
+      <div class="an-section">
+        <div class="an-section-title">⚡ Top 10 partidos clave (mayor disparidad)</div>
+        <table class="an-table">
+          <thead><tr><th class="an-th-left">Partido</th><th title="Marcadores distintos">Mkd</th><th>L / E / V</th></tr></thead>
+          <tbody>${top10disp.map((s,i)=>levRow(s,i,true)).join('')}</tbody>
+        </table>
+      </div>
+      <div class="an-section">
+        <div class="an-section-title">😴 Top 10 partidos irrelevantes (menor disparidad)</div>
+        <table class="an-table">
+          <thead><tr><th class="an-th-left">Partido</th><th title="Mismo marcador (más común)">Igl</th><th>L / E / V</th></tr></thead>
+          <tbody>${bot10disp.map((s,i)=>levRow(s,i,false)).join('')}</tbody>
+        </table>
+      </div>
+    </div>
 
-    <!-- Partidos con más y menos puntos -->
     <div class="an-two-col">
       <div class="an-section">
         <div class="an-section-title">🔥 Partidos con más puntos (promedio)</div>
         <table class="an-table">
           <thead><tr><th class="an-th-left">Partido</th><th>Prom.</th></tr></thead>
-          <tbody>${top3pts.map((s,i)=>matchRow(s,i,'hi')).join('')}</tbody>
+          <tbody>${top3pts.map((s,i)=>matchRow(s,i)).join('')}</tbody>
         </table>
       </div>
       <div class="an-section">
         <div class="an-section-title">❄️ Partidos con menos puntos (promedio)</div>
         <table class="an-table">
           <thead><tr><th class="an-th-left">Partido</th><th>Prom.</th></tr></thead>
-          <tbody>${bot3pts.map((s,i)=>matchRow(s,i,'lo')).join('')}</tbody>
+          <tbody>${bot3pts.map((s,i)=>matchRow(s,i)).join('')}</tbody>
         </table>
       </div>
     </div>
 
-    <!-- Partidos clave e irrelevantes -->
-    <div class="an-two-col">
-      <div class="an-section">
-        <div class="an-section-title">⚡ Top 10 partidos clave (mayor disparidad de pronósticos)</div>
-        <table class="an-table">
-          <thead><tr><th class="an-th-left">Partido</th><th>Disparidad</th></tr></thead>
-          <tbody>${top10disp.map((s,i)=>dispRow(s,i)).join('')}</tbody>
-        </table>
-      </div>
-      <div class="an-section">
-        <div class="an-section-title">😴 Top 10 partidos irrelevantes (menor disparidad)</div>
-        <table class="an-table">
-          <thead><tr><th class="an-th-left">Partido</th><th>Disparidad</th></tr></thead>
-          <tbody>${bot10disp.map((s,i)=>dispRow(s,i)).join('')}</tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Marcadores exactos y resultados correctos -->
     <div class="an-two-col">
       <div class="an-section">
         <div class="an-section-title">🎯 Marcadores exactos (5 pts) por participante</div>
@@ -482,27 +463,6 @@ function renderAnalytics() {
           <tbody>${byCorrect.map((s,i)=>partRow(s,i,p=>p.correct,maxCorrect,'blue')).join('')}</tbody>
         </table>
       </div>
-    </div>
-
-    <!-- Pronósticos reservados vs arriesgados -->
-    <div class="an-section">
-      <div class="an-section-title">🐑 Pronósticos reservados vs 🦁 arriesgados (% de veces que coincide con la mayoría)</div>
-      <table class="an-table" style="width:100%">
-        <thead><tr><th>#</th><th class="an-th-left">Participante</th><th></th><th>%</th><th style="font-size:9px;color:rgba(255,255,255,.5)">tipo</th></tr></thead>
-        <tbody>${byMajRate.map((s,i) => {
-          const isSel = s.name===sel;
-          const cls = isSel?'an-tr-sel':i%2===0?'an-tr-a':'an-tr-b';
-          const pct = Math.round(s.majorityRate*100);
-          const tipo = pct>=70?'🐑 Conservador':pct<=40?'🦁 Arriesgado':'';
-          return `<tr class="${cls}">
-            <td style="padding:3px 6px;font-size:11px;width:20px;color:var(--txt-dim);text-align:center">${s.rank}°</td>
-            <td style="padding:3px 6px;font-size:11px">${s.name}</td>
-            <td class="an-td-bar"><div class="an-bar-track"><div class="an-bar-fill" style="width:${pct}%;background:${pct>=70?'#60A5FA':pct<=40?'var(--pts-5)':'var(--bg-hdr)'}"></div></div></td>
-            <td class="an-td-num">${pct}%</td>
-            <td style="font-size:10px;padding:3px 6px;text-align:center">${tipo}</td>
-          </tr>`;
-        }).join('')}</tbody>
-      </table>
     </div>
   `;
 }
