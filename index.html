@@ -133,14 +133,14 @@ main{padding:10px}
 
 /* Top row: info box + summary side by side */
 .match-top{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap}
-.match-info-box{flex:0 0 auto;width:160px;background:var(--bg-panel);border:1px solid #2A3540;padding:10px 14px}
+.match-info-box{flex:1 1 160px;background:var(--bg-panel);border:1px solid #2A3540;padding:10px 14px;min-width:140px}
 .match-teams-big{text-align:center;margin-bottom:6px}
 .match-teams-big .team{font-size:12px;font-weight:bold;color:var(--txt);display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:3px}
 .match-score-big{font-family:Verdana,sans-serif;font-size:24px;font-weight:bold;color:var(--txt);text-align:center;margin:5px 0;letter-spacing:3px}
 .match-score-big.pending{color:var(--txt-gray);font-size:16px}
 .match-date-lbl{font-size:10px;color:var(--txt-dim);text-align:center;margin-bottom:6px}
 
-.result-summary{flex:0 0 auto;width:120px;background:var(--bg-panel);border:1px solid #2A3540;padding:8px}
+.result-summary{flex:1 1 120px;background:var(--bg-panel);border:1px solid #2A3540;padding:8px}
 .result-summary table{border-collapse:collapse;width:100%;font-size:12px}
 .result-summary th{background:var(--bg-hdr);color:#EEE;padding:4px 8px;font-size:10px;text-align:center;border-bottom:1px solid #014A62}
 .result-summary td{padding:4px 8px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04)}
@@ -156,7 +156,7 @@ main{padding:10px}
 .mp-a td{background:var(--bg-row-a)}.mp-b td{background:var(--bg-row-b)}
 .mp-sel td{background:rgba(240,180,41,0.1)!important;color:var(--gold)!important}
 .td-rank-num{color:var(--txt-dim);font-size:10px;width:16px;text-align:center;padding:0 2px}
-.td-part-name{text-align:left!important;padding-left:5px!important;font-weight:bold;font-size:11px;max-width:80px;overflow:hidden;text-overflow:ellipsis}
+.td-part-name{text-align:left!important;padding-left:5px!important;font-weight:bold;font-size:11px}
 .mp-sel .td-part-name{color:var(--gold)}
 .td-pred-lv{font-weight:bold;color:var(--txt);font-size:11px;width:32px}
 .td-pred-pts{width:22px;font-size:11px}
@@ -1199,7 +1199,7 @@ function renderMatchDetail() {
       }
     }
     return `<tr class="${rowCls}">
-      <td class="td-rank-num">${p.rank}°</td>
+      <td class="td-rank-num">${i+1}</td>
       <td class="td-part-name">${p.name}</td>
       <td class="td-pred-icon">${iconCell}</td>
       <td class="td-pred-lv">${predCell}</td>
