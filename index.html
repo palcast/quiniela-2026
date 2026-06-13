@@ -147,8 +147,8 @@ main{padding:10px}
 .rs-a td{background:var(--bg-row-a)}.rs-b td{background:var(--bg-row-b)}
 
 /* Bottom: two-column predictions */
-.match-preds-wrap{display:flex;gap:6px;justify-content:center}
-.match-preds-table{flex:0 0 auto;width:200px;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden}
+.match-preds-wrap{display:flex;gap:6px}
+.match-preds-table{flex:1 1 0;background:var(--bg-panel);border:1px solid #2A3540;overflow:hidden;min-width:0}
 .match-preds-table table{border-collapse:collapse;width:100%;font-size:11px}
 .match-preds-table th{background:var(--bg-hdr);color:#EEE;padding:4px 5px;font-size:10px;font-weight:bold;text-align:center;border-bottom:1px solid #014A62;border-right:1px solid #014A62;white-space:nowrap}
 .match-preds-table th.th-pts-col{background:var(--bg-pts-hdr)}
@@ -1215,17 +1215,15 @@ function renderMatchDetail() {
     <th class="th-pts-col">Pts</th>
   </tr>`;
 
-  const useTwoCols = parts.length > 16;
-  const half = useTwoCols ? Math.ceil(parts.length / 2) : parts.length;
+  const half = Math.ceil(parts.length / 2);
   const col1 = parts.slice(0, half);
-  const col2 = useTwoCols ? parts.slice(half) : [];
+  const col2 = parts.slice(half);
 
-  const cols = useTwoCols ? [col1, col2] : [col1];
-  document.getElementById('match-preds-wrap').innerHTML = cols.map((col, ci) => `
+  document.getElementById('match-preds-wrap').innerHTML = [col1, col2].map(col => `
     <div class="match-preds-table">
       <table>
         <thead>${thRow}</thead>
-        <tbody>${col.map((p,i) => buildPredRow(p, ci === 0 ? i : half+i)).join('')}</tbody>
+        <tbody>${col.map((p,i) => buildPredRow(p, col === col1 ? i : half+i)).join('')}</tbody>
       </table>
     </div>`).join('');
 }
